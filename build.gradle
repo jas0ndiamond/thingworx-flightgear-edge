@@ -1,0 +1,48 @@
+apply plugin: 'java'
+apply from: 'dependencies.gradle'
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+repositories {
+	jcenter()
+	mavenCentral() 
+}
+
+ext {
+	projectVersion = "1.0.0"
+	title = "thingworx-flightgear-edge"
+}
+
+dependencies {
+
+	compile libs.edge_sdk_libs
+	compile libs.flightgear_libs
+	
+	//edge java sdk 7.0.0
+	compile fileTree(dir: project.file("lib/"), include: ['thingworx-java-sdk-7.0.0.jar'])
+	
+	//flightgear control 1.0.0
+	compile fileTree(dir: project.file("lib/"), include: ["flightgear-control-1.0.0.jar"])
+	
+}
+
+
+
+sourceSets {
+	main {
+		java {
+			srcDir 'src/main/java'
+		}
+	}
+}
+
+//jar {
+//
+//	baseName title
+//	version projectVersion
+//
+//	from(sourceSets.main.output)
+//	manifest {
+//	}
+//}

@@ -1,0 +1,32 @@
+ext {
+    libs = [
+            apache_commons: [
+                'commons-io:commons-io:2.4',
+                'commons-lang:commons-lang:2.6',
+                'commons-fileupload:commons-fileupload:1.3.3',
+                'org.apache.commons:commons-dbcp2:2.0',
+                'org.apache.commons:commons-pool2:2.2',
+                'commons-logging:commons-logging:1.1.3',
+                'commons-codec:commons-codec:1.9',
+                'org.apache.commons:commons-compress:1.12'
+            ],
+            flightgear_libs: [
+            	'commons-net:commons-net:3.8.0',
+    			'org.json:json:20210307',
+				'ch.qos.logback:logback-classic:1.2.3'
+            ],
+            edge_sdk_libs: [
+                'org.slf4j:slf4j-api:1.7.25',
+                'ch.qos.logback:logback-core:1.2.3',
+                'ch.qos.logback:logback-classic:1.2.3',
+                'joda-time:joda-time:2.9.4',
+                'io.netty:netty-all:4.1.48.Final',
+                'org.apache.httpcomponents:httpclient:4.5.2',
+                'com.fasterxml.jackson.core:jackson-core:2.12.0',
+                'com.fasterxml.jackson.core:jackson-databind:2.12.0',
+                'com.fasterxml.jackson.core:jackson-annotations:2.12.0',
+                'com.fasterxml.jackson.dataformat:jackson-dataformat-smile:2.12.0',
+                'org.jdom:jdom2:2.0.6'
+            ]
+    ]
+}
