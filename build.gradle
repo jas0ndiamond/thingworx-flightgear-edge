@@ -5,44 +5,65 @@ sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
 
 repositories {
-	jcenter()
-	mavenCentral() 
+    jcenter()
+    mavenCentral() 
+    
+    flatDir {
+        dirs 'lib'
+    }
 }
 
 ext {
-	projectVersion = "1.0.0"
-	title = "thingworx-flightgear-edge"
+    projectVersion = "1.0.0"
+    title = "thingworx-flightgear-edge"
 }
 
 dependencies {
 
-	compile libs.edge_sdk_libs
-	compile libs.flightgear_libs
-	
-	//edge java sdk 7.0.0
-	compile fileTree(dir: project.file("lib/"), include: ['thingworx-java-sdk-7.0.0.jar'])
-	
-	//flightgear control 1.0.0
-	compile fileTree(dir: project.file("lib/"), include: ["flightgear-control-1.0.0.jar"])
-	
+    compile libs.edge_sdk_libs
+    compile libs.flightgear_libs
+    
+
+    
+    //edge java sdk 7.0.0
+    //compile fileTree(dir: project.file("lib/"), include: ['thingworx-java-sdk-7.0.0.jar'])
+    implementation fileTree(dir: 'lib', include: 'thingworx-java-sdk-7.0.0.jar')
+    
+    //flightgear control 1.0.0
+    //compile fileTree(dir: project.file("lib/"), include: ["flightgear-control-1.0.0.jar"])
+    implementation fileTree(dir: 'lib', include: 'flightgear-control-1.0.0.jar')
+    //testImplementation fileTree(dir: 'lib', include: 'flightgear-control-1.0.0.jar')
+    
+    
+    //flightgear control source 1.0.0
+    //compile fileTree(dir: project.file("lib/"), include: ["flightgear-control-1.0.0-src.jar"])
+    implementation fileTree(dir: 'lib', include: 'flightgear-control-1.0.0-src.jar')
+    //testImplementation fileTree(dir: 'lib', include: 'flightgear-control-1.0.0-src.jar')
+    
+    
+    //compile files("lib/flightgear-control-1.0.0.jar")
+    //compile files("lib/flightgear-control-1.0.0-src.jar")
+    
+    
+    
 }
 
 
 
 sourceSets {
-	main {
-		java {
-			srcDir 'src/main/java'
-		}
-	}
+    main {
+        java {
+            srcDir 'src/main/java'
+        }
+    }
 }
 
 //jar {
 //
-//	baseName title
-//	version projectVersion
+//    baseName title
+//    version projectVersion
 //
-//	from(sourceSets.main.output)
-//	manifest {
-//	}
+//    from(sourceSets.main.output)
+//    manifest {
+//    }
 //}
