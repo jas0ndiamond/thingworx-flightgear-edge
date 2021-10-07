@@ -24,3 +24,9 @@ hs_err_pid*
 
 lib/*.jar
 /.gradle/
+
+.classpath
+.project
+.settings/
+
+bin/

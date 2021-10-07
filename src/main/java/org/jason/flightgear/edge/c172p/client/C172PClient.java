@@ -115,7 +115,7 @@ public class C172PClient extends ConnectedThingClient {
         
         //shutdown the plane
         
-    	LOGGER.trace("edgeShutdown started");
+        LOGGER.trace("edgeShutdown started");
         
         if(thing != null) {
             thing.Shutdown();
@@ -123,10 +123,10 @@ public class C172PClient extends ConnectedThingClient {
         
         //trailing sleep to allow thing shutdown
         try {
-			Thread.sleep(1500);
-		} catch (InterruptedException e) {
-			LOGGER.warn(e.getMessage(), e);
-		}
+            Thread.sleep(1500);
+        } catch (InterruptedException e) {
+            LOGGER.warn(e.getMessage(), e);
+        }
         
         if(client != null) {
             try {
@@ -138,10 +138,10 @@ public class C172PClient extends ConnectedThingClient {
         
         //trailing sleep to allow client shutdown
         try {
-			Thread.sleep(3000);
-		} catch (InterruptedException e) {
-			LOGGER.warn(e.getMessage(), e);
-		}
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            LOGGER.warn(e.getMessage(), e);
+        }
         
         LOGGER.trace("edgeShutdown completed");
         
@@ -155,11 +155,12 @@ public class C172PClient extends ConnectedThingClient {
      * 
      * 
      * @param thing
+     * @throws Exception 
      */
-    private static void edgeStartup(C172PThing thing) {
-    	
-    	LOGGER.trace("edgeStartup started");
-    	
+    private static void edgeStartup(C172PThing thing) throws Exception {
+        
+        LOGGER.trace("edgeStartup started");
+        
         
         
         //assume bound client is connected and bound
@@ -189,7 +190,7 @@ public class C172PClient extends ConnectedThingClient {
     }
     
     private static void edgeOperation(ConnectedThingClient client) {
-          	
+              
         int runTime = 0;
         while (runTime <= MAX_RUN_TIME && !client.isShutdown()) {
             // Only process the Virtual Things if the client is connected
