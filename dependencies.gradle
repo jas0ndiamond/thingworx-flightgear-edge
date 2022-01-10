@@ -10,10 +10,17 @@ ext {
                 'commons-codec:commons-codec:1.9',
                 'org.apache.commons:commons-compress:1.12'
             ],
-            flightgear_libs: [
-            	'commons-net:commons-net:3.8.0',
-    			'org.json:json:20210307',
-				'ch.qos.logback:logback-classic:1.2.3'
+            flightgear_control: [
+                'commons-net:commons-net:3.8.0',
+                'org.apache.commons:commons-math3:3.6.1',
+                'org.json:json:20210307',
+                'ch.qos.logback:logback-classic:1.2.3'
+            ],
+            geotools: [
+                'org.geotools:gt-referencing:26.1.01'
+            ],
+            mina_sshd: [
+                'org.apache.sshd:sshd-core:2.8.0'
             ],
             edge_sdk_libs: [
                 'org.slf4j:slf4j-api:1.7.25',

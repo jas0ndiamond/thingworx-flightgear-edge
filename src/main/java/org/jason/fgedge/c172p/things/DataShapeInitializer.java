@@ -1,7 +1,8 @@
-package org.jason.flightgear.edge.c172p.things;
+package org.jason.fgedge.c172p.things;
 
-import org.jason.flightgear.planes.c172p.C172PFields;
-import org.jason.util.EdgeUtilities;
+import org.jason.fgcontrol.aircraft.c172p.C172PFields;
+import org.jason.fgcontrol.aircraft.fields.FlightGearFields;
+import org.jason.fgedge.util.EdgeUtilities;
 
 import com.thingworx.metadata.FieldDefinition;
 import com.thingworx.metadata.collections.FieldDefinitionCollection;
@@ -14,20 +15,38 @@ public abstract class DataShapeInitializer {
         FieldDefinitionCollection consumablesFields = new FieldDefinitionCollection();
         consumablesFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_CAPACITY_FIELD), 
-                C172PFields.FUEL_TANK_CAPACITY_FIELD_DESC,
+                EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_0_CAPACITY_FIELD), 
+                C172PFields.FUEL_TANK_0_CAPACITY_FIELD_DESC,
                 BaseTypes.NUMBER
         ));
         consumablesFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_LEVEL_FIELD), 
-                C172PFields.FUEL_TANK_LEVEL_FIELD_DESC,
+                EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_0_LEVEL_FIELD), 
+                C172PFields.FUEL_TANK_0_LEVEL_FIELD_DESC,
                 BaseTypes.NUMBER
         ));
         consumablesFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.WATER_CONTAMINATION_FIELD), 
-                C172PFields.WATER_CONTAMINATION_FIELD_DESC,
+                EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_0_WATER_CONTAMINATION_FIELD), 
+                C172PFields.FUEL_TANK_0_WATER_CONTAMINATION_FIELD_DESC,
+                BaseTypes.NUMBER
+        ));
+        consumablesFields.addFieldDefinition(
+            new FieldDefinition(
+                EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_1_CAPACITY_FIELD), 
+                C172PFields.FUEL_TANK_1_CAPACITY_FIELD_DESC,
+                BaseTypes.NUMBER
+        ));
+        consumablesFields.addFieldDefinition(
+            new FieldDefinition(
+                EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_1_LEVEL_FIELD), 
+                C172PFields.FUEL_TANK_1_LEVEL_FIELD_DESC,
+                BaseTypes.NUMBER
+        ));
+        consumablesFields.addFieldDefinition(
+            new FieldDefinition(
+                EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_1_WATER_CONTAMINATION_FIELD), 
+                C172PFields.FUEL_TANK_1_WATER_CONTAMINATION_FIELD_DESC,
                 BaseTypes.NUMBER
         ));
         
@@ -62,6 +81,12 @@ public abstract class DataShapeInitializer {
         ));
         controlFields.addFieldDefinition(
             new FieldDefinition(
+                EdgeUtilities.toThingworxPropertyName(C172PFields.AILERON_TRIM_FIELD), 
+                C172PFields.AILERON_TRIM_FIELD_DESC,
+                BaseTypes.NUMBER
+        ));
+        controlFields.addFieldDefinition(
+            new FieldDefinition(
                 EdgeUtilities.toThingworxPropertyName(C172PFields.AUTO_COORDINATION_FIELD), 
                 C172PFields.AUTO_COORDINATION_FIELD_DESC,
                 BaseTypes.INTEGER
@@ -80,6 +105,12 @@ public abstract class DataShapeInitializer {
         ));
         controlFields.addFieldDefinition(
             new FieldDefinition(
+                EdgeUtilities.toThingworxPropertyName(C172PFields.ELEVATOR_TRIM_FIELD), 
+                C172PFields.ELEVATOR_TRIM_FIELD_DESC,
+                BaseTypes.NUMBER
+        ));
+        controlFields.addFieldDefinition(
+            new FieldDefinition(
                 EdgeUtilities.toThingworxPropertyName(C172PFields.FLAPS_FIELD), 
                 C172PFields.FLAPS_FIELD_DESC,
                 BaseTypes.NUMBER
@@ -87,6 +118,12 @@ public abstract class DataShapeInitializer {
         controlFields.addFieldDefinition(
             new FieldDefinition(
                 EdgeUtilities.toThingworxPropertyName(C172PFields.RUDDER_FIELD),
+                C172PFields.RUDDER_FIELD_DESC,
+                BaseTypes.NUMBER
+        ));
+        controlFields.addFieldDefinition(
+            new FieldDefinition(
+                EdgeUtilities.toThingworxPropertyName(C172PFields.RUDDER_TRIM_FIELD),
                 C172PFields.RUDDER_FIELD_DESC,
                 BaseTypes.NUMBER
         ));
@@ -116,56 +153,56 @@ public abstract class DataShapeInitializer {
         FieldDefinitionCollection engineFields = new FieldDefinitionCollection();
         engineFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINE_COWLING_AIR_TEMPERATURE_FIELD), 
-                C172PFields.ENGINE_COWLING_AIR_TEMPERATURE_DESC,
+                EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINES_COWLING_AIR_TEMPERATURE_FIELD), 
+                C172PFields.ENGINES_COWLING_AIR_TEMPERATURE_DESC,
                 BaseTypes.NUMBER
         ));
         engineFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINE_EXHAUST_GAS_TEMPERATURE_FIELD), 
-                C172PFields.ENGINE_EXHAUST_GAS_TEMPERATURE_DESC,
+                EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINES_EXHAUST_GAS_TEMPERATURE_FIELD), 
+                C172PFields.ENGINES_EXHAUST_GAS_TEMPERATURE_DESC,
                 BaseTypes.NUMBER
         ));
         engineFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINE_EXHAUST_GAS_TEMPERATURE_NORM_FIELD), 
-                C172PFields.ENGINE_EXHAUST_GAS_TEMPERATURE_NORM_DESC,
+                EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINES_EXHAUST_GAS_TEMPERATURE_NORM_FIELD), 
+                C172PFields.ENGINES_EXHAUST_GAS_TEMPERATURE_NORM_DESC,
                 BaseTypes.NUMBER
         ));
         engineFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINE_FUEL_FLOW_FIELD), 
-                C172PFields.ENGINE_FUEL_FLOW_DESC,
+                EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINES_FUEL_FLOW_FIELD), 
+                C172PFields.ENGINES_FUEL_FLOW_DESC,
                 BaseTypes.NUMBER
         ));
         engineFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINE_MP_OSI_FIELD), 
-                C172PFields.ENGINE_MP_OSI_DESC,
+                EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINES_MP_OSI_FIELD), 
+                C172PFields.ENGINES_MP_OSI_DESC,
                 BaseTypes.NUMBER
         ));
         engineFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINE_OIL_PRESSURE_FIELD), 
-                C172PFields.ENGINE_OIL_PRESSURE_DESC,
+                EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINES_OIL_PRESSURE_FIELD), 
+                C172PFields.ENGINES_OIL_PRESSURE_DESC,
                 BaseTypes.NUMBER
         ));
         engineFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINE_OIL_TEMPERATURE_FIELD), 
-                C172PFields.ENGINE_OIL_TEMPERATURE_DESC,
+                EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINES_OIL_TEMPERATURE_FIELD), 
+                C172PFields.ENGINES_OIL_TEMPERATURE_DESC,
                 BaseTypes.NUMBER
         ));
         engineFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINE_RPM_FIELD), 
-                C172PFields.ENGINE_RPM_DESC,
+                EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINES_RPM_FIELD), 
+                C172PFields.ENGINES_RPM_DESC,
                 BaseTypes.NUMBER
         ));
         engineFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINE_RUNNING_FIELD), 
-                C172PFields.ENGINE_RUNNING_DESC,
+                EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINES_RUNNING_FIELD), 
+                C172PFields.ENGINES_RUNNING_DESC,
                 BaseTypes.INTEGER
         ));
         
@@ -176,62 +213,62 @@ public abstract class DataShapeInitializer {
         FieldDefinitionCollection environmentFields = new FieldDefinitionCollection();
         environmentFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.DEWPOINT_FIELD), 
-                C172PFields.DEWPOINT_FIELD_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.DEWPOINT_FIELD), 
+                FlightGearFields.DEWPOINT_FIELD_DESC,
                 BaseTypes.NUMBER
         ));
         environmentFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.EFFECTIVE_VISIBILITY_FIELD), 
-                C172PFields.EFFECTIVE_VISIBILITY_FIELD_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.EFFECTIVE_VISIBILITY_FIELD), 
+                FlightGearFields.EFFECTIVE_VISIBILITY_FIELD_DESC,
                 BaseTypes.NUMBER
         ));
         environmentFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.PRESSURE_FIELD), 
-                C172PFields.PRESSURE_FIELD_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.PRESSURE_FIELD), 
+                FlightGearFields.PRESSURE_FIELD_DESC,
                 BaseTypes.NUMBER
         ));
         environmentFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.RELATIVE_HUMIDITY_FIELD), 
-                C172PFields.RELATIVE_HUMIDITY_FIELD_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.RELATIVE_HUMIDITY_FIELD), 
+                FlightGearFields.RELATIVE_HUMIDITY_FIELD_DESC,
                 BaseTypes.NUMBER
         ));
         environmentFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.TEMPERATURE_FIELD), 
-                C172PFields.TEMPERATURE_FIELD_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.TEMPERATURE_FIELD), 
+                FlightGearFields.TEMPERATURE_FIELD_DESC,
                 BaseTypes.NUMBER
         ));
         environmentFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.VISIBILITY_FIELD), 
-                C172PFields.VISIBILITY_FIELD_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.VISIBILITY_FIELD), 
+                FlightGearFields.VISIBILITY_FIELD_DESC,
                 BaseTypes.NUMBER
         ));
         environmentFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.WIND_FROM_DOWN_FIELD), 
-                C172PFields.WIND_FROM_DOWN_FIELD_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.WIND_FROM_DOWN_FIELD), 
+                FlightGearFields.WIND_FROM_DOWN_FIELD_DESC,
                 BaseTypes.NUMBER
         ));
         environmentFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.WIND_FROM_EAST_FIELD), 
-                C172PFields.WIND_FROM_EAST_FIELD_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.WIND_FROM_EAST_FIELD), 
+                FlightGearFields.WIND_FROM_EAST_FIELD_DESC,
                 BaseTypes.NUMBER
         ));
         environmentFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.WIND_FROM_NORTH_FIELD),
-                C172PFields.WIND_FROM_NORTH_FIELD_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.WIND_FROM_NORTH_FIELD),
+                FlightGearFields.WIND_FROM_NORTH_FIELD_DESC,
                 BaseTypes.NUMBER
         ));
         environmentFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.WINDSPEED_FIELD), 
-                C172PFields.WINDSPEED_FIELD_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.WINDSPEED_FIELD), 
+                FlightGearFields.WINDSPEED_FIELD_DESC,
                 BaseTypes.NUMBER
         ));
         
@@ -242,189 +279,196 @@ public abstract class DataShapeInitializer {
         FieldDefinitionCollection fdmFields = new FieldDefinitionCollection();
         fdmFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.FDM_DAMAGE_REPAIRING_FIELD), 
-                C172PFields.FDM_DAMAGE_REPAIRING_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.FDM_DAMAGE_REPAIRING_FIELD), 
+                FlightGearFields.FDM_DAMAGE_REPAIRING_DESC,
                 BaseTypes.INTEGER
         ));
         
         fdmFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.FDM_FBX_AERO_FIELD), 
-                C172PFields.FDM_FBX_AERO_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.FDM_FBX_AERO_FIELD), 
+                FlightGearFields.FDM_FBX_AERO_DESC,
                 BaseTypes.NUMBER
         ));        
         fdmFields.addFieldDefinition(
             new FieldDefinition(
-                   EdgeUtilities.toThingworxPropertyName(C172PFields.FDM_FBX_EXTERNAL_FIELD), 
-                   C172PFields.FDM_FBX_EXTERNAL_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.FDM_FBX_EXTERNAL_FIELD), 
+                FlightGearFields.FDM_FBX_EXTERNAL_DESC,
                 BaseTypes.NUMBER
         ));   
         fdmFields.addFieldDefinition(
             new FieldDefinition(
-                  EdgeUtilities.toThingworxPropertyName(C172PFields.FDM_FBX_GEAR_FIELD), 
-                  C172PFields.FDM_FBX_GEAR_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.FDM_FBX_GEAR_FIELD), 
+                FlightGearFields.FDM_FBX_GEAR_DESC,
                 BaseTypes.NUMBER
         ));     
         fdmFields.addFieldDefinition(
             new FieldDefinition(
-                  EdgeUtilities.toThingworxPropertyName(C172PFields.FDM_FBX_PROP_FIELD), 
-                  C172PFields.FDM_FBX_PROP_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.FDM_FBX_PROP_FIELD), 
+                FlightGearFields.FDM_FBX_PROP_DESC,
                 BaseTypes.NUMBER
         ));  
         fdmFields.addFieldDefinition(
             new FieldDefinition(
-                   EdgeUtilities.toThingworxPropertyName(C172PFields.FDM_FBX_TOTAL_FIELD), 
-                   C172PFields.FDM_FBX_TOTAL_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.FDM_FBX_TOTAL_FIELD), 
+                FlightGearFields.FDM_FBX_TOTAL_DESC,
                 BaseTypes.NUMBER
         ));  
         fdmFields.addFieldDefinition(
             new FieldDefinition(
-                   EdgeUtilities.toThingworxPropertyName(C172PFields.FDM_FBX_WEIGHT_FIELD), 
-                   C172PFields.FDM_FBX_WEIGHT_DESC,
-                BaseTypes.NUMBER
-        ));  
-        
-        fdmFields.addFieldDefinition(
-            new FieldDefinition(
-                   EdgeUtilities.toThingworxPropertyName(C172PFields.FDM_FBY_AERO_FIELD), 
-                   C172PFields.FDM_FBY_AERO_DESC,
-                BaseTypes.NUMBER
-        ));  
-        fdmFields.addFieldDefinition(
-            new FieldDefinition(
-                   EdgeUtilities.toThingworxPropertyName(C172PFields.FDM_FBY_EXTERNAL_FIELD), 
-                   C172PFields.FDM_FBY_EXTERNAL_DESC,
-                BaseTypes.NUMBER
-        ));  
-        fdmFields.addFieldDefinition(
-            new FieldDefinition(
-                   EdgeUtilities.toThingworxPropertyName(C172PFields.FDM_FBY_GEAR_FIELD), 
-                   C172PFields.FDM_FBY_GEAR_DESC,
-                BaseTypes.NUMBER
-        ));  
-        fdmFields.addFieldDefinition(
-            new FieldDefinition(
-                   EdgeUtilities.toThingworxPropertyName(C172PFields.FDM_FBY_PROP_FIELD), 
-                   C172PFields.FDM_FBY_PROP_DESC,
-                BaseTypes.NUMBER
-        ));  
-        fdmFields.addFieldDefinition(
-            new FieldDefinition(
-                  EdgeUtilities.toThingworxPropertyName(C172PFields.FDM_FBY_TOTAL_FIELD), 
-                  C172PFields.FDM_FBY_TOTAL_DESC,
-                BaseTypes.NUMBER
-        ));  
-        fdmFields.addFieldDefinition(
-            new FieldDefinition(
-                   EdgeUtilities.toThingworxPropertyName(C172PFields.FDM_FBY_WEIGHT_FIELD), 
-                   C172PFields.FDM_FBY_WEIGHT_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.FDM_FBX_WEIGHT_FIELD), 
+                FlightGearFields.FDM_FBX_WEIGHT_DESC,
                 BaseTypes.NUMBER
         ));  
         
         fdmFields.addFieldDefinition(
             new FieldDefinition(
-                   EdgeUtilities.toThingworxPropertyName(C172PFields.FDM_FBZ_AERO_FIELD), 
-                   C172PFields.FDM_FBZ_AERO_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.FDM_FBY_AERO_FIELD), 
+                FlightGearFields.FDM_FBY_AERO_DESC,
                 BaseTypes.NUMBER
         ));  
         fdmFields.addFieldDefinition(
             new FieldDefinition(
-                   EdgeUtilities.toThingworxPropertyName(C172PFields.FDM_FBZ_EXTERNAL_FIELD), 
-                   C172PFields.FDM_FBZ_EXTERNAL_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.FDM_FBY_EXTERNAL_FIELD), 
+                FlightGearFields.FDM_FBY_EXTERNAL_DESC,
                 BaseTypes.NUMBER
         ));  
         fdmFields.addFieldDefinition(
             new FieldDefinition(
-                   EdgeUtilities.toThingworxPropertyName(C172PFields.FDM_FBZ_GEAR_FIELD),
-                   C172PFields.FDM_FBZ_GEAR_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.FDM_FBY_GEAR_FIELD), 
+                FlightGearFields.FDM_FBY_GEAR_DESC,
                 BaseTypes.NUMBER
         ));  
         fdmFields.addFieldDefinition(
             new FieldDefinition(
-                   EdgeUtilities.toThingworxPropertyName(C172PFields.FDM_FBZ_PROP_FIELD), 
-                   C172PFields.FDM_FBZ_PROP_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.FDM_FBY_PROP_FIELD), 
+                FlightGearFields.FDM_FBY_PROP_DESC,
                 BaseTypes.NUMBER
         ));  
         fdmFields.addFieldDefinition(
             new FieldDefinition(
-                   EdgeUtilities.toThingworxPropertyName(C172PFields.FDM_FBZ_TOTAL_FIELD), 
-                   C172PFields.FDM_FBZ_TOTAL_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.FDM_FBY_TOTAL_FIELD), 
+                FlightGearFields.FDM_FBY_TOTAL_DESC,
                 BaseTypes.NUMBER
         ));  
         fdmFields.addFieldDefinition(
             new FieldDefinition(
-                   EdgeUtilities.toThingworxPropertyName(C172PFields.FDM_FBZ_WEIGHT_FIELD), 
-                   C172PFields.FDM_FBZ_WEIGHT_DESC,
-                BaseTypes.NUMBER
-        ));  
-        
-        fdmFields.addFieldDefinition(
-            new FieldDefinition(
-                   EdgeUtilities.toThingworxPropertyName(C172PFields.FDM_FSX_AERO_FIELD), 
-                   C172PFields.FDM_FBZ_AERO_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.FDM_FBY_WEIGHT_FIELD), 
+                FlightGearFields.FDM_FBY_WEIGHT_DESC,
                 BaseTypes.NUMBER
         ));  
         
         fdmFields.addFieldDefinition(
             new FieldDefinition(
-                   EdgeUtilities.toThingworxPropertyName(C172PFields.FDM_FSY_AERO_FIELD), 
-                   C172PFields.FDM_FSY_AERO_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.FDM_FBZ_AERO_FIELD), 
+                FlightGearFields.FDM_FBZ_AERO_DESC,
+                BaseTypes.NUMBER
+        ));  
+        fdmFields.addFieldDefinition(
+            new FieldDefinition(
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.FDM_FBZ_EXTERNAL_FIELD), 
+                FlightGearFields.FDM_FBZ_EXTERNAL_DESC,
+                BaseTypes.NUMBER
+        ));  
+        fdmFields.addFieldDefinition(
+            new FieldDefinition(
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.FDM_FBZ_GEAR_FIELD),
+                FlightGearFields.FDM_FBZ_GEAR_DESC,
+                BaseTypes.NUMBER
+        ));  
+        fdmFields.addFieldDefinition(
+            new FieldDefinition(
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.FDM_FBZ_PROP_FIELD), 
+                FlightGearFields.FDM_FBZ_PROP_DESC,
+                BaseTypes.NUMBER
+        ));  
+        fdmFields.addFieldDefinition(
+            new FieldDefinition(
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.FDM_FBZ_TOTAL_FIELD), 
+                FlightGearFields.FDM_FBZ_TOTAL_DESC,
+                BaseTypes.NUMBER
+        ));  
+        fdmFields.addFieldDefinition(
+            new FieldDefinition(
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.FDM_FBZ_WEIGHT_FIELD), 
+                FlightGearFields.FDM_FBZ_WEIGHT_DESC,
                 BaseTypes.NUMBER
         ));  
         
         fdmFields.addFieldDefinition(
             new FieldDefinition(
-                   EdgeUtilities.toThingworxPropertyName(C172PFields.FDM_FSZ_AERO_FIELD), 
-                   C172PFields.FDM_FSZ_AERO_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.FDM_FSX_AERO_FIELD), 
+                FlightGearFields.FDM_FBZ_AERO_DESC,
                 BaseTypes.NUMBER
         ));  
         
         fdmFields.addFieldDefinition(
             new FieldDefinition(
-                   EdgeUtilities.toThingworxPropertyName(C172PFields.FDM_FWY_AERO_FIELD),
-                   C172PFields.FDM_FWY_AERO_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.FDM_FSY_AERO_FIELD), 
+                FlightGearFields.FDM_FSY_AERO_DESC,
                 BaseTypes.NUMBER
         ));  
         
         fdmFields.addFieldDefinition(
             new FieldDefinition(
-                  EdgeUtilities.toThingworxPropertyName(C172PFields.FDM_FWZ_AERO_FIELD), 
-                  C172PFields.FDM_FWZ_AERO_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.FDM_FSZ_AERO_FIELD), 
+                FlightGearFields.FDM_FSZ_AERO_DESC,
                 BaseTypes.NUMBER
         ));  
         
         fdmFields.addFieldDefinition(
             new FieldDefinition(
-                   EdgeUtilities.toThingworxPropertyName(C172PFields.FDM_LOAD_FACTOR_FIELD), 
-                   C172PFields.FDM_LOAD_FACTOR_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.FDM_FWY_AERO_FIELD),
+                FlightGearFields.FDM_FWY_AERO_DESC,
                 BaseTypes.NUMBER
         ));  
         
         fdmFields.addFieldDefinition(
             new FieldDefinition(
-                   EdgeUtilities.toThingworxPropertyName(C172PFields.FDM_LOD_NORM_FIELD), 
-                   C172PFields.FDM_LOD_NORM_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.FDM_FWZ_AERO_FIELD), 
+                FlightGearFields.FDM_FWZ_AERO_DESC,
                 BaseTypes.NUMBER
         ));  
         
         fdmFields.addFieldDefinition(
             new FieldDefinition(
-                  EdgeUtilities.toThingworxPropertyName(C172PFields.FDM_DAMAGE_FIELD), 
-                  C172PFields.FDM_DAMAGE_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.FDM_LOAD_FACTOR_FIELD), 
+                FlightGearFields.FDM_LOAD_FACTOR_DESC,
                 BaseTypes.NUMBER
         ));  
         
         fdmFields.addFieldDefinition(
             new FieldDefinition(
-                   EdgeUtilities.toThingworxPropertyName(C172PFields.FDM_LEFT_WING_DAMAGE_FIELD), 
-                   C172PFields.FDM_LEFT_WING_DAMAGE_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.FDM_LOD_NORM_FIELD), 
+                FlightGearFields.FDM_LOD_NORM_DESC,
+                BaseTypes.NUMBER
+        ));  
+        
+        fdmFields.addFieldDefinition(
+             new FieldDefinition(
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.FDM_WEIGHT), 
+                FlightGearFields.FDM_WEIGHT_DESC,
                 BaseTypes.NUMBER
         ));  
         
         fdmFields.addFieldDefinition(
             new FieldDefinition(
-                   EdgeUtilities.toThingworxPropertyName(C172PFields.FDM_RIGHT_WING_DAMAGE_FIELD), 
-                   C172PFields.FDM_RIGHT_WING_DAMAGE_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.FDM_DAMAGE_FIELD), 
+                FlightGearFields.FDM_DAMAGE_DESC,
+                BaseTypes.NUMBER
+        ));  
+        
+        fdmFields.addFieldDefinition(
+            new FieldDefinition(
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.FDM_LEFT_WING_DAMAGE_FIELD), 
+                FlightGearFields.FDM_LEFT_WING_DAMAGE_DESC,
+                BaseTypes.NUMBER
+        ));  
+        
+        fdmFields.addFieldDefinition(
+            new FieldDefinition(
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.FDM_RIGHT_WING_DAMAGE_FIELD), 
+                FlightGearFields.FDM_RIGHT_WING_DAMAGE_DESC,
                 BaseTypes.NUMBER
         ));
         
@@ -435,56 +479,56 @@ public abstract class DataShapeInitializer {
         FieldDefinitionCollection orientationFields = new FieldDefinitionCollection();
         orientationFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.ALPHA_FIELD), 
-                C172PFields.ALPHA_FIELD_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.ALPHA_FIELD), 
+                FlightGearFields.ALPHA_FIELD_DESC,
                 BaseTypes.NUMBER
         ));
         orientationFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.BETA_FIELD),
-                C172PFields.BETA_FIELD_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.BETA_FIELD),
+                FlightGearFields.BETA_FIELD_DESC,
                 BaseTypes.NUMBER
         ));
         orientationFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.HEADING_FIELD), 
-                C172PFields.HEADING_FIELD_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.HEADING_FIELD), 
+                FlightGearFields.HEADING_FIELD_DESC,
                 BaseTypes.NUMBER
         ));
         orientationFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.HEADING_MAG_FIELD), 
-                C172PFields.HEADING_MAG_FIELD_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.HEADING_MAG_FIELD), 
+                FlightGearFields.HEADING_MAG_FIELD_DESC,
                 BaseTypes.NUMBER
         ));
         orientationFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.PITCH_FIELD), 
-                C172PFields.PITCH_FIELD_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.PITCH_FIELD), 
+                FlightGearFields.PITCH_FIELD_DESC,
                 BaseTypes.NUMBER
         ));
         orientationFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.ROLL_FIELD), 
-                C172PFields.ROLL_FIELD_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.ROLL_FIELD), 
+                FlightGearFields.ROLL_FIELD_DESC,
                 BaseTypes.NUMBER
         ));
         orientationFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.TRACK_MAG_FIELD), 
-                C172PFields.TRACK_MAG_FIELD_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.TRACK_MAG_FIELD), 
+                FlightGearFields.TRACK_MAG_FIELD_DESC,
                 BaseTypes.NUMBER
         ));
         orientationFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.YAW_FIELD), 
-                C172PFields.YAW_FIELD_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.YAW_FIELD), 
+                FlightGearFields.YAW_FIELD_DESC,
                 BaseTypes.NUMBER
         ));
         orientationFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.YAW_RATE_FIELD), 
-                C172PFields.YAW_RATE_FIELD_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.YAW_RATE_FIELD), 
+                FlightGearFields.YAW_RATE_FIELD_DESC,
                 BaseTypes.NUMBER
         ));
         
@@ -495,31 +539,44 @@ public abstract class DataShapeInitializer {
         FieldDefinitionCollection positionFields = new FieldDefinitionCollection();
         positionFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.ALTITUDE_FIELD), 
-                C172PFields.ALTITUDE_FIELD_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.ALTITUDE_FIELD), 
+                FlightGearFields.ALTITUDE_FIELD_DESC,
                 BaseTypes.NUMBER
         ));
         positionFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.GROUND_ELEVATION_FIELD), 
-                C172PFields.GROUND_ELEVATION_FIELD_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.GROUND_ELEVATION_FIELD), 
+                FlightGearFields.GROUND_ELEVATION_FIELD_DESC,
                 BaseTypes.NUMBER
         ));
         positionFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.LATITUDE_FIELD), 
-                C172PFields.LATITUDE_FIELD_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.LATITUDE_FIELD), 
+                FlightGearFields.LATITUDE_FIELD_DESC,
                 BaseTypes.NUMBER
         ));
         positionFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.LONGITUDE_FIELD), 
-                C172PFields.LONGITUDE_FIELD_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.LONGITUDE_FIELD), 
+                FlightGearFields.LONGITUDE_FIELD_DESC,
                 BaseTypes.NUMBER
         ));
         
         return positionFields;
     }
+    
+    public static FieldDefinitionCollection buildSimParkingBrakeShape() {
+        FieldDefinitionCollection simFields = new FieldDefinitionCollection();
+        simFields.addFieldDefinition(
+            new FieldDefinition(
+                EdgeUtilities.toThingworxPropertyName(C172PFields.SIM_PARKING_BRAKE_FIELD),
+                C172PFields.SIM_PARKING_BRAKE_FIELD_DESC,
+                BaseTypes.NUMBER
+        ));
+        
+        return simFields;
+    }
+    
 
     public static FieldDefinitionCollection buildSimShape() {
         FieldDefinitionCollection simFields = new FieldDefinitionCollection();
@@ -531,38 +588,44 @@ public abstract class DataShapeInitializer {
         ));
         simFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.SIM_FREEZE_CLOCK_FIELD), 
-                C172PFields.SIM_FREEZE_CLOCK_FIELD_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.SIM_FREEZE_CLOCK_FIELD), 
+                FlightGearFields.SIM_FREEZE_CLOCK_FIELD_DESC,
                 BaseTypes.NUMBER
         ));
         simFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.SIM_FREEZE_MASTER_FIELD), 
-                C172PFields.SIM_FREEZE_MASTER_FIELD_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.SIM_FREEZE_MASTER_FIELD), 
+                FlightGearFields.SIM_FREEZE_MASTER_FIELD_DESC,
                 BaseTypes.NUMBER
         ));
         simFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.SIM_SPEEDUP_FIELD), 
-                C172PFields.SIM_SPEED_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.SIM_SPEEDUP_FIELD), 
+                FlightGearFields.SIM_SPEED_DESC,
                 BaseTypes.NUMBER
         ));
         simFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.SIM_TIME_ELAPSED_FIELD), 
-                C172PFields.SIM_TIME_ELAPSED_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.SIM_TIME_ELAPSED_FIELD), 
+                FlightGearFields.SIM_TIME_ELAPSED_DESC,
                 BaseTypes.NUMBER
         ));
         simFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.SIM_LOCAL_DAY_SECONDS_FIELD), 
-                C172PFields.SIM_LOCAL_DAY_SECONDS_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.SIM_TIME_GMT_FIELD), 
+                FlightGearFields.SIM_TIME_GMT_DESC,
+                BaseTypes.STRING
+        ));
+        simFields.addFieldDefinition(
+            new FieldDefinition(
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.SIM_LOCAL_DAY_SECONDS_FIELD), 
+                FlightGearFields.SIM_LOCAL_DAY_SECONDS_DESC,
                 BaseTypes.NUMBER
         ));
         simFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.SIM_MP_CLOCK_FIELD), 
-                C172PFields.SIM_MP_CLOCK_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.SIM_MP_CLOCK_FIELD), 
+                FlightGearFields.SIM_MP_CLOCK_DESC,
                 BaseTypes.NUMBER
         ));
         
@@ -573,38 +636,38 @@ public abstract class DataShapeInitializer {
         FieldDefinitionCollection velocitiesFields = new FieldDefinitionCollection();
         velocitiesFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.AIRSPEED_FIELD), 
-                C172PFields.AIRSPEED_FIELD_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.AIRSPEED_FIELD), 
+                FlightGearFields.AIRSPEED_FIELD_DESC,
                 BaseTypes.NUMBER
         ));
         velocitiesFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.GROUNDSPEED_FIELD), 
-                C172PFields.GROUNDSPEED_FIELD_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.GROUNDSPEED_FIELD), 
+                FlightGearFields.GROUNDSPEED_FIELD_DESC,
                 BaseTypes.NUMBER
         ));
         velocitiesFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.VERTICALSPEED_FIELD), 
-                C172PFields.VERTICALSPEED_FIELD_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.VERTICALSPEED_FIELD), 
+                FlightGearFields.VERTICALSPEED_FIELD_DESC,
                 BaseTypes.NUMBER
         ));
         velocitiesFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.U_BODY_FIELD),
-                C172PFields.U_BODY_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.U_BODY_FIELD),
+                FlightGearFields.U_BODY_DESC,
                 BaseTypes.NUMBER
         ));
         velocitiesFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.V_BODY_FIELD), 
-                C172PFields.V_BODY_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.V_BODY_FIELD), 
+                FlightGearFields.V_BODY_DESC,
                 BaseTypes.NUMBER
         ));
         velocitiesFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.W_BODY_FIELD), 
-                C172PFields.W_BODY_DESC,
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.W_BODY_FIELD), 
+                FlightGearFields.W_BODY_DESC,
                 BaseTypes.NUMBER
         ));
         

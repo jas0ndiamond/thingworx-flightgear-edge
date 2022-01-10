@@ -1,7 +1,7 @@
-package org.jason.flightgear.edge.c172p.client;
+package org.jason.fgedge.c172p.client;
 
-import org.jason.flightgear.edge.c172p.client.callback.AppKeyCallback;
-import org.jason.flightgear.edge.c172p.things.C172PThing;
+import org.jason.fgedge.c172p.things.C172PThing;
+import org.jason.fgedge.callback.AppKeyCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,9 +9,9 @@ import com.thingworx.communications.client.ClientConfigurator;
 import com.thingworx.communications.client.ConnectedThingClient;
 import com.thingworx.communications.client.things.VirtualThing;
 
-public class C172PClient extends ConnectedThingClient {
+public class C172PFlyAroundClient extends ConnectedThingClient {
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(C172PClient.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(C172PFlyAroundClient.class);
     
     private static final String C172P_THING_NAME = "C172PThing"; 
     
@@ -29,7 +29,7 @@ public class C172PClient extends ConnectedThingClient {
     private final static String PLATFORM_URI_COMPONENT_STR = "/Thingworx/WS";
 
     
-    public C172PClient(ClientConfigurator config) throws Exception {
+    public C172PFlyAroundClient(ClientConfigurator config) throws Exception {
         super(config);
     }
     
@@ -59,7 +59,7 @@ public class C172PClient extends ConnectedThingClient {
         config.setSecurityClaims( new AppKeyCallback(appKey) );
         config.ignoreSSLErrors(true);
 
-        C172PClient c172pClient = new C172PClient(config);
+        C172PFlyAroundClient c172pClient = new C172PFlyAroundClient(config);
                 
         C172PThing c172pThing = new C172PThing(C172P_THING_NAME, "Cessna 172P Thing", "", c172pClient);
         
@@ -95,7 +95,7 @@ public class C172PClient extends ConnectedThingClient {
             //we are connected and the virtual thing is bound, start the plane and launch it
             edgeStartup( c172pThing );
             
-            c172pThing.launchPlane();
+            c172pThing.executeFlightPlan();
             
             //edge main execution
             edgeOperation(c172pClient);
@@ -111,34 +111,20 @@ public class C172PClient extends ConnectedThingClient {
         }    
     }
     
-    private static void edgeShutdown(C172PClient client, C172PThing thing) {
+    private static void edgeShutdown(C172PFlyAroundClient client, C172PThing thing) throws Exception {
         
         //shutdown the plane
         
         LOGGER.trace("edgeShutdown started");
         
+        //shuts down the client too
         if(thing != null) {
             thing.Shutdown();
         }
         
-        //trailing sleep to allow thing shutdown
+        //trailing sleep to allow thing and client to complete shutdown
         try {
             Thread.sleep(1500);
-        } catch (InterruptedException e) {
-            LOGGER.warn(e.getMessage(), e);
-        }
-        
-        if(client != null) {
-            try {
-                client.shutdown();
-            } catch (Exception e) {
-                LOGGER.warn("Exception shutting down client", e);
-            }
-        }
-        
-        //trailing sleep to allow client shutdown
-        try {
-            Thread.sleep(3000);
         } catch (InterruptedException e) {
             LOGGER.warn(e.getMessage(), e);
         }

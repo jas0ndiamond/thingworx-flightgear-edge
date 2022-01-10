@@ -30,3 +30,5 @@ lib/*.jar
 .settings/
 
 bin/
+
+/log/

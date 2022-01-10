@@ -1,4 +1,4 @@
-package org.jason.flightgear.edge.c172p.client.callback;
+package org.jason.fgedge.callback;
 
 import com.thingworx.communications.client.IPasswordCallback;
 
@@ -16,6 +16,9 @@ public class AppKeyCallback implements IPasswordCallback {
 		this.appKey = appKey;
 	}
 	
+	/**
+	 *	Seriously do not use this for reference.
+	 */
 	@Override
 	public char[] getSecret() {
 		return this.appKey.toCharArray();

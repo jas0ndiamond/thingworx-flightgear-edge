@@ -5,6 +5,15 @@ sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
 
 repositories {
+
+    //need both of these maven repos for geotools
+    maven {
+        url "https://maven.geo-solutions.it/"
+    }
+    maven {
+        url "https://repo.osgeo.org/repository/release/"
+    }
+
     jcenter()
     mavenCentral() 
     
@@ -21,10 +30,11 @@ ext {
 dependencies {
 
     compile libs.edge_sdk_libs
-    compile libs.flightgear_libs
+    compile libs.flightgear_control
+    compile libs.geotools
+    compile libs.mina_sshd
     
 
-    
     //edge java sdk 7.0.0
     //compile fileTree(dir: project.file("lib/"), include: ['thingworx-java-sdk-7.0.0.jar'])
     implementation fileTree(dir: 'lib', include: 'thingworx-java-sdk-7.0.0.jar')
@@ -37,7 +47,7 @@ dependencies {
     
     //flightgear control source 1.0.0
     //compile fileTree(dir: project.file("lib/"), include: ["flightgear-control-1.0.0-src.jar"])
-    implementation fileTree(dir: 'lib', include: 'flightgear-control-1.0.0-src.jar')
+    //implementation fileTree(dir: 'lib', include: 'flightgear-control-1.0.0-src.jar')
     //testImplementation fileTree(dir: 'lib', include: 'flightgear-control-1.0.0-src.jar')
     
     
@@ -48,8 +58,6 @@ dependencies {
     
 }
 
-
-
 sourceSets {
     main {
         java {
@@ -57,13 +65,3 @@ sourceSets {
         }
     }
 }
-
-//jar {
-//
-//    baseName title
-//    version projectVersion
-//
-//    from(sourceSets.main.output)
-//    manifest {
-//    }
-//}
