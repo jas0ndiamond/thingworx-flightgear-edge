@@ -1,6 +1,6 @@
-package org.jason.fgedge.c172p.things;
+package org.jason.fgedge.f15c.things;
 
-import org.jason.fgcontrol.aircraft.c172p.C172PFields;
+import org.jason.fgcontrol.aircraft.f15c.F15CFields;
 import org.jason.fgcontrol.aircraft.fields.FlightGearFields;
 import org.jason.fgedge.util.EdgeUtilities;
 
@@ -15,38 +15,62 @@ public abstract class DataShapeInitializer {
         FieldDefinitionCollection consumablesFields = new FieldDefinitionCollection();
         consumablesFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_0_CAPACITY_FIELD), 
-                C172PFields.FUEL_TANK_0_CAPACITY_FIELD_DESC,
+                EdgeUtilities.toThingworxPropertyName(F15CFields.FUEL_TANK_0_CAPACITY_FIELD), 
+                F15CFields.FUEL_TANK_0_CAPACITY_FIELD_DESC,
                 BaseTypes.NUMBER
         ));
         consumablesFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_0_LEVEL_FIELD), 
-                C172PFields.FUEL_TANK_0_LEVEL_FIELD_DESC,
+                EdgeUtilities.toThingworxPropertyName(F15CFields.FUEL_TANK_0_LEVEL_FIELD), 
+                F15CFields.FUEL_TANK_0_LEVEL_FIELD_DESC,
                 BaseTypes.NUMBER
         ));
         consumablesFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_0_WATER_CONTAMINATION_FIELD), 
-                C172PFields.FUEL_TANK_0_WATER_CONTAMINATION_FIELD_DESC,
+                EdgeUtilities.toThingworxPropertyName(F15CFields.FUEL_TANK_1_CAPACITY_FIELD), 
+                F15CFields.FUEL_TANK_1_CAPACITY_FIELD_DESC,
                 BaseTypes.NUMBER
         ));
         consumablesFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_1_CAPACITY_FIELD), 
-                C172PFields.FUEL_TANK_1_CAPACITY_FIELD_DESC,
+                EdgeUtilities.toThingworxPropertyName(F15CFields.FUEL_TANK_1_LEVEL_FIELD), 
+                F15CFields.FUEL_TANK_1_LEVEL_FIELD_DESC,
                 BaseTypes.NUMBER
         ));
         consumablesFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_1_LEVEL_FIELD), 
-                C172PFields.FUEL_TANK_1_LEVEL_FIELD_DESC,
+                EdgeUtilities.toThingworxPropertyName(F15CFields.FUEL_TANK_2_CAPACITY_FIELD), 
+                F15CFields.FUEL_TANK_2_CAPACITY_FIELD_DESC,
                 BaseTypes.NUMBER
         ));
         consumablesFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_1_WATER_CONTAMINATION_FIELD), 
-                C172PFields.FUEL_TANK_1_WATER_CONTAMINATION_FIELD_DESC,
+                EdgeUtilities.toThingworxPropertyName(F15CFields.FUEL_TANK_2_LEVEL_FIELD), 
+                F15CFields.FUEL_TANK_2_LEVEL_FIELD_DESC,
+                BaseTypes.NUMBER
+        ));
+        consumablesFields.addFieldDefinition(
+            new FieldDefinition(
+                EdgeUtilities.toThingworxPropertyName(F15CFields.FUEL_TANK_3_CAPACITY_FIELD), 
+                F15CFields.FUEL_TANK_3_CAPACITY_FIELD_DESC,
+                BaseTypes.NUMBER
+        ));
+        consumablesFields.addFieldDefinition(
+            new FieldDefinition(
+                EdgeUtilities.toThingworxPropertyName(F15CFields.FUEL_TANK_3_LEVEL_FIELD), 
+                F15CFields.FUEL_TANK_3_LEVEL_FIELD_DESC,
+                BaseTypes.NUMBER
+         ));
+        consumablesFields.addFieldDefinition(
+            new FieldDefinition(
+                EdgeUtilities.toThingworxPropertyName(F15CFields.FUEL_TANK_4_CAPACITY_FIELD), 
+                F15CFields.FUEL_TANK_4_CAPACITY_FIELD_DESC,
+                BaseTypes.NUMBER
+        ));
+        consumablesFields.addFieldDefinition(
+            new FieldDefinition(
+                EdgeUtilities.toThingworxPropertyName(F15CFields.FUEL_TANK_4_LEVEL_FIELD), 
+                F15CFields.FUEL_TANK_4_LEVEL_FIELD_DESC,
                 BaseTypes.NUMBER
         ));
         
@@ -57,92 +81,116 @@ public abstract class DataShapeInitializer {
         FieldDefinitionCollection controlFields = new FieldDefinitionCollection();
         controlFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.BATTERY_SWITCH_FIELD), 
-                C172PFields.BATTERY_SWITCH_FIELD_DESC,
+                EdgeUtilities.toThingworxPropertyName(F15CFields.BATTERY_SWITCH_FIELD), 
+                F15CFields.BATTERY_SWITCH_FIELD_DESC,
                 BaseTypes.INTEGER
         ));
         controlFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.MIXTURE_FIELD), 
-                C172PFields.MIXTURE_FIELD_DESC,
-                BaseTypes.NUMBER
-        ));
-        controlFields.addFieldDefinition(
-            new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.THROTTLE_FIELD), 
-                C172PFields.THROTTLE_FIELD_DESC,
-                BaseTypes.NUMBER
-        ));
-        controlFields.addFieldDefinition(
-            new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.AILERON_FIELD), 
-                C172PFields.AILERON_FIELD_DESC,
-                BaseTypes.NUMBER
-        ));
-        controlFields.addFieldDefinition(
-            new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.AILERON_TRIM_FIELD), 
-                C172PFields.AILERON_TRIM_FIELD_DESC,
-                BaseTypes.NUMBER
-        ));
-        controlFields.addFieldDefinition(
-            new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.AUTO_COORDINATION_FIELD), 
-                C172PFields.AUTO_COORDINATION_FIELD_DESC,
+                EdgeUtilities.toThingworxPropertyName(F15CFields.ENGINE_0_CUTOFF_FIELD),
+                F15CFields.ENGINE_0_CUTOFF_FIELD_DESC, 
                 BaseTypes.INTEGER
         ));
         controlFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.AUTO_COORDINATION_FACTOR_FIELD),
-                C172PFields.AUTO_COORDINATION_FACTOR_FIELD_DESC,
-                BaseTypes.NUMBER
-        ));
-        controlFields.addFieldDefinition(
-            new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.ELEVATOR_FIELD), 
-                C172PFields.ELEVATOR_FIELD_DESC,
-                BaseTypes.NUMBER
-        ));
-        controlFields.addFieldDefinition(
-            new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.ELEVATOR_TRIM_FIELD), 
-                C172PFields.ELEVATOR_TRIM_FIELD_DESC,
-                BaseTypes.NUMBER
-        ));
-        controlFields.addFieldDefinition(
-            new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.FLAPS_FIELD), 
-                C172PFields.FLAPS_FIELD_DESC,
-                BaseTypes.NUMBER
-        ));
-        controlFields.addFieldDefinition(
-            new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.RUDDER_FIELD),
-                C172PFields.RUDDER_FIELD_DESC,
-                BaseTypes.NUMBER
-        ));
-        controlFields.addFieldDefinition(
-            new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.RUDDER_TRIM_FIELD),
-                C172PFields.RUDDER_FIELD_DESC,
-                BaseTypes.NUMBER
-        ));
-        controlFields.addFieldDefinition(
-            new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.SPEED_BRAKE_FIELD),
-                C172PFields.SPEED_BRAKE_FIELD_DESC,
+                EdgeUtilities.toThingworxPropertyName(F15CFields.ENGINE_1_CUTOFF_FIELD),
+                F15CFields.ENGINE_1_CUTOFF_FIELD_DESC, 
                 BaseTypes.INTEGER
         ));
         controlFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.PARKING_BRAKE_FIELD), 
-                C172PFields.PARKING_BRAKE_FIELD_DESC,
+                EdgeUtilities.toThingworxPropertyName(F15CFields.ENGINE_0_MIXTURE_FIELD), 
+                F15CFields.ENGINE_0_MIXTURE_FIELD_DESC, 
+                BaseTypes.NUMBER
+        ));
+        controlFields.addFieldDefinition(
+            new FieldDefinition(
+                EdgeUtilities.toThingworxPropertyName(F15CFields.ENGINE_1_MIXTURE_FIELD), 
+                F15CFields.ENGINE_1_MIXTURE_FIELD_DESC, 
+                BaseTypes.NUMBER
+        ));
+        controlFields.addFieldDefinition(
+            new FieldDefinition(
+                EdgeUtilities.toThingworxPropertyName(F15CFields.ENGINE_0_THROTTLE_FIELD), 
+                F15CFields.ENGINE_0_THROTTLE_FIELD_DESC, 
+                BaseTypes.NUMBER
+        ));
+        controlFields.addFieldDefinition(
+            new FieldDefinition(
+                EdgeUtilities.toThingworxPropertyName(F15CFields.ENGINE_1_THROTTLE_FIELD), 
+                F15CFields.ENGINE_1_THROTTLE_FIELD_DESC, 
+                BaseTypes.NUMBER
+        ));
+        controlFields.addFieldDefinition(
+            new FieldDefinition(
+                EdgeUtilities.toThingworxPropertyName(F15CFields.AILERON_FIELD), 
+                F15CFields.AILERON_FIELD_DESC,
+                BaseTypes.NUMBER
+        ));
+        controlFields.addFieldDefinition(
+            new FieldDefinition(
+                EdgeUtilities.toThingworxPropertyName(F15CFields.AILERON_TRIM_FIELD), 
+                F15CFields.AILERON_TRIM_FIELD_DESC,
+                BaseTypes.NUMBER
+        ));
+        controlFields.addFieldDefinition(
+            new FieldDefinition(
+                EdgeUtilities.toThingworxPropertyName(F15CFields.AUTO_COORDINATION_FIELD), 
+                F15CFields.AUTO_COORDINATION_FIELD_DESC,
                 BaseTypes.INTEGER
         ));
         controlFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.GEAR_DOWN_FIELD), 
-                C172PFields.GEAR_DOWN_FIELD_DESC,
+                EdgeUtilities.toThingworxPropertyName(F15CFields.AUTO_COORDINATION_FACTOR_FIELD),
+                F15CFields.AUTO_COORDINATION_FACTOR_FIELD_DESC,
+                BaseTypes.NUMBER
+        ));
+        controlFields.addFieldDefinition(
+            new FieldDefinition(
+                EdgeUtilities.toThingworxPropertyName(F15CFields.ELEVATOR_FIELD), 
+                F15CFields.ELEVATOR_FIELD_DESC,
+                BaseTypes.NUMBER
+        ));
+        controlFields.addFieldDefinition(
+            new FieldDefinition(
+                EdgeUtilities.toThingworxPropertyName(F15CFields.ELEVATOR_TRIM_FIELD), 
+                F15CFields.ELEVATOR_TRIM_FIELD_DESC,
+                BaseTypes.NUMBER
+        ));
+        controlFields.addFieldDefinition(
+            new FieldDefinition(
+                EdgeUtilities.toThingworxPropertyName(F15CFields.FLAPS_FIELD), 
+                F15CFields.FLAPS_FIELD_DESC,
+                BaseTypes.NUMBER
+        ));
+        controlFields.addFieldDefinition(
+            new FieldDefinition(
+                EdgeUtilities.toThingworxPropertyName(F15CFields.RUDDER_FIELD),
+                F15CFields.RUDDER_FIELD_DESC,
+                BaseTypes.NUMBER
+        ));
+        controlFields.addFieldDefinition(
+            new FieldDefinition(
+                EdgeUtilities.toThingworxPropertyName(F15CFields.RUDDER_TRIM_FIELD),
+                F15CFields.RUDDER_FIELD_DESC,
+                BaseTypes.NUMBER
+        ));
+        controlFields.addFieldDefinition(
+            new FieldDefinition(
+                EdgeUtilities.toThingworxPropertyName(F15CFields.SPEED_BRAKE_FIELD),
+                F15CFields.SPEED_BRAKE_FIELD_DESC,
+                BaseTypes.INTEGER
+        ));
+        controlFields.addFieldDefinition(
+            new FieldDefinition(
+                EdgeUtilities.toThingworxPropertyName(F15CFields.PARKING_BRAKE_FIELD), 
+                F15CFields.PARKING_BRAKE_FIELD_DESC,
+                BaseTypes.INTEGER
+        ));
+        controlFields.addFieldDefinition(
+            new FieldDefinition(
+                EdgeUtilities.toThingworxPropertyName(F15CFields.GEAR_DOWN_FIELD), 
+                F15CFields.GEAR_DOWN_FIELD_DESC,
                 BaseTypes.INTEGER
         ));
         
@@ -153,57 +201,75 @@ public abstract class DataShapeInitializer {
         FieldDefinitionCollection engineFields = new FieldDefinitionCollection();
         engineFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINES_COWLING_AIR_TEMPERATURE_FIELD), 
-                C172PFields.ENGINES_COWLING_AIR_TEMPERATURE_DESC,
+                EdgeUtilities.toThingworxPropertyName(F15CFields.ENGINE_0_EXHAUST_GAS_TEMPERATURE_FIELD), 
+                F15CFields.ENGINE_0_EXHAUST_GAS_TEMPERATURE_DESC,
                 BaseTypes.NUMBER
         ));
         engineFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINES_EXHAUST_GAS_TEMPERATURE_FIELD), 
-                C172PFields.ENGINES_EXHAUST_GAS_TEMPERATURE_DESC,
+                EdgeUtilities.toThingworxPropertyName(F15CFields.ENGINE_1_EXHAUST_GAS_TEMPERATURE_FIELD), 
+                F15CFields.ENGINE_1_EXHAUST_GAS_TEMPERATURE_DESC,
                 BaseTypes.NUMBER
         ));
         engineFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINES_EXHAUST_GAS_TEMPERATURE_NORM_FIELD), 
-                C172PFields.ENGINES_EXHAUST_GAS_TEMPERATURE_NORM_DESC,
+                EdgeUtilities.toThingworxPropertyName(F15CFields.ENGINE_0_EXHAUST_GAS_TEMPERATURE_NORM_FIELD), 
+                F15CFields.ENGINE_0_EXHAUST_GAS_TEMPERATURE_NORM_DESC,
                 BaseTypes.NUMBER
         ));
         engineFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINES_FUEL_FLOW_FIELD), 
-                C172PFields.ENGINES_FUEL_FLOW_DESC,
+                EdgeUtilities.toThingworxPropertyName(F15CFields.ENGINE_1_EXHAUST_GAS_TEMPERATURE_NORM_FIELD), 
+                F15CFields.ENGINE_1_EXHAUST_GAS_TEMPERATURE_NORM_DESC,
                 BaseTypes.NUMBER
         ));
         engineFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINES_MP_OSI_FIELD), 
-                C172PFields.ENGINES_MP_OSI_DESC,
+                EdgeUtilities.toThingworxPropertyName(F15CFields.ENGINE_0_FUEL_FLOW_FIELD), 
+                F15CFields.ENGINE_0_FUEL_FLOW_DESC,
                 BaseTypes.NUMBER
         ));
         engineFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINES_OIL_PRESSURE_FIELD), 
-                C172PFields.ENGINES_OIL_PRESSURE_DESC,
+                EdgeUtilities.toThingworxPropertyName(F15CFields.ENGINE_1_FUEL_FLOW_FIELD), 
+                F15CFields.ENGINE_1_FUEL_FLOW_DESC,
                 BaseTypes.NUMBER
         ));
         engineFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINES_OIL_TEMPERATURE_FIELD), 
-                C172PFields.ENGINES_OIL_TEMPERATURE_DESC,
+                EdgeUtilities.toThingworxPropertyName(F15CFields.ENGINE_0_OIL_PRESSURE_FIELD), 
+                F15CFields.ENGINE_0_OIL_PRESSURE_DESC,
                 BaseTypes.NUMBER
         ));
         engineFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINES_RPM_FIELD), 
-                C172PFields.ENGINES_RPM_DESC,
+                EdgeUtilities.toThingworxPropertyName(F15CFields.ENGINE_1_OIL_PRESSURE_FIELD), 
+                F15CFields.ENGINE_1_OIL_PRESSURE_DESC,
                 BaseTypes.NUMBER
         ));
         engineFields.addFieldDefinition(
             new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINES_RUNNING_FIELD), 
-                C172PFields.ENGINES_RUNNING_DESC,
+                EdgeUtilities.toThingworxPropertyName(F15CFields.ENGINE_0_RUNNING_FIELD), 
+                F15CFields.ENGINE_0_RUNNING_DESC,
                 BaseTypes.INTEGER
+        ));
+        engineFields.addFieldDefinition(
+            new FieldDefinition(
+                EdgeUtilities.toThingworxPropertyName(F15CFields.ENGINE_1_RUNNING_FIELD), 
+                F15CFields.ENGINE_1_RUNNING_DESC,
+                BaseTypes.INTEGER
+        ));
+        engineFields.addFieldDefinition(
+        	new FieldDefinition(
+                EdgeUtilities.toThingworxPropertyName(F15CFields.ENGINE_0_THRUST_FIELD), 
+                F15CFields.ENGINE_0_THRUST_DESC,
+                BaseTypes.NUMBER
+        ));
+        engineFields.addFieldDefinition(
+            new FieldDefinition(
+                EdgeUtilities.toThingworxPropertyName(F15CFields.ENGINE_1_THRUST_FIELD), 
+                F15CFields.ENGINE_1_THRUST_DESC,
+                BaseTypes.NUMBER
         ));
         
         return engineFields;
@@ -563,16 +629,10 @@ public abstract class DataShapeInitializer {
         ));
         
         return positionFields;
-    } 
-
+    }
+    
     public static FieldDefinitionCollection buildSimShape() {
         FieldDefinitionCollection simFields = new FieldDefinitionCollection();
-        simFields.addFieldDefinition(
-            new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.SIM_PARKING_BRAKE_FIELD),
-                C172PFields.SIM_PARKING_BRAKE_FIELD_DESC,
-                BaseTypes.NUMBER
-        ));
         simFields.addFieldDefinition(
             new FieldDefinition(
                 EdgeUtilities.toThingworxPropertyName(FlightGearFields.SIM_FREEZE_CLOCK_FIELD), 
@@ -620,30 +680,24 @@ public abstract class DataShapeInitializer {
     }
     
     public static FieldDefinitionCollection buildSimModelShape() {
-        FieldDefinitionCollection simFields = new FieldDefinitionCollection();
-        simFields.addFieldDefinition(
-            new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.SIM_PARKING_BRAKE_FIELD),
-                C172PFields.SIM_PARKING_BRAKE_FIELD_DESC,
-                BaseTypes.NUMBER
-        ));
-        
-        return simFields;
-    }
+        FieldDefinitionCollection simModelFields = new FieldDefinitionCollection();
 
-    public static FieldDefinitionCollection buildSystemsShape() {
-        FieldDefinitionCollection systemsFields = new FieldDefinitionCollection();
-        
-        systemsFields.addFieldDefinition(
+        simModelFields.addFieldDefinition(
         	new FieldDefinition(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.BATTERY_CHARGE_FIELD), 
-                C172PFields.BATTERY_CHARGE_FIELD_DESC,
-                BaseTypes.NUMBER
+                EdgeUtilities.toThingworxPropertyName(F15CFields.ARMAMENT_AGM_COUNT), 
+                F15CFields.ARMAMENT_AGM_COUNT_DESC,
+                BaseTypes.INTEGER
         ));
-
-    	return systemsFields;
+        simModelFields.addFieldDefinition(
+        	new FieldDefinition(
+                EdgeUtilities.toThingworxPropertyName(F15CFields.ARMAMENT_SYSTEM_RUNNING), 
+                F15CFields.ARMAMENT_SYSTEM_RUNNING_DESC,
+                BaseTypes.INTEGER
+        ));
+        
+        return simModelFields;
     }
-    
+
     public static FieldDefinitionCollection buildVelocitiesShape() {
         FieldDefinitionCollection velocitiesFields = new FieldDefinitionCollection();
         velocitiesFields.addFieldDefinition(

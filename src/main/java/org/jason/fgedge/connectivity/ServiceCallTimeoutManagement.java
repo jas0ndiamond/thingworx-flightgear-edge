@@ -8,6 +8,13 @@ public interface ServiceCallTimeoutManagement {
 	 * service call in place of a service call that's typically expected to 
 	 * succeed. 
 	 * 
+	 * Examples:
+     *     Beyond a maxDistance from a set of positions (cell tower coverage).
+     *     Above or below a set altitude (cell tower coverage or edge antenna range).
+     *  Above or below a velocity
+     *  Battery level low (low power environment)
+     *  Randomly (general network failure)
+	 * 
 	 * @param aircraft	aircraft and simulator state to base decision
 	 * 
 	 * @return	true if there should be a timeout, false otherwise

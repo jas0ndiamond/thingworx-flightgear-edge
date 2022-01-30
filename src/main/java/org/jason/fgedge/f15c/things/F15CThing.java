@@ -1,13 +1,14 @@
-package org.jason.fgedge.c172p.things;
+package org.jason.fgedge.f15c.things;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.TreeSet;
 import java.util.concurrent.TimeoutException;
 
-import org.jason.fgcontrol.aircraft.c172p.C172P;
-import org.jason.fgcontrol.aircraft.c172p.C172PFields;
+import org.jason.fgcontrol.aircraft.f15c.F15C;
+import org.jason.fgcontrol.aircraft.f15c.F15CFields;
 import org.jason.fgcontrol.exceptions.AircraftStartupException;
+import org.jason.fgcontrol.exceptions.FlightGearSetupException;
 import org.jason.fgcontrol.flight.position.PositionUtilities;
 import org.jason.fgcontrol.flight.position.TrackPosition;
 import org.jason.fgcontrol.flight.position.WaypointManager;
@@ -38,9 +39,9 @@ import com.thingworx.types.primitives.BooleanPrimitive;
 import com.thingworx.types.primitives.InfoTablePrimitive;
 import com.thingworx.types.properties.collections.PendingPropertyUpdatesByProperty;
 
-public class C172PThing extends VirtualThing {
+public class F15CThing extends VirtualThing {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(C172PThing.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(F15CThing.class);
     
     private static final long serialVersionUID = -1670069869427933890L;   
 
@@ -63,17 +64,25 @@ public class C172PThing extends VirtualThing {
     //////////
     //WaypointFlight state
     
-    private final static double WAYPOINT_ADJUST_MIN = 0.75 * 5280.0; 
-    
-    private final static double FLIGHT_MIXTURE = 0.90;
-    private final static double FLIGHT_THROTTLE = 0.90;
-    
-    private final static double MAX_HEADING_CHANGE = 20.0;
+    private final static double MAX_HEADING_CHANGE = 12.0;
     
     //adjust in smaller increments than MAX_HEADING_CHANGE, since course changes can be radical
-    private final static double COURSE_ADJUSTMENT_INCREMENT = 12.5;
+    private final static double COURSE_ADJUSTMENT_INCREMENT = 3.5;
     
-    private final static double WAYPOINT_ARRIVAL_THRESHOLD = 0.75 * 5280.0;
+    //if the sim is steering the plane by forcing positional constraints,
+    //then the plane is essentially a missile so we need a wide margin of error
+    private final static double WAYPOINT_ARRIVAL_THRESHOLD = 10.0 * 5280.0;
+    
+    //beyond this distance, increase throttle to crusing level (MAX)
+    private final static double WAYPOINT_ADJUST_MIN_DIST = 30.0 * 5280.0; 
+    
+    private final static String LAUNCH_TIME_GMT = "2021-07-01T20:00:00";
+    
+    private final static double THROTTLE_WAYPOINT_APPROACH = 0.75;
+    private final static double THROTTLE_COURSE_CHANGE = 0.6;
+    
+    private final static double FUEL_LEVEL_REFILL_THRESHOLD_PERCENT = 0.9;
+    
     
     private FlightLog flightLog;
     
@@ -98,18 +107,15 @@ public class C172PThing extends VirtualThing {
     private final static String POSITION_SHAPE_NAME = "PositionShape";
     private final static String SIM_SHAPE_NAME = "SimShape";
     private final static String SIM_MODEL_SHAPE_NAME = "SimModelShape";
-    private final static String SYSTEMS_SHAPE_NAME = "SystemsShape";
     private final static String VELOCITIES_SHAPE_NAME = "VelocitiesShape";
     
     ////////
     //sleep intervals
     private final static int FLIGHT_EXECUTION_SLEEP = 250;
-    
-    private final static String LAUNCH_TIME_GMT = "2021-07-01T20:00:00";
-    
+        
     private boolean isFlightRunning;
     
-    private C172P plane;
+    private F15C plane;
 
     //default plan is the runwaytest
     private int flightPlan;
@@ -118,12 +124,12 @@ public class C172PThing extends VirtualThing {
 
 	
 
-    public C172PThing(String name, String description, String identifer, ConnectedThingClient client) throws Exception {
+    public F15CThing(String name, String description, String identifer, ConnectedThingClient client) throws Exception {
         super(name, description, identifer, client);
         
         ///////////////////////        
         //init plane object
-        plane = new C172P();
+        plane = new F15C();
                 
         // Populate the thing shape with any properties, services, and events that are annotated in
         // this code
@@ -188,6 +194,8 @@ public class C172PThing extends VirtualThing {
                     }         
                 } catch (IOException e) {
                     LOGGER.error(e.getMessage(), e);
+                } catch (FlightGearSetupException e) {
+                    LOGGER.error(e.getMessage(), e);
                 } catch (AircraftStartupException e) {
                     LOGGER.error(e.getMessage(), e);
                 } catch (Exception e) {
@@ -245,12 +253,9 @@ public class C172PThing extends VirtualThing {
         //Sim
         defineDataShapeDefinition(SIM_SHAPE_NAME, DataShapeInitializer.buildSimShape());
         
-        //Sim model
+        //Sim Model
         defineDataShapeDefinition(SIM_MODEL_SHAPE_NAME, DataShapeInitializer.buildSimModelShape());
-
-        //Systems
-        defineDataShapeDefinition(SYSTEMS_SHAPE_NAME, DataShapeInitializer.buildSystemsShape());
-        
+            
         //Velocities
         defineDataShapeDefinition(VELOCITIES_SHAPE_NAME, DataShapeInitializer.buildVelocitiesShape());
 
@@ -266,7 +271,7 @@ public class C172PThing extends VirtualThing {
         plane.startupPlane();
         
         //set the parking brake so the plane doesn't start rolling
-        //enabled by default, but the default c172p autostart disables it
+        //enabled by default, but the default f15c autostart disables it
         plane.setParkingBrake(true);
         
         LOGGER.debug("startup returning");
@@ -315,7 +320,7 @@ public class C172PThing extends VirtualThing {
      */
     private void scanDevice() throws Exception {
         
-        C172PDeviceScanner.DeviceScanner(this, plane);
+        F15CDeviceScanner.DeviceScanner(this, plane);
 
         this.updateSubscribedProperties(SUBSCRIBED_PROPERTIES_UPDATE_TIMEOUT);
         this.updateSubscribedEvents(SUBSCRIBED_EVENTS_UPDATE_TIMEOUT);
@@ -396,16 +401,13 @@ public class C172PThing extends VirtualThing {
         
         LOGGER.debug("Setting fuel tank water amount to: {}", newWaterAmount);
         
-        plane.setFuelTank0WaterContamination(newWaterAmount);
-        plane.setFuelTank1WaterContamination(newWaterAmount);
-        
         LOGGER.trace("SetFuelTankWaterContamination returning");
     }
     
     @ThingworxServiceDefinition
     (
         name = "GetConsumablesTelemetry", 
-        description = "Get consumables telemetry fields for the C172"
+        description = "Get consumables telemetry fields for the F15C"
     )
     @ThingworxServiceResult
     (
@@ -422,17 +424,25 @@ public class C172PThing extends VirtualThing {
         entry.clear();
         
         entry.SetNumberValue(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_0_CAPACITY_FIELD), plane.getFuelTank0Capacity());
+                EdgeUtilities.toThingworxPropertyName(F15CFields.FUEL_TANK_0_CAPACITY_FIELD), plane.getFuelTank0Capacity());
         entry.SetNumberValue(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_0_LEVEL_FIELD), plane.getFuelTank0Level());
+                EdgeUtilities.toThingworxPropertyName(F15CFields.FUEL_TANK_0_LEVEL_FIELD), plane.getFuelTank0Level());
         entry.SetNumberValue(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_0_WATER_CONTAMINATION_FIELD), plane.getFuelTank0WaterContamination());
+                EdgeUtilities.toThingworxPropertyName(F15CFields.FUEL_TANK_1_CAPACITY_FIELD), plane.getFuelTank1Capacity());
         entry.SetNumberValue(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_1_CAPACITY_FIELD), plane.getFuelTank1Capacity());
+                EdgeUtilities.toThingworxPropertyName(F15CFields.FUEL_TANK_1_LEVEL_FIELD), plane.getFuelTank1Level());
         entry.SetNumberValue(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_1_LEVEL_FIELD), plane.getFuelTank1Level());
+                EdgeUtilities.toThingworxPropertyName(F15CFields.FUEL_TANK_2_CAPACITY_FIELD), plane.getFuelTank2Capacity());
         entry.SetNumberValue(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_1_WATER_CONTAMINATION_FIELD), plane.getFuelTank1WaterContamination());
+                EdgeUtilities.toThingworxPropertyName(F15CFields.FUEL_TANK_2_LEVEL_FIELD), plane.getFuelTank2Level());
+        entry.SetNumberValue(
+                EdgeUtilities.toThingworxPropertyName(F15CFields.FUEL_TANK_3_CAPACITY_FIELD), plane.getFuelTank3Capacity());
+        entry.SetNumberValue(
+                EdgeUtilities.toThingworxPropertyName(F15CFields.FUEL_TANK_3_LEVEL_FIELD), plane.getFuelTank3Level());
+        entry.SetNumberValue(
+                EdgeUtilities.toThingworxPropertyName(F15CFields.FUEL_TANK_4_CAPACITY_FIELD), plane.getFuelTank4Capacity());
+        entry.SetNumberValue(
+                EdgeUtilities.toThingworxPropertyName(F15CFields.FUEL_TANK_4_LEVEL_FIELD), plane.getFuelTank4Level());
  
         InfoTable table = new InfoTable(getDataShapeDefinition(CONSUMABLES_SHAPE_NAME));
         table.addRow(entry);
@@ -471,33 +481,6 @@ public class C172PThing extends VirtualThing {
     
     @ThingworxServiceDefinition
     (
-        name = "SetMixture", 
-        description = "Set the fuel mixture level"
-    )
-    public synchronized void SetMixture(
-        @ThingworxServiceParameter
-        ( 
-        	name="mixtureValue", 
-            description="Fuel mixture setting", 
-            baseType="NUMBER" 
-        ) Double mixtureAmount
-    ) throws Exception 
-    {
-        LOGGER.trace("SetMixture invoked");
-        
-        if(mixtureAmount < 1.0 && mixtureAmount > 0.0) {
-            LOGGER.debug("Setting mixture amount to: {}", mixtureAmount);
-            
-            plane.setMixture(mixtureAmount);
-        } else {
-            LOGGER.warn("Ignoring mixture change to invalid amount");
-        }
-                
-        LOGGER.trace("SetMixture returning");
-    }
-    
-    @ThingworxServiceDefinition
-    (
         name = "SetThrottle", 
         description = "Set the throttle level"
     )
@@ -512,10 +495,10 @@ public class C172PThing extends VirtualThing {
     {
         LOGGER.trace("SetThrottle invoked");
         
-        if(throttleAmount < C172PFields.THROTTLE_MAX && throttleAmount > C172PFields.THROTTLE_MIN) {
+        if(throttleAmount < F15CFields.THROTTLE_MAX && throttleAmount > F15CFields.THROTTLE_MIN) {
             LOGGER.debug("Setting throttle amount to: {}", throttleAmount);
             
-            plane.setThrottle(throttleAmount);
+            plane.setEngine1Throttle(throttleAmount);
         } else {
             LOGGER.warn("Ignoring throttle change to invalid amount");
         }
@@ -540,10 +523,10 @@ public class C172PThing extends VirtualThing {
         LOGGER.trace("SetAileron invoked");
         
         //guardrails -1.0 <-> 1.0
-        if(orientation < C172PFields.AILERON_MIN) {
-            orientation = C172PFields.AILERON_MIN;
-        } else if (orientation > C172PFields.AILERON_MAX) {
-            orientation = C172PFields.AILERON_MAX;
+        if(orientation < F15CFields.AILERON_MIN) {
+            orientation = F15CFields.AILERON_MIN;
+        } else if (orientation > F15CFields.AILERON_MAX) {
+            orientation = F15CFields.AILERON_MAX;
         }
 
         LOGGER.debug("Setting aileron orientation to: {}", orientation);
@@ -593,10 +576,10 @@ public class C172PThing extends VirtualThing {
         LOGGER.trace("SetElevator invoked");
         
         //guardrails -1 <-> 1
-        if(orientation < C172PFields.ELEVATOR_MIN) {
-            orientation = C172PFields.ELEVATOR_MIN;
-        } else if (orientation > C172PFields.ELEVATOR_MAX) {
-            orientation = C172PFields.ELEVATOR_MAX;
+        if(orientation < F15CFields.ELEVATOR_MIN) {
+            orientation = F15CFields.ELEVATOR_MIN;
+        } else if (orientation > F15CFields.ELEVATOR_MAX) {
+            orientation = F15CFields.ELEVATOR_MAX;
         }
 
         LOGGER.debug("Setting elevator orientation to: {}", orientation);
@@ -623,10 +606,10 @@ public class C172PThing extends VirtualThing {
         LOGGER.trace("SetFlaps invoked");
         
         //guardrails 0 <-> 1
-        if(orientation < C172PFields.FLAPS_MIN) {
-            orientation = C172PFields.FLAPS_MIN;
-        } else if (orientation > C172PFields.FLAPS_MAX) {
-            orientation = C172PFields.FLAPS_MAX;
+        if(orientation < F15CFields.FLAPS_MIN) {
+            orientation = F15CFields.FLAPS_MIN;
+        } else if (orientation > F15CFields.FLAPS_MAX) {
+            orientation = F15CFields.FLAPS_MAX;
         }
 
         LOGGER.debug("Setting flaps orientation to: {}", orientation);
@@ -653,10 +636,10 @@ public class C172PThing extends VirtualThing {
         LOGGER.trace("SetRudder invoked");
         
         //guardrails 0 <-> 1
-        if(orientation < C172PFields.ELEVATOR_MIN) {
-            orientation = C172PFields.ELEVATOR_MIN;
-        } else if (orientation > C172PFields.ELEVATOR_MAX) {
-            orientation = C172PFields.ELEVATOR_MAX;
+        if(orientation < F15CFields.ELEVATOR_MIN) {
+            orientation = F15CFields.ELEVATOR_MIN;
+        } else if (orientation > F15CFields.ELEVATOR_MAX) {
+            orientation = F15CFields.ELEVATOR_MAX;
         }
 
         LOGGER.debug("Setting elevator orientation to: {}", orientation);
@@ -669,7 +652,7 @@ public class C172PThing extends VirtualThing {
     @ThingworxServiceDefinition
     (
         name = "SetParkingBrake", 
-        description = "Set the C172 Parking Brake"
+        description = "Set the F15C Parking Brake"
     )
     @ThingworxServiceResult
     (
@@ -697,7 +680,7 @@ public class C172PThing extends VirtualThing {
         ValueCollection entry = new ValueCollection();
         entry.clear();
         
-        entry.SetIntegerValue(EdgeUtilities.toThingworxPropertyName(C172PFields.SIM_PARKING_BRAKE_FIELD), brakeState);
+        entry.SetIntegerValue(EdgeUtilities.toThingworxPropertyName(F15CFields.PARKING_BRAKE_FIELD), brakeState);
 
         InfoTable table = new InfoTable(getDataShapeDefinition(SIM_MODEL_SHAPE_NAME));
         table.addRow(entry);
@@ -710,7 +693,7 @@ public class C172PThing extends VirtualThing {
     @ThingworxServiceDefinition
     (
     	name = "GetControlTelemetry", 
-        description = "Get control telemetry fields for the C172"
+        description = "Get control telemetry fields for the F15C"
     )
     @ThingworxServiceResult
     (
@@ -727,29 +710,33 @@ public class C172PThing extends VirtualThing {
         entry.clear();
         
         entry.SetIntegerValue(
-            EdgeUtilities.toThingworxPropertyName(C172PFields.BATTERY_SWITCH_FIELD), plane.getBatterySwitch());
+            EdgeUtilities.toThingworxPropertyName(F15CFields.BATTERY_SWITCH_FIELD), plane.getBatterySwitch());
         entry.SetNumberValue(
-            EdgeUtilities.toThingworxPropertyName(C172PFields.MIXTURE_FIELD), plane.getMixture());
+            EdgeUtilities.toThingworxPropertyName(F15CFields.ENGINE_0_MIXTURE_FIELD), plane.getEngine0Mixture());
         entry.SetNumberValue(
-            EdgeUtilities.toThingworxPropertyName(C172PFields.THROTTLE_FIELD), plane.getThrottle());
+            EdgeUtilities.toThingworxPropertyName(F15CFields.ENGINE_1_MIXTURE_FIELD), plane.getEngine1Mixture());
         entry.SetNumberValue(
-            EdgeUtilities.toThingworxPropertyName(C172PFields.AILERON_FIELD), plane.getAileron());
+            EdgeUtilities.toThingworxPropertyName(F15CFields.ENGINE_0_THROTTLE_FIELD), plane.getEngine0Throttle());
+        entry.SetNumberValue(
+            EdgeUtilities.toThingworxPropertyName(F15CFields.ENGINE_1_THROTTLE_FIELD), plane.getEngine1Throttle());
+        entry.SetNumberValue(
+            EdgeUtilities.toThingworxPropertyName(F15CFields.AILERON_FIELD), plane.getAileron());
         entry.SetIntegerValue(
-            EdgeUtilities.toThingworxPropertyName(C172PFields.AUTO_COORDINATION_FIELD), plane.getAutoCoordination());
+            EdgeUtilities.toThingworxPropertyName(F15CFields.AUTO_COORDINATION_FIELD), plane.getAutoCoordination());
         entry.SetNumberValue(
-            EdgeUtilities.toThingworxPropertyName(C172PFields.AUTO_COORDINATION_FACTOR_FIELD), plane.getAutoCoordinationFactor());
+            EdgeUtilities.toThingworxPropertyName(F15CFields.AUTO_COORDINATION_FACTOR_FIELD), plane.getAutoCoordinationFactor());
         entry.SetNumberValue(
-            EdgeUtilities.toThingworxPropertyName(C172PFields.ELEVATOR_FIELD), plane.getElevator());
+            EdgeUtilities.toThingworxPropertyName(F15CFields.ELEVATOR_FIELD), plane.getElevator());
         entry.SetNumberValue(
-            EdgeUtilities.toThingworxPropertyName(C172PFields.FLAPS_FIELD), plane.getFlaps());
+            EdgeUtilities.toThingworxPropertyName(F15CFields.FLAPS_FIELD), plane.getFlaps());
         entry.SetNumberValue(
-            EdgeUtilities.toThingworxPropertyName(C172PFields.RUDDER_FIELD), plane.getRudder());
+            EdgeUtilities.toThingworxPropertyName(F15CFields.RUDDER_FIELD), plane.getRudder());
         entry.SetNumberValue(
-            EdgeUtilities.toThingworxPropertyName(C172PFields.SPEED_BRAKE_FIELD), plane.getSpeedbrake());
+            EdgeUtilities.toThingworxPropertyName(F15CFields.SPEED_BRAKE_FIELD), plane.getSpeedbrake());
         entry.SetIntegerValue(
-            EdgeUtilities.toThingworxPropertyName(C172PFields.PARKING_BRAKE_FIELD), plane.getParkingBrake());
+            EdgeUtilities.toThingworxPropertyName(F15CFields.PARKING_BRAKE_FIELD), plane.getParkingBrake());
         entry.SetIntegerValue(
-            EdgeUtilities.toThingworxPropertyName(C172PFields.GEAR_DOWN_FIELD), plane.getGearDown());
+            EdgeUtilities.toThingworxPropertyName(F15CFields.GEAR_DOWN_FIELD), plane.getGearDown());
         
         InfoTable table = new InfoTable(getDataShapeDefinition(CONTROL_SHAPE_NAME));
         table.addRow(entry);
@@ -779,11 +766,11 @@ public class C172PThing extends VirtualThing {
     @ThingworxServiceDefinition
     (
             name = "Shutdown", 
-            description = "Shut down the Edge C172P"
+            description = "Shut down the Edge F15C"
     )
     public void Shutdown() throws Exception {
         
-        LOGGER.debug("C172PThing shut down invoked");
+        LOGGER.debug("F15CThing shut down invoked");
         
         //signal the flight thread to shutdown
         isFlightRunning = false;
@@ -799,34 +786,28 @@ public class C172PThing extends VirtualThing {
      * Function for managing the flight. Runway burnout/throttle test.
      * Set the parking brake on. Start the engines. Move the throttle around while fuel is consumed.
      * Executed in the flightplan thread.
-     * @throws IOException 
-     * @throws AircraftStartupException 
      * 
      * @throws Exception 
      *
      */
-    private void runRunwayFlightPlan() throws IOException, AircraftStartupException {
+    private void runRunwayFlightPlan() throws Exception {
         
-        LOGGER.info("C172PThing runRunwayFlightPlan thread starting");
+        LOGGER.info("F15CThing runRunwayFlightPlan thread starting");
                
         //initial config
-
-        //plane.setCurrentView(2);
         
-        double highThrottle = 0.95;
+        //high throttle but not so high it overwhelms the parking brake
+        double highThrottle = 0.80;
         double lowThrottle = 0.25;
-        double testMixture = 0.95;
-        double testFuelLevel = 3.0;
+        double testFuelLevel = 30.0;
         double speedUpLevel = 8.0;
         
-        long throttleInterval = 15 * 1000;
+        long throttleInterval = 5 * 1000;
         
         
         //setup. pause so these updates don't overwrite each other
         plane.setPause(true);
         plane.setDamageEnabled(false);
-        plane.setComplexEngineProcedures(false);
-        plane.setWinterKitInstalled(true);
         plane.setGMT(LAUNCH_TIME_GMT);         
         plane.setPause(false);
         
@@ -834,9 +815,6 @@ public class C172PThing extends VirtualThing {
         
         //will block/wait for the engine to begin running
         plane.startupPlane();
-        
-        //explicitly set after startup too. sometimes startup unsets the brake
-        plane.setParkingBrake(true);
         
         //sleep some more for the engines to get up to speed for the initial mixture/throttle setting
         try {
@@ -848,8 +826,8 @@ public class C172PThing extends VirtualThing {
         //post-startup setup. pause so these updates don't overwrite each other
         plane.setPause(true);
         
-        //startup sets mixture to 0.95 but set it explicitly
-        plane.setMixture(testMixture);
+        //explicitly set after startup too. sometimes startup unsets the brake
+        plane.setParkingBrake(true);
         
         //i'm in a hurry
         plane.setSimSpeedUp(speedUpLevel);
@@ -858,7 +836,7 @@ public class C172PThing extends VirtualThing {
         plane.refillFuel(testFuelLevel);
         
         //set after sleep 
-        plane.setThrottle(highThrottle);
+        plane.setEngineThrottles(highThrottle);
         
         plane.setPause(false);
         
@@ -866,13 +844,14 @@ public class C172PThing extends VirtualThing {
         
         while(plane.isEngineRunning()) {
             
-            currentThrottle = plane.getThrottle();
+        	//throttles set collectively
+            currentThrottle = plane.getEngine0Throttle();
             
             //if it's high throttle, flip to low. vice-versa
             if(currentThrottle <= lowThrottle) {
-                plane.setThrottle(highThrottle);
+                plane.setEngineThrottles(highThrottle);
             } else {
-                plane.setThrottle(lowThrottle);
+                plane.setEngineThrottles(lowThrottle);
             }
             
             try {
@@ -888,11 +867,7 @@ public class C172PThing extends VirtualThing {
         plane.shutdown();
         
         //signal the flight thread to shutdown
-        try {
-			Shutdown();
-		} catch (Exception e) {
-            LOGGER.warn("Exception during virtual thing shutdown", e);
-		}
+        Shutdown();
         
         LOGGER.info("FlightPlan thread runRunwayFlightPlan returning");
     }
@@ -903,127 +878,87 @@ public class C172PThing extends VirtualThing {
      * 
      * @throws IOException 
      * @throws AircraftStartupException 
+     * @throws FlightGearSetupException 
      *
      */
-    private void runFlyAroundFlightPlan() throws IOException, AircraftStartupException {
+    private void runFlyAroundFlightPlan() throws IOException, AircraftStartupException, FlightGearSetupException {
         
-        LOGGER.info("C172PThing runFlyAroundFlightPlan thread starting");
+        LOGGER.info("F15CThing runFlyAroundFlightPlan thread starting");
                
         //initial config
-        try {
-            plane.setCurrentView(2);
-            
-            plane.setDamageEnabled(false);
-            plane.setComplexEngineProcedures(false);
-            plane.setWinterKitInstalled(true);
-            plane.setGMT(LAUNCH_TIME_GMT);
-            
-            //in case we get a previously lightly-used environment
-            plane.refillFuel();
-            plane.setBatteryCharge(C172PFields.BATTERY_CHARGE_MAX);
-        } catch (IOException e) {
-            LOGGER.error("IOException running plane setup. Bailing on flight.", e);
-            throw e;
-        }
-                
-        double targetAltitude = 9000;
+
+        double targetAltitude = 11500.0;
         
-        WaypointPosition startingWaypoint = waypointManager.getNextWaypoint();
+        plane.setDamageEnabled(false);
+        plane.setGMT(LAUNCH_TIME_GMT);
         
-        //figure out the heading of our first waypoint based upon our current position
-        double initialBearing = PositionUtilities.calcBearingToGPSCoordinates(plane.getPosition(), startingWaypoint);            
+        plane.refillFuel();
         
-        //point the plane at our first waypoint
-        LOGGER.info("First waypoint is {} and initial target bearing is {}", startingWaypoint.toString(), initialBearing);
-        plane.setHeading(initialBearing);
-        
-        //startup procedure to get the engines running
-        if(!plane.isEngineRunning()) {
-            plane.startupPlane();
-        } else {
-            LOGGER.info("Engine was running on launch. Skipping startup");
-        }
+
         
         isFlightRunning = true;
         
         while(isFlightRunning) {
             
-            LOGGER.debug("C172PThing thread running");
+            LOGGER.debug("F15CThing thread running");
             
             //fly the plane
             
-            //FlightUtilities.altitudeCheck(plane, 500, TARGET_ALTITUDE);
+            WaypointPosition startingWaypoint = waypointManager.getNextWaypoint();
             
-            //wait for startup to complete and telemetry reads to arrive
+            //figure out the heading of our first waypoint based upon our current position
+            TrackPosition startPosition = plane.getPosition();
+            double initialBearing = PositionUtilities.calcBearingToGPSCoordinates(startPosition, startingWaypoint);            
             
-            int i = 0;
-            while(i < 80) {
-                
-                stabilizeCheck(plane, initialBearing);
-                
-                try {
-                    Thread.sleep(15);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                
-                i++;
-            }
+            //point the plane at our first waypoint
+            LOGGER.info("First waypoint is {} and initial target bearing is {}", startingWaypoint.toString(), initialBearing);
             
-            plane.setMixture(FLIGHT_MIXTURE);
-            
-            //wait for mixture to take effect
-            i = 0;
-            while(i < 20) {
-                
-                stabilizeCheck(plane, initialBearing);
-                
-                try {
-                    Thread.sleep(10);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                
-                i++;
-            }
-            
-            //increase throttle
-            plane.setPause(true);
-            plane.setThrottle(FLIGHT_THROTTLE);
-            plane.setPause(false);
+            //make sure the shell script is launched with the initial heading instead
+            plane.setHeading(initialBearing);
             
             plane.resetControlSurfaces();
             
-            plane.setBatterySwitch(false);
-            plane.setAntiIce(true);
+            plane.setPause(false);
             
-            //i'm in a hurry and a c172p only goes so fast
-            plane.setSimSpeedUp(8.0);
+            //chase view
+            plane.setCurrentView(2);
+
+            //full throttle or the engines will have divergent thrust outputs
+            plane.setEngineThrottles(F15CFields.THROTTLE_MAX);            
+            
+            //trouble doing waypoint flight at faster speeds with high speedup under the current threading model
+            //TODO: separate threads for telemetry readouts and flight control
+            //plane.setSimSpeedUp(2.0);
         
-            //not much of a min, but both tanks largely filled means even weight and more stable flight
-            double minFuelGal = 16.0;
-            double minBatteryCharge = 0.25;
+            //not much of a min, but all tanks largely filled means even weight distribution and more stable flight
+            double minFuelTank0 = plane.getFuelTank0Capacity() * FUEL_LEVEL_REFILL_THRESHOLD_PERCENT,
+                    minFuelTank1 = plane.getFuelTank1Capacity() * FUEL_LEVEL_REFILL_THRESHOLD_PERCENT,
+                    minFuelTank2 = plane.getFuelTank2Capacity() * FUEL_LEVEL_REFILL_THRESHOLD_PERCENT,
+                    minFuelTank3 = plane.getFuelTank3Capacity() * FUEL_LEVEL_REFILL_THRESHOLD_PERCENT,
+                    minFuelTank4 = plane.getFuelTank4Capacity() * FUEL_LEVEL_REFILL_THRESHOLD_PERCENT;
             
             //needs to be tuned depending on aircraft speed, sim speedup, and waypoint closeness
-            int bearingRecalcCycleInterval = 5;    
+            //int bearingRecalcCycleInterval = 5;    
             
             WaypointPosition nextWaypoint;
             TrackPosition currentPosition;
-            double distanceToNextWaypoint;
             double nextWaypointBearing = initialBearing;
-            long cycleSleep = 5;
+            double distanceToNextWaypoint;
             int waypointFlightCycles;
-            
+            long cycleSleep = 5;
             while(waypointManager.getWaypointCount() > 0) {
                 
                 nextWaypoint = waypointManager.getAndRemoveNextWaypoint();
+                
+                //possibly slow the simulator down if the next waypoint is close.
+                //it's possible that hard and frequent course adjustments are needed
                 
                 LOGGER.info("Headed to next waypoint: {}", nextWaypoint.toString());
                 
                 nextWaypointBearing = PositionUtilities.calcBearingToGPSCoordinates(plane.getPosition(), nextWaypoint);
                 
                 //normalize to 0-360
-                if(nextWaypointBearing < 0) {
+                if(nextWaypointBearing < 0.0) {
                     nextWaypointBearing += FlightUtilities.DEGREES_CIRCLE;
                 }
                 
@@ -1032,11 +967,17 @@ public class C172PThing extends VirtualThing {
                 ///////////////////////////////
                 //transition to a stable path to next waypoint.
                 
+                //turning to face next waypoint. throttle down
+                plane.setEngineThrottles(THROTTLE_COURSE_CHANGE);
+                
                 double currentHeading;
                 int headingComparisonResult;
                 while(!FlightUtilities.withinHeadingThreshold(plane, MAX_HEADING_CHANGE, nextWaypointBearing)) {
                     
                     currentHeading = plane.getHeading();
+                    
+                    flightLog.addTrackPosition(plane.getPosition());
+                    
                     headingComparisonResult = FlightUtilities.headingCompareTo(plane, nextWaypointBearing);
                     
                     LOGGER.info("Easing hard turn from current heading {} to target {}", currentHeading, nextWaypointBearing);
@@ -1064,7 +1005,7 @@ public class C172PThing extends VirtualThing {
                     //low count here. if we're not on track by the end, the heading check should fail and get us back here
                     //seeing close waypoints get overshot
                     int stablizeCount = 0;
-                    while(stablizeCount < 5) {
+                    while(stablizeCount < 10) {
                         
                         FlightUtilities.altitudeCheck(plane, 500, targetAltitude);
                         stabilizeCheck(plane, intermediateHeading);
@@ -1082,12 +1023,27 @@ public class C172PThing extends VirtualThing {
                     nextWaypointBearing = PositionUtilities.calcBearingToGPSCoordinates(plane.getPosition(), nextWaypoint);
                     
                     //normalize to 0-360
-                    if(nextWaypointBearing < 0.0) {
+                    if(nextWaypointBearing < 0) {
                         nextWaypointBearing += FlightUtilities.DEGREES_CIRCLE;
+                    }
+                    
+                    //refill all tanks for balance
+                    if (
+                        plane.getFuelTank0Level() < minFuelTank0 || 
+                        plane.getFuelTank1Level() < minFuelTank1 ||
+                        plane.getFuelTank2Level() < minFuelTank2 ||
+                        plane.getFuelTank3Level() < minFuelTank3 ||
+                        plane.getFuelTank4Level() < minFuelTank4 
+
+                    ) {
+                        plane.refillFuel();
                     }
                 }
                 
                 LOGGER.info("Heading change within tolerance");
+                
+                //on our way. throttle up
+                plane.setEngineThrottles(F15CFields.THROTTLE_MAX);
                 
                 ///////////////////////////////
                 //main flight path to way point
@@ -1104,11 +1060,11 @@ public class C172PThing extends VirtualThing {
                     
                     distanceToNextWaypoint = PositionUtilities.distanceBetweenPositions(plane.getPosition(), nextWaypoint);
                     
-                    flightLog.addTrackPosition(currentPosition);                    
+                    flightLog.addTrackPosition(currentPosition);
                     
                     if(    
-                        distanceToNextWaypoint >= WAYPOINT_ADJUST_MIN &&
-                        waypointFlightCycles % bearingRecalcCycleInterval == 0
+                        distanceToNextWaypoint > WAYPOINT_ADJUST_MIN_DIST //&&
+                        //waypointFlightCycles % bearingRecalcCycleInterval == 0
                     ) 
                     {
                         //reset bearing incase we've drifted, not not if we're too close
@@ -1120,6 +1076,15 @@ public class C172PThing extends VirtualThing {
                         }
                         
                         LOGGER.info("Recalculating bearing to waypoint: {}", nextWaypointBearing);
+                    } else if ( distanceToNextWaypoint < WAYPOINT_ARRIVAL_THRESHOLD * 3 ) {
+                        //throttle down for waypoint approach to accommodate any late corrections
+                        
+                        plane.setEngineThrottles(THROTTLE_WAYPOINT_APPROACH);
+                    } else if (plane.getEngine0Throttle() != F15CFields.THROTTLE_MAX) {
+                        
+                        //far enough away from the previous waypoint and not close enough to the next
+                        //throttle up to max if we haven't already
+                        plane.setEngineThrottles(F15CFields.THROTTLE_MAX);
                     }
                     
                     // check altitude first, if we're in a nose dive that needs to be corrected first
@@ -1132,30 +1097,31 @@ public class C172PThing extends VirtualThing {
                     
                     if(!plane.isEngineRunning()) {
                         LOGGER.error("Engine found not running. Attempting to restart.");
-                        plane.startupPlane();
+//                        plane.startupPlane();
+//                        
+//                        //increase throttle
+//                        plane.setPause(true);
+//                        plane.resetControlSurfaces();
+//                        plane.setPause(false);
+//                        
+//                        plane.setEngineThrottles(F15CFields.THROTTLE_MAX);
                         
-                        plane.setMixture(FLIGHT_MIXTURE);
-                        
-                        //increase throttle
                         plane.setPause(true);
-                        plane.setThrottle(FLIGHT_THROTTLE);
-                        plane.setPause(false);
                         
-                        plane.resetControlSurfaces();
+                        throw new IOException("Engine not running");
                     }
                     
-                    //refill both tanks for balance
-                    if (plane.getFuelTank0Level() < minFuelGal || plane.getFuelTank1Level() < minFuelGal) {
+                    //refill all tanks for balance
+                    if (
+                        plane.getFuelTank0Level() < minFuelTank0 || 
+                        plane.getFuelTank1Level() < minFuelTank1 ||
+                        plane.getFuelTank2Level() < minFuelTank2 ||
+                        plane.getFuelTank3Level() < minFuelTank3 ||
+                        plane.getFuelTank4Level() < minFuelTank4 
+
+                    ) {
                         plane.refillFuel();
-                        
-                        //check battery level
-                        if (plane.getBatteryCharge() < minBatteryCharge) {
-                            plane.setBatteryCharge(0.9);
-                        }
                     }
-                    
-                    //LOGGER.info("Telemetry Read: {}", telemetryReadOut(plane, nextWaypoint, nextWaypointBearing, distanceToNextWaypoint));
-                    LOGGER.info("\nCycle {} end\n======================", waypointFlightCycles);
                     
                     try {
                         Thread.sleep(cycleSleep);
@@ -1197,22 +1163,14 @@ public class C172PThing extends VirtualThing {
 		}
     }
     
-    private static void stabilizeCheck(C172P plane, double bearing) throws IOException {
+    private static void stabilizeCheck(F15C plane, double bearing) throws IOException {
         if( 
-            !FlightUtilities.withinRollThreshold(plane, 2.0, 0.0) ||
-            !FlightUtilities.withinPitchThreshold(plane, 4.0, 2.0) ||
+        	!FlightUtilities.withinRollThreshold(plane, 1.5, 0.0) ||
+            !FlightUtilities.withinPitchThreshold(plane, 3.0, 1.5) ||
             !FlightUtilities.withinHeadingThreshold(plane, COURSE_ADJUSTMENT_INCREMENT, bearing)
         ) 
         {
             plane.forceStabilize(bearing, 0.0, 2.0);
-                
-            //keep seeing flaps extending on their own, probably as part of the plane autostart.
-            //everything else on the c172p model seems to react to the launch altitude, but not this.
-            //retracting flaps doesn't work immediately after starting the plane.
-            //dumb.
-            if(plane.getFlaps() != C172PFields.FLAPS_DEFAULT) {
-                plane.resetControlSurfaces();
-            }
         }
     }
     
