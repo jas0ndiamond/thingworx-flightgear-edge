@@ -5,23 +5,23 @@ sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
 
 repositories {
-
-    //need both of these maven repos for geotools
-    maven {
-        url "https://maven.geo-solutions.it/"
-    }
-    maven {
-        url "https://repo.osgeo.org/repository/release/"
-    }
-
-    jcenter()
-    mavenCentral() 
     
-    flatDir {
-        dirs 'lib'
-    }
+        //need both of these maven repos for geotools
+        maven {
+            url "https://maven.geo-solutions.it/"
+        }
+        maven {
+            url "https://repo.osgeo.org/repository/release/"
+        }
+    
+        jcenter()
+        mavenCentral() 
+        
+        flatDir {
+            dirs 'lib'
+        }
 }
-
+    
 ext {
     projectVersion = "1.0.0"
     title = "thingworx-flightgear-edge"
@@ -36,26 +36,15 @@ dependencies {
     
 
     //edge java sdk 7.0.0
-    //compile fileTree(dir: project.file("lib/"), include: ['thingworx-java-sdk-7.0.0.jar'])
-    implementation fileTree(dir: 'lib', include: 'thingworx-java-sdk-7.0.0.jar')
+    compile fileTree(dir: project.file("lib/"), include: ['thingworx-java-sdk-7.0.0.jar'])
     
     //flightgear control 1.0.0
-    //compile fileTree(dir: project.file("lib/"), include: ["flightgear-control-1.0.0.jar"])
-    implementation fileTree(dir: 'lib', include: 'flightgear-control-1.0.0.jar')
-    //testImplementation fileTree(dir: 'lib', include: 'flightgear-control-1.0.0.jar')
-    
-    
+    compile fileTree(dir: project.file("lib/"), include: ["flightgear-control-1.0.0.jar"])
+
     //flightgear control source 1.0.0
     //compile fileTree(dir: project.file("lib/"), include: ["flightgear-control-1.0.0-src.jar"])
     //implementation fileTree(dir: 'lib', include: 'flightgear-control-1.0.0-src.jar')
-    //testImplementation fileTree(dir: 'lib', include: 'flightgear-control-1.0.0-src.jar')
-    
-    
-    //compile files("lib/flightgear-control-1.0.0.jar")
-    //compile files("lib/flightgear-control-1.0.0-src.jar")
-    
-    
-    
+    //testImplementation fileTree(dir: 'lib', include: 'flightgear-control-1.0.0-src.jar')    
 }
 
 sourceSets {
@@ -64,4 +53,31 @@ sourceSets {
             srcDir 'src/main/java'
         }
     }
+}
+
+jar {
+
+    baseName title
+    version projectVersion
+
+    from(sourceSets.main.output)
+    
+    //fatjar
+    from {
+        //runtimeClasspath for class files from local jars
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    
+    
+    //no main, since we have a bunch of clients
+    manifest {
+        
+    //    attributes ([
+    //        'Main-Class': 'org.jason.fgedge.sshd.EdgeSSHServerTester'
+    //    ])
+        
+    }
+    
+    //need to exclude sig data from some libraries
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA' 
 }
