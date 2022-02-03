@@ -70,7 +70,7 @@ public class EdgeSSHDServer implements Runnable {
 		
 		sshdServer.setHost(bindAddress);
 		sshdServer.setPort(port);
-
+				
 		sshdServer.setPasswordAuthenticator(new PasswordAuthenticator() {
 			@Override
 			public boolean authenticate(String username, String password, ServerSession session)
@@ -88,7 +88,19 @@ public class EdgeSSHDServer implements Runnable {
 		sshdServer.setFileSystemFactory(vfs);
 		
 		//will see remote echo if you manually ssh into this
-		sshdServer.setShellFactory(new ProcessShellFactory("bash", "/usr/bin/bash", "--norc", "-i", "-l" ));
+		
+		///usr/bin/bash on fedora
+		//sshdServer.setShellFactory(new ProcessShellFactory("bash", "/bin/bash", "--no-rc", "-i", "-l" ));
+		
+		///bin/bash on debian, and option --no-rc is --norc
+		//TODO: neofetch and motd
+		//"--init-file <(echo \"/usr/bin/neofetch\")",
+		sshdServer.setShellFactory(new ProcessShellFactory(
+			"bash",
+			"/bin/bash",
+			"-i"
+		));
+		
 		
 		sshdServer.setCommandFactory(new CommandFactory() {
 
@@ -142,6 +154,9 @@ public class EdgeSSHDServer implements Runnable {
 	}
 	
 	public void shutdown() {
+		
+		LOGGER.info("SSHD server shutdown invoked");
+		
 		isRunning = false;
 		
 		while(!isShutdown) {
@@ -152,5 +167,7 @@ public class EdgeSSHDServer implements Runnable {
 				LOGGER.warn("SSHD server shut down sleep interrupted", e);
 			}
 		}
+		
+		LOGGER.info("SSHD server shutdown completed");
 	}
 }

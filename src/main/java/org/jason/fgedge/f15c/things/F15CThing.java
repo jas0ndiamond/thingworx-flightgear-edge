@@ -17,6 +17,7 @@ import org.jason.fgcontrol.flight.util.FlightLog;
 import org.jason.fgcontrol.flight.util.FlightUtilities;
 import org.jason.fgedge.connectivity.PerfectNetwork;
 import org.jason.fgedge.connectivity.ServiceCallTimeoutManagement;
+import org.jason.fgedge.sshd.EdgeSSHDServer;
 import org.jason.fgedge.util.EdgeUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +57,8 @@ public class F15CThing extends VirtualThing {
             add(FLIGHTPLAN_FLYAROUND);
         }
     };
+    
+    private final static boolean ENABLE_TUNNELING = true;
     
     //////////
     //RunwayTest state
@@ -122,7 +125,8 @@ public class F15CThing extends VirtualThing {
     
     private Thread flightThread;
 
-	
+	private EdgeSSHDServer sshdServer = null;
+	private Thread sshdServerThread;
 
     public F15CThing(String name, String description, String identifer, ConnectedThingClient client) throws Exception {
         super(name, description, identifer, client);
@@ -135,6 +139,13 @@ public class F15CThing extends VirtualThing {
         // this code
         super.initializeFromAnnotations();
         this.init();
+        
+        //edge embedded sshd server
+        if(ENABLE_TUNNELING) {
+	        sshdServer = new EdgeSSHDServer();
+	        sshdServerThread = new Thread(sshdServer);
+	        sshdServerThread.start();
+	    }
         
         flightPlan = FLIGHTPLAN_RUNWAY;
         
@@ -776,6 +787,12 @@ public class F15CThing extends VirtualThing {
         isFlightRunning = false;
         
         this.getClient().shutdown();
+        
+        if(this.sshdServer != null) {
+        	this.sshdServer.shutdown();
+        }
+        
+        LOGGER.debug("F15CThing shut down completed");
     }
     
     

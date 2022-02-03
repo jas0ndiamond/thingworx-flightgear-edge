@@ -34,10 +34,10 @@ public class C172PCoverageTestClient extends ConnectedThingClient {
     }
     
     /**
-     * Main program for a C172P runway test. Start the plane and move the throttle up and down.
-     * Refuel a few times, then allow the engine to run until out of fuel and stopped.
+     * Flaky connectivity tester. Timeout service calls based on plane state. Plane will still be connected
+     * to the platform but property updates should timeout according to the configured plan/rules.
      * 
-     * Run shell script c172p_runway.sh to launch simulator.
+     * Run shell script c172p_flight.sh to launch simulator.
      * 
      * @param args	host port appkey
      * 
@@ -78,7 +78,7 @@ public class C172PCoverageTestClient extends ConnectedThingClient {
         networkConnectivityManager.addTower(KnownPositions.VAN_INTER_AIRPORT_YVR, 5.0 * 5280.0);
         networkConnectivityManager.addTower(KnownPositions.UBC, 5.0 * 5280.0);
         networkConnectivityManager.addTower(KnownPositions.LONSDALE_QUAY, 5.0 * 5280.0);
-        //networkConnectivityManager.addTower(KnownPositions.ABBOTSFORD, 5.0 * 5280.0);
+        networkConnectivityManager.addTower(KnownPositions.ABBOTSFORD, 5.0 * 5280.0);
         
         c172pThing.setConnectivityManager(networkConnectivityManager);
         
@@ -116,6 +116,7 @@ public class C172PCoverageTestClient extends ConnectedThingClient {
             //literal launch handled by the fgfs script
             //this starts the flight thread
 
+            //start in range of cell towers, then move out of range 
             ArrayList<WaypointPosition> route = new ArrayList<WaypointPosition>();
             route.add(KnownPositions.UBC);
             route.add(KnownPositions.LONSDALE_QUAY);

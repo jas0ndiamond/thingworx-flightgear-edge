@@ -1,7 +1,6 @@
 package org.jason.fgedge.f15c.client;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import org.jason.fgcontrol.flight.position.KnownRoutes;
 import org.jason.fgcontrol.flight.position.WaypointPosition;
@@ -104,16 +103,7 @@ public class F15CClient extends ConnectedThingClient {
         if(enterRunLoop) {
             //if we're connected, enter the edge runtime loop
             
-        	
-        	
             LOGGER.info("Entering edge run loop");
-            
-            ArrayList<WaypointPosition> route = KnownRoutes.BC_SOUTH_TOUR;
-            
-            //for fun, reverse waypoint order
-            Collections.reverse(route);
-            
-            f15cThing.setRoute(route);
             
             //we are connected and the virtual thing is bound, start the plane and launch it
             
@@ -131,6 +121,13 @@ public class F15CClient extends ConnectedThingClient {
 //                networkConnectivityManager.addTower(KnownPositions.ABBOTSFORD, 5.0 * 5280.0);
 //                
 //                f15cThing.setConnectivityManager(networkConnectivityManager);
+            	
+                ArrayList<WaypointPosition> route = KnownRoutes.BC_SOUTH_TOUR;
+                
+                //for fun, reverse waypoint order
+                //Collections.reverse(route);
+                
+                f15cThing.setRoute(route);
             } else {
             	//checked earlier for this
             	throw new Exception("Unexpected flight plan");

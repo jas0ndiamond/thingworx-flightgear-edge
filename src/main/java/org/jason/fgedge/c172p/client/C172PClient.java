@@ -1,9 +1,11 @@
 package org.jason.fgedge.c172p.client;
 
-import org.jason.fgcontrol.flight.position.KnownPositions;
+import java.util.ArrayList;
+
+import org.jason.fgcontrol.flight.position.KnownRoutes;
+import org.jason.fgcontrol.flight.position.WaypointPosition;
 import org.jason.fgedge.c172p.things.C172PThing;
 import org.jason.fgedge.callback.AppKeyCallback;
-import org.jason.fgedge.connectivity.CellTowerCoverageNetwork;
 import org.jason.fgedge.util.EdgeUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,12 +116,17 @@ public class C172PClient extends ConnectedThingClient {
             } else if(flightPlan == C172PThing.FLIGHTPLAN_FLYAROUND) {
             	c172pThing.setFlightPlan(C172PThing.FLIGHTPLAN_FLYAROUND);
             	
-                CellTowerCoverageNetwork networkConnectivityManager = new CellTowerCoverageNetwork();
+//                CellTowerCoverageNetwork networkConnectivityManager = new CellTowerCoverageNetwork();
+//                
+//                networkConnectivityManager.addTower(KnownPositions.LONSDALE_QUAY, 10.0 * 5280.0);
+//                networkConnectivityManager.addTower(KnownPositions.ABBOTSFORD, 5.0 * 5280.0);
+//                
+//                c172pThing.setConnectivityManager(networkConnectivityManager);
                 
-                networkConnectivityManager.addTower(KnownPositions.LONSDALE_QUAY, 10.0 * 5280.0);
-                networkConnectivityManager.addTower(KnownPositions.ABBOTSFORD, 5.0 * 5280.0);
+                ArrayList<WaypointPosition> route = KnownRoutes.VANCOUVER_TOUR;
                 
-                c172pThing.setConnectivityManager(networkConnectivityManager);
+                c172pThing.setRoute(route);
+                
             } else {
             	//checked earlier for this
             	throw new Exception("Unexpected flight plan");

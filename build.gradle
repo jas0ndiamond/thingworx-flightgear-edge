@@ -6,20 +6,20 @@ targetCompatibility = JavaVersion.VERSION_11
 
 repositories {
     
-        //need both of these maven repos for geotools
-        maven {
-            url "https://maven.geo-solutions.it/"
-        }
-        maven {
-            url "https://repo.osgeo.org/repository/release/"
-        }
+    //need both of these maven repos for geotools
+    maven {
+        url "https://maven.geo-solutions.it/"
+    }
+    maven {
+        url "https://repo.osgeo.org/repository/release/"
+    }
     
-        jcenter()
-        mavenCentral() 
+    jcenter()
+    mavenCentral() 
         
-        flatDir {
-            dirs 'lib'
-        }
+    flatDir {
+        dirs 'lib'
+    }
 }
     
 ext {
