@@ -21,6 +21,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Launch an SSH server with set credentials and home directory. 
  *
+ * TODO: homedir doesn't quite work
+ *
  */
 public class EdgeSSHDServer implements Runnable {
 
@@ -41,16 +43,28 @@ public class EdgeSSHDServer implements Runnable {
 	private boolean isShutdown;
 	
 	public EdgeSSHDServer() {
-		this(DEFAULT_USER, DEFAULT_PASS);
+		this(DEFAULT_USER, DEFAULT_PASS, DEFAULT_PORT, DEFAULT_HOME_DIR);
 	}
 	
 	public EdgeSSHDServer(String user, String pass) {
+		this(user, pass, DEFAULT_PORT, DEFAULT_HOME_DIR);
+	}
+	
+	public EdgeSSHDServer(int port) {
+		this(DEFAULT_USER, DEFAULT_PASS, port, DEFAULT_HOME_DIR);
+	}
+	
+	public EdgeSSHDServer(int port, String homeDir) {
+		this(DEFAULT_USER, DEFAULT_PASS, port, homeDir);
+	}
+	
+	public EdgeSSHDServer(String user, String pass, int port, String homeDir) {
 		this.edgeUser = user;
 		this.edgePass = pass;
+		this.port = port;
+		this.homeDir = homeDir;
 		
 		setBindAddress(DEFAULT_BIND_ADDR);
-		setPort(DEFAULT_PORT);
-		setHomeDir(DEFAULT_HOME_DIR);
 	}
 	
 	public void setBindAddress(String address) {

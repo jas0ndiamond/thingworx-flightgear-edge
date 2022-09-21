@@ -6,6 +6,7 @@ import java.util.TreeSet;
 import java.util.concurrent.TimeoutException;
 
 import org.jason.fgcontrol.aircraft.f15c.F15C;
+import org.jason.fgcontrol.aircraft.f15c.F15CConfig;
 import org.jason.fgcontrol.aircraft.f15c.F15CFields;
 import org.jason.fgcontrol.exceptions.AircraftStartupException;
 import org.jason.fgcontrol.exceptions.FlightGearSetupException;
@@ -128,12 +129,16 @@ public class F15CThing extends VirtualThing {
 	private EdgeSSHDServer sshdServer = null;
 	private Thread sshdServerThread;
 
-    public F15CThing(String name, String description, String identifer, ConnectedThingClient client) throws Exception {
+	public F15CThing(String name, String description, String identifer, ConnectedThingClient client) throws Exception {
+		this(name, description, identifer, client, new F15CConfig());
+	}
+	
+    public F15CThing(String name, String description, String identifer, ConnectedThingClient client, F15CConfig simConfig) throws Exception {
         super(name, description, identifer, client);
         
         ///////////////////////        
         //init plane object
-        plane = new F15C();
+        plane = new F15C(simConfig);
                 
         // Populate the thing shape with any properties, services, and events that are annotated in
         // this code
@@ -904,7 +909,7 @@ public class F15CThing extends VirtualThing {
                
         //initial config
 
-        double targetAltitude = 11500.0;
+        double targetAltitude = 5000.0;
         
         plane.setDamageEnabled(false);
         plane.setGMT(LAUNCH_TIME_GMT);

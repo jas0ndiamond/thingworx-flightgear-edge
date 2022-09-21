@@ -6,6 +6,7 @@ import java.util.TreeSet;
 import java.util.concurrent.TimeoutException;
 
 import org.jason.fgcontrol.aircraft.c172p.C172P;
+import org.jason.fgcontrol.aircraft.c172p.C172PConfig;
 import org.jason.fgcontrol.aircraft.c172p.C172PFields;
 import org.jason.fgcontrol.exceptions.AircraftStartupException;
 import org.jason.fgcontrol.flight.position.PositionUtilities;
@@ -122,12 +123,16 @@ public class C172PThing extends VirtualThing {
 	private EdgeSSHDServer sshdServer = null;
 	private Thread sshdServerThread;
 
-    public C172PThing(String name, String description, String identifer, ConnectedThingClient client) throws Exception {
+	public C172PThing(String name, String description, String identifer, ConnectedThingClient client) throws Exception {
+		this(name, description, identifer, client, new C172PConfig());
+	}
+	
+    public C172PThing(String name, String description, String identifer, ConnectedThingClient client, C172PConfig simConfig) throws Exception {
         super(name, description, identifer, client);
         
         ///////////////////////        
         //init plane object
-        plane = new C172P();
+        plane = new C172P(simConfig);
                 
         // Populate the thing shape with any properties, services, and events that are annotated in
         // this code
@@ -136,6 +141,9 @@ public class C172PThing extends VirtualThing {
         
         //edge embedded sshd server
         if(ENABLE_TUNNELING) {
+        	
+        	//TODO: grab any relevant directives from the config file
+        	
 	        sshdServer = new EdgeSSHDServer();
 	        sshdServerThread = new Thread(sshdServer);
 	        sshdServerThread.start();
@@ -828,12 +836,17 @@ public class C172PThing extends VirtualThing {
                
         //initial config
 
+        //easier to see from inside cockpit
         //plane.setCurrentView(2);
         
         double highThrottle = 0.95;
         double lowThrottle = 0.25;
         double testMixture = 0.95;
-        double testFuelLevel = 3.0;
+        
+        //3 gal at 8x => 10+ mins
+        //1.5 gal at 8x => 5 mins
+        double testFuelLevel = 1.5;
+        
         double speedUpLevel = 8.0;
         
         long throttleInterval = 15 * 1000;

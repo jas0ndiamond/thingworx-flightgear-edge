@@ -1,11 +1,15 @@
 package org.jason.fgedge.c172p.client;
 
+import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.Properties;
 
+import org.jason.fgcontrol.aircraft.c172p.C172PConfig;
 import org.jason.fgcontrol.flight.position.KnownRoutes;
 import org.jason.fgcontrol.flight.position.WaypointPosition;
 import org.jason.fgedge.c172p.things.C172PThing;
 import org.jason.fgedge.callback.AppKeyCallback;
+import org.jason.fgedge.config.TWXConfigDirectives;
 import org.jason.fgedge.util.EdgeUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,12 +17,10 @@ import org.slf4j.LoggerFactory;
 import com.thingworx.communications.client.ClientConfigurator;
 import com.thingworx.communications.client.ConnectedThingClient;
 
-public class C172PClient extends ConnectedThingClient {
+public class C172PFlightFleetClient extends ConnectedThingClient {
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(C172PClient.class);
-    
-    private static final String C172P_THING_NAME = "C172PThing"; 
-        
+    private static final Logger LOGGER = LoggerFactory.getLogger(C172PFlightFleetClient.class);
+            
     private static final int SCAN_RATE = 250;
     
     private static final int CONNECT_TIMEOUT = 5 * 1000;
@@ -28,35 +30,54 @@ public class C172PClient extends ConnectedThingClient {
     private final static String PLATFORM_URI_COMPONENT_STR = "/Thingworx/WS";
 
     
-    public C172PClient(ClientConfigurator config) throws Exception {
+    public C172PFlightFleetClient(ClientConfigurator config) throws Exception {
         super(config);
     }
     
     /**
-     * Main program for a C172P runway test. Start the plane and move the throttle up and down.
-     * Refuel a few times, then allow the engine to run until out of fuel and stopped.
+     * Main program for a C172P fleet test. Start the plane and fly a set of waypoints.
      * 
-     * Run shell script c172p_runway.sh to launch simulator.
+     * Run shell script c172p_flight_fleet.sh to launch simulator.
      * 
-     * @param args	host port appkey
+     * @param args	twx_edge.properties sim.properties
      * 
      * @throws Exception
      */
     public static void main(String args[]) throws Exception {
-        //host
-        //port
-        //appkey
+
+    	//read config
+    	//App twx_edge.properties sim.properties
+    	
+    	String twxConfigFile = "./conf/twx_edge.properties";
+    	String simConfigFile = "./conf/c172p.properties";
+    	if(args.length == 2) {
+    		twxConfigFile = args[0];	
+    		simConfigFile = args[1];	
+    	}
+    	else {
+    		System.out.println("Usage: App twx_edge.properties sim.properties");
+    		System.exit(1);
+    	}
         
+    	Properties twxConfig = new Properties();
+    	twxConfig.load(new FileInputStream(twxConfigFile) );
+    	
+    	Properties simConfig = new Properties();
+    	simConfig.load(new FileInputStream(simConfigFile) );
+    	
+    	//TODO: validate expected config directives are defined
+    	
         boolean enterRunLoop = false;
         
         //////////
         //input
         
         //TODO: add guard rails for these
-        String host = args[0];
-        int port = Integer.parseInt(args[1]);
-        String appKey = args[2];
-        int flightPlan = Integer.parseInt(args[3]);
+        String host = twxConfig.getProperty(TWXConfigDirectives.PLATFORM_HOST_DIRECTIVE);
+        int port = Integer.parseInt(twxConfig.getProperty(TWXConfigDirectives.PLATFORM_PORT_DIRECTIVE));
+        String appKey = twxConfig.getProperty(TWXConfigDirectives.APPKEY_DIRECTIVE);
+        
+        int flightPlan = C172PThing.FLIGHTPLAN_FLYAROUND;
         
         if(!C172PThing.SUPPORTED_FLIGHTPLANS.contains(flightPlan)) {
         	LOGGER.error("Unsupported flight plan");
@@ -74,9 +95,13 @@ public class C172PClient extends ConnectedThingClient {
         config.setSecurityClaims( new AppKeyCallback(appKey) );
         config.ignoreSSLErrors(true);
 
-        C172PClient c172pClient = new C172PClient(config);
+        String thingName = simConfig.getProperty(TWXConfigDirectives.THINGNAME_DIRECTIVE);
+        
+        C172PFlightFleetClient c172pClient = new C172PFlightFleetClient(config);
+        
+        C172PConfig c172PConfig = new C172PConfig(simConfig);
                 
-        C172PThing c172pThing = new C172PThing(C172P_THING_NAME, "Cessna 172P Thing", "", c172pClient);
+		C172PThing c172pThing = new C172PThing(thingName, "Cessna 172P Thing", "", c172pClient, c172PConfig);
         
         c172pClient.bindThing(c172pThing);
         
@@ -135,7 +160,7 @@ public class C172PClient extends ConnectedThingClient {
             c172pThing.executeFlightPlan();
             
             //edge main execution - blocks and signals shutdown of thing/client when the flightplan is done
-            edgeOperation(c172pClient);
+            edgeOperation(c172pClient, thingName);
             
             LOGGER.info("Exiting edge run loop");
         }
@@ -150,7 +175,7 @@ public class C172PClient extends ConnectedThingClient {
      * 
      * @param client
      */
-    private static void edgeOperation(ConnectedThingClient client) {
+    private static void edgeOperation(ConnectedThingClient client, String thingName) {
                  	
         while ( !client.isShutdown()) {
             // Only process the Virtual Things if the client is connected
@@ -160,7 +185,7 @@ public class C172PClient extends ConnectedThingClient {
                 
                 try {
                     //twx-edge execution. 
-                    client.getThing(C172P_THING_NAME).processScanRequest();
+                    client.getThing(thingName).processScanRequest();
                 } catch (Exception e) {
                     LOGGER.warn("Exception occurred during processScanRequest", e);
                 }
