@@ -20,4 +20,10 @@ public interface ServiceCallTimeoutManagement {
 	 * @return	true if there should be a timeout, false otherwise
 	 */
 	public abstract boolean shouldTimeoutServiceCall(FlightGearAircraft aircraft);
+	
+	
+	
+	public abstract boolean shouldDisconnect(FlightGearAircraft aircraft);
+	
+	public abstract boolean shouldConnect(FlightGearAircraft aircraft);
 }

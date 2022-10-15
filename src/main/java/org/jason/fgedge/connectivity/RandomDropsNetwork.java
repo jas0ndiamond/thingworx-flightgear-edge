@@ -37,4 +37,16 @@ public class RandomDropsNetwork implements ServiceCallTimeoutManagement {
         
         return retval;
 	}
+
+	@Override
+	public boolean shouldDisconnect(FlightGearAircraft aircraft) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean shouldConnect(FlightGearAircraft aircraft) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }
