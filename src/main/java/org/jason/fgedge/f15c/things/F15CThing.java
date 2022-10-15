@@ -148,7 +148,9 @@ public class F15CThing extends VirtualThing {
         flightThread = new Thread() {
             @Override
             public void run() {
-                LOGGER.trace("flight thread started");
+            	if(LOGGER.isTraceEnabled()) {
+            		LOGGER.trace("flight thread started");
+            	}
                 
                 //TODO: select a flight plan based on config
                 try {
@@ -169,7 +171,9 @@ public class F15CThing extends VirtualThing {
                     LOGGER.error(e.getMessage(), e);
                 }
                 
-                LOGGER.trace("flight thread returning");
+                if(LOGGER.isTraceEnabled()) {
+                	LOGGER.trace("flight thread returning");
+                }
             }
         };
         
@@ -189,7 +193,9 @@ public class F15CThing extends VirtualThing {
     }
     
     private void init() throws Exception {
-        LOGGER.trace("init invoked");
+    	if(LOGGER.isTraceEnabled()) {
+    		LOGGER.trace("init invoked");
+    	}
         
         super.initialize();
         
@@ -229,7 +235,9 @@ public class F15CThing extends VirtualThing {
         //waypoint readout
         defineDataShapeDefinition(FLIGHTPLAN_SHAPE_NAME, DataShapeInitializer.buildFlightPlanShape());
         
-        LOGGER.trace("init returning");
+        if(LOGGER.isTraceEnabled()) {
+        	LOGGER.trace("init returning");
+        }
     }
     
     //separate function, so plane can be started after bind
@@ -247,12 +255,16 @@ public class F15CThing extends VirtualThing {
     }
     
     public void executeFlightPlan() {
-        LOGGER.trace("executeFlightPlan invoked");
+    	if(LOGGER.isTraceEnabled()) {
+    		LOGGER.trace("executeFlightPlan invoked");
+    	}
         
         //start the flight thread
         flightThread.start();
         
-        LOGGER.trace("executeFlightPlan returning");
+        if(LOGGER.isTraceEnabled()) {
+        	LOGGER.trace("executeFlightPlan returning");
+        }
     }
     
     @Override
@@ -271,13 +283,17 @@ public class F15CThing extends VirtualThing {
      */
     @Override
     public void processScanRequest() throws Exception {
-        LOGGER.trace("processScanRequest invoked");
+    	if(LOGGER.isTraceEnabled()) {
+    		LOGGER.trace("processScanRequest invoked");
+    	}
         
         super.processScanRequest();
         
         this.scanDevice();
         
-        LOGGER.trace("processScanRequest returning");
+        if(LOGGER.isTraceEnabled()) {
+        	LOGGER.trace("processScanRequest returning");
+        }
 
     }
     

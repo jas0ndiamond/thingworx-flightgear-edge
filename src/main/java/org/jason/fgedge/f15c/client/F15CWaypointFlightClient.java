@@ -152,7 +152,9 @@ public class F15CWaypointFlightClient extends ConnectedThingClient {
             // Only process the Virtual Things if the client is connected
             if (client.isConnected()) {
                 
-                LOGGER.trace("runtime cycle started");
+            	if(LOGGER.isTraceEnabled()) {
+            		LOGGER.trace("runtime cycle started");
+            	}
                 
                 try {
                     //twx-edge execution. 
@@ -161,7 +163,9 @@ public class F15CWaypointFlightClient extends ConnectedThingClient {
                     LOGGER.warn("Exception occurred during processScanRequest", e);
                 }
                 
-                LOGGER.trace("runtime cycle completed");
+                if(LOGGER.isTraceEnabled()) {
+                	LOGGER.trace("runtime cycle completed");
+                }
             }
             else {
                 LOGGER.warn("Client disconnected");
