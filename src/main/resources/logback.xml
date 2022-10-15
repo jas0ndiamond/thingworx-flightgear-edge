@@ -30,13 +30,12 @@
     </appender>
 
     <!-- loggers -->
-    <logger name="org.jason.flightgear" level="TRACE" />
-    <logger name="org.jason.flightgear.sockets.FlightGearManagerSockets" level="DEBUG" />
-    
-    <logger name="org.jason.flightgear.edge" level="TRACE" />
+    <logger name="org.jason.fgedge" level="DEBUG" />
+    <logger name="org.jason.fgcontrol.connection.sockets" level="DEBUG" />
     
     
-    <logger name="com.thingworx" level="DEBUG" />
+    
+    <logger name="com.thingworx" level="INFO" />
 
     <root level="DEBUG">
         <appender-ref ref="${consoleAppenderName}" />

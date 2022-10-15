@@ -25,6 +25,28 @@ public class CellTowerCoverageNetwork implements ServiceCallTimeoutManagement {
 		network.add( new ImmutablePair<>(pos, radius));
 	}
 	
+	private boolean isWithinTowerRange(FlightGearAircraft aircraft) {
+		return isWithinTowerRange(aircraft.getPosition());
+	}
+	
+	private boolean isWithinTowerRange(TrackPosition currentPosition) {
+		
+		boolean retval = true;
+				
+        for( Pair<LatLonPosition, Double> site : network) {
+            if(PositionUtilities.distanceBetweenPositions(currentPosition, site.getKey()) < site.getValue()) {
+                
+                LOGGER.debug("In range of connectivity site {}", site.toString());
+                
+                //found an in-range tower to talk to, end search
+                retval = false;
+                break;
+            }
+        }
+        
+        return retval;
+	}
+	
 	@Override
 	public boolean shouldTimeoutServiceCall(FlightGearAircraft aircraft) {
         boolean retval = true;
@@ -46,5 +68,15 @@ public class CellTowerCoverageNetwork implements ServiceCallTimeoutManagement {
         LOGGER.debug("shouldTimeoutServiceCall returning {}", retval);
         
         return retval;
+	}
+
+	@Override
+	public boolean shouldDisconnect(FlightGearAircraft aircraft) {
+		return isWithinTowerRange(aircraft) == false;
+	}
+
+	@Override
+	public boolean shouldConnect(FlightGearAircraft aircraft) {
+		return isWithinTowerRange(aircraft) == true;
 	}
 }

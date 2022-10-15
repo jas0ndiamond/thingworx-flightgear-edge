@@ -1,5 +1,7 @@
 package org.jason.fgedge.util;
 
+import java.util.HashMap;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,6 +11,21 @@ public abstract class EdgeUtilities {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(EdgeUtilities.class);
 	
+	private static HashMap<String, String> twxPropertyMap = new HashMap<> () {
+		private static final long serialVersionUID = 6332858047106595994L;
+	};
+	
+    /**
+     * Convert flight sim property names to their twx-safe equivalent. Cache the results 
+     * so the string replacement doesn't have to be redone.
+     * 
+     * This will likely be called once on twx property definition, where the string replacement
+     * is made, and the result is referred to during device scans and property updates.  
+     * 
+     * @param propertyName The flightsim property name
+     * 
+     * @return The twx-safe property name
+     */
     public static String toThingworxPropertyName(String propertyName) {
     	
     	/** 
@@ -20,11 +37,32 @@ public abstract class EdgeUtilities {
     	 * 
     	 */
     	
-        return propertyName.substring(1)
-        	.replace('/', '_')
-        	.replace("[", "")
-        	.replace("]", "")
-        ;
+    	String retval = null;
+    	
+    	if(twxPropertyMap.containsKey(propertyName)) {
+    		retval = twxPropertyMap.get(propertyName);
+    	}
+    	else {
+    		if(propertyName.charAt(0) == '/') {
+	    		retval = propertyName.substring(1)
+	    			.replace(" ", "_")
+	    	       	.replace('/', '_')
+	    	       	.replace("[", "")
+	    	       	.replace("]", "");
+    		}
+    		else {
+	    		retval = propertyName
+		    			.replace(" ", "_")
+		    	       	.replace('/', '_')
+		    	       	.replace("[", "")
+		    	       	.replace("]", "");
+    		}
+    	       
+    		//cache the result
+    		twxPropertyMap.put(propertyName, retval);
+    	}
+    	
+        return retval;
     }
     
     public static boolean waitForBind(VirtualThing thing, int timeout) {

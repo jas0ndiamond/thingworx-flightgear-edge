@@ -20,7 +20,7 @@ ext {
                 'org.geotools:gt-referencing:26.1.01'
             ],
             mina_sshd: [
-                'org.apache.sshd:sshd-core:2.8.0'
+                'org.apache.sshd:sshd-core:2.9.0'
             ],
             edge_sdk_libs: [
                 'org.slf4j:slf4j-api:1.7.25',

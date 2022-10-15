@@ -1,11 +1,11 @@
-package org.jason.fgedge.f15c.client;
+package org.jason.fgedge.c172p.client;
 
 import java.util.ArrayList;
 
 import org.jason.fgcontrol.flight.position.KnownRoutes;
 import org.jason.fgcontrol.flight.position.WaypointPosition;
+import org.jason.fgedge.c172p.things.C172PThing;
 import org.jason.fgedge.callback.AppKeyCallback;
-import org.jason.fgedge.f15c.things.F15CThing;
 import org.jason.fgedge.util.EdgeUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,11 +13,11 @@ import org.slf4j.LoggerFactory;
 import com.thingworx.communications.client.ClientConfigurator;
 import com.thingworx.communications.client.ConnectedThingClient;
 
-public class F15CClient extends ConnectedThingClient {
+public class C172PRunwayBurnoutClient extends ConnectedThingClient {
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(F15CClient.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(C172PRunwayBurnoutClient.class);
     
-    private static final String F15CP_THING_NAME = "F15CThing"; 
+    private static final String C172P_THING_NAME = "C172PThing"; 
         
     private static final int SCAN_RATE = 250;
     
@@ -28,15 +28,15 @@ public class F15CClient extends ConnectedThingClient {
     private final static String PLATFORM_URI_COMPONENT_STR = "/Thingworx/WS";
 
     
-    public F15CClient(ClientConfigurator config) throws Exception {
+    public C172PRunwayBurnoutClient(ClientConfigurator config) throws Exception {
         super(config);
     }
     
     /**
-     * Main program for a F15C runway test. Start the plane and move the throttle up and down.
+     * Main program for a C172P runway test. Start the plane and move the throttle up and down.
      * Refuel a few times, then allow the engine to run until out of fuel and stopped.
      * 
-     * Run shell script f15c_runway.sh to launch simulator.
+     * Run shell script c172p_runway.sh to launch simulator.
      * 
      * @param args	host port appkey
      * 
@@ -58,7 +58,7 @@ public class F15CClient extends ConnectedThingClient {
         String appKey = args[2];
         int flightPlan = Integer.parseInt(args[3]);
         
-        if(!F15CThing.SUPPORTED_FLIGHTPLANS.contains(flightPlan)) {
+        if(!C172PThing.SUPPORTED_FLIGHTPLANS.contains(flightPlan)) {
         	LOGGER.error("Unsupported flight plan");
         	System.exit(-1);
         }
@@ -74,22 +74,22 @@ public class F15CClient extends ConnectedThingClient {
         config.setSecurityClaims( new AppKeyCallback(appKey) );
         config.ignoreSSLErrors(true);
 
-        F15CClient f15cClient = new F15CClient(config);
+        C172PRunwayBurnoutClient c172pClient = new C172PRunwayBurnoutClient(config);
                 
-        F15CThing f15cThing = new F15CThing(F15CP_THING_NAME, "McD F15C Thing", "", f15cClient);
+        C172PThing c172pThing = new C172PThing(C172P_THING_NAME, "Cessna 172P Thing", "", c172pClient);
         
-        f15cClient.bindThing(f15cThing);
+        c172pClient.bindThing(c172pThing);
         
         try {
             // Start the client
-            f15cClient.start();
+            c172pClient.start();
             
-            if(!f15cClient.waitForConnection(CONNECT_TIMEOUT)) {
+            if(!c172pClient.waitForConnection(CONNECT_TIMEOUT)) {
                 throw new Exception("Could not connect");
             }
             
             //wait for bind
-            if(!EdgeUtilities.waitForBind(f15cThing, BIND_TIMEOUT)) {
+            if(!EdgeUtilities.waitForBind(c172pThing, BIND_TIMEOUT)) {
                 throw new Exception("Could not bind virtual thing");
             }
             
@@ -99,10 +99,11 @@ public class F15CClient extends ConnectedThingClient {
             LOGGER.warn("Initial Start Failed : " + eStart.getMessage(), eStart);
         }
         
-        //TODO: build out services for the client and interact with those to control/config the modeled plane
         if(enterRunLoop) {
             //if we're connected, enter the edge runtime loop
             
+        	
+        	
             LOGGER.info("Entering edge run loop");
             
             //we are connected and the virtual thing is bound, start the plane and launch it
@@ -110,33 +111,31 @@ public class F15CClient extends ConnectedThingClient {
             //literal launch handled by the fgfs script
             //this starts the flight thread
             
-            if(flightPlan == F15CThing.FLIGHTPLAN_RUNWAY) {
-            	f15cThing.setFlightPlan(F15CThing.FLIGHTPLAN_RUNWAY);
-            } else if(flightPlan == F15CThing.FLIGHTPLAN_FLYAROUND) {
-            	f15cThing.setFlightPlan(F15CThing.FLIGHTPLAN_FLYAROUND);
+            if(flightPlan == C172PThing.FLIGHTPLAN_RUNWAY) {
+            	c172pThing.setFlightPlan(C172PThing.FLIGHTPLAN_RUNWAY);
+            } else if(flightPlan == C172PThing.FLIGHTPLAN_FLYAROUND) {
+            	c172pThing.setFlightPlan(C172PThing.FLIGHTPLAN_FLYAROUND);
             	
 //                CellTowerCoverageNetwork networkConnectivityManager = new CellTowerCoverageNetwork();
 //                
 //                networkConnectivityManager.addTower(KnownPositions.LONSDALE_QUAY, 10.0 * 5280.0);
 //                networkConnectivityManager.addTower(KnownPositions.ABBOTSFORD, 5.0 * 5280.0);
 //                
-//                f15cThing.setConnectivityManager(networkConnectivityManager);
-            	
-                ArrayList<WaypointPosition> route = KnownRoutes.BC_SOUTH_TOUR;
+//                c172pThing.setConnectivityManager(networkConnectivityManager);
                 
-                //for fun, reverse waypoint order
-                //Collections.reverse(route);
+                ArrayList<WaypointPosition> route = KnownRoutes.VANCOUVER_TOUR;
                 
-                f15cThing.setRoute(route);
+                c172pThing.setRoute(route);
+                
             } else {
             	//checked earlier for this
             	throw new Exception("Unexpected flight plan");
             }
             
-            f15cThing.executeFlightPlan();
+            c172pThing.executeFlightPlan();
             
             //edge main execution - blocks and signals shutdown of thing/client when the flightplan is done
-            edgeOperation(f15cClient);
+            edgeOperation(c172pClient);
             
             LOGGER.info("Exiting edge run loop");
         }
@@ -161,7 +160,7 @@ public class F15CClient extends ConnectedThingClient {
                 
                 try {
                     //twx-edge execution. 
-                    client.getThing(F15CP_THING_NAME).processScanRequest();
+                    client.getThing(C172P_THING_NAME).processScanRequest();
                 } catch (Exception e) {
                     LOGGER.warn("Exception occurred during processScanRequest", e);
                 }

@@ -23,23 +23,23 @@ repositories {
 }
     
 ext {
-    projectVersion = "1.0.0"
+    projectVersion = "0.2"
     title = "thingworx-flightgear-edge"
 }
 
 dependencies {
 
-    compile libs.edge_sdk_libs
-    compile libs.flightgear_control
-    compile libs.geotools
-    compile libs.mina_sshd
+    implementation libs.edge_sdk_libs
+    implementation libs.flightgear_control
+    implementation libs.geotools
+    implementation libs.mina_sshd
     
 
     //edge java sdk 7.0.0
-    compile fileTree(dir: project.file("lib/"), include: ['thingworx-java-sdk-7.0.0.jar'])
+    implementation fileTree(dir: project.file("lib/"), include: ['thingworx-java-sdk-7.0.0.jar'])
     
     //flightgear control 1.0.0
-    compile fileTree(dir: project.file("lib/"), include: ["flightgear-control-1.0.0.jar"])
+    implementation fileTree(dir: project.file("lib/"), include: ["flightgear-control-0.2.jar"])
 
     //flightgear control source 1.0.0
     //compile fileTree(dir: project.file("lib/"), include: ["flightgear-control-1.0.0-src.jar"])
@@ -56,17 +56,16 @@ sourceSets {
 }
 
 jar {
-
-    baseName title
-    version projectVersion
+    archiveBaseName = title 
+    archiveVersion = projectVersion
 
     from(sourceSets.main.output)
     
     //fatjar
-    from {
+    //from {
         //runtimeClasspath for class files from local jars
-        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
-    }
+    //    configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    //}
     
     
     //no main, since we have a bunch of clients

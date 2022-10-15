@@ -17,4 +17,16 @@ public class PerfectNetwork implements ServiceCallTimeoutManagement {
         
         return retval;
 	}
+
+	@Override
+	public boolean shouldDisconnect(FlightGearAircraft aircraft) {
+		//never disconnect
+		return false;
+	}
+
+	@Override
+	public boolean shouldConnect(FlightGearAircraft aircraft) {
+		//never reconnect because no disconnects
+		return false;
+	}
 }

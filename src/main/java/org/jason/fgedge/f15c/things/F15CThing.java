@@ -2,43 +2,36 @@ package org.jason.fgedge.f15c.things;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.TreeSet;
-import java.util.concurrent.TimeoutException;
 
 import org.jason.fgcontrol.aircraft.f15c.F15C;
+import org.jason.fgcontrol.aircraft.f15c.F15CConfig;
 import org.jason.fgcontrol.aircraft.f15c.F15CFields;
+import org.jason.fgcontrol.aircraft.f15c.flight.RunwayBurnoutFlightExecutor;
+import org.jason.fgcontrol.aircraft.f15c.flight.WaypointFlightExecutor;
+import org.jason.fgcontrol.aircraft.fields.FlightGearFields;
 import org.jason.fgcontrol.exceptions.AircraftStartupException;
 import org.jason.fgcontrol.exceptions.FlightGearSetupException;
-import org.jason.fgcontrol.flight.position.PositionUtilities;
-import org.jason.fgcontrol.flight.position.TrackPosition;
 import org.jason.fgcontrol.flight.position.WaypointManager;
 import org.jason.fgcontrol.flight.position.WaypointPosition;
-import org.jason.fgcontrol.flight.util.FlightLog;
-import org.jason.fgcontrol.flight.util.FlightUtilities;
-import org.jason.fgedge.connectivity.PerfectNetwork;
-import org.jason.fgedge.connectivity.ServiceCallTimeoutManagement;
 import org.jason.fgedge.sshd.EdgeSSHDServer;
 import org.jason.fgedge.util.EdgeUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.thingworx.communications.client.ConnectedThingClient;
-import com.thingworx.communications.client.ConnectionException;
 import com.thingworx.communications.client.things.VirtualThing;
 import com.thingworx.metadata.PropertyDefinition;
 import com.thingworx.metadata.annotations.ThingworxServiceDefinition;
 import com.thingworx.metadata.annotations.ThingworxServiceParameter;
 import com.thingworx.metadata.annotations.ThingworxServiceResult;
-import com.thingworx.relationships.RelationshipTypes.ThingworxEntityTypes;
 import com.thingworx.types.InfoTable;
 import com.thingworx.types.collections.AspectCollection;
 import com.thingworx.types.collections.ValueCollection;
 import com.thingworx.types.constants.Aspects;
 import com.thingworx.types.constants.CommonPropertyNames;
-import com.thingworx.types.events.collections.PendingEvents;
 import com.thingworx.types.primitives.BooleanPrimitive;
-import com.thingworx.types.primitives.InfoTablePrimitive;
-import com.thingworx.types.properties.collections.PendingPropertyUpdatesByProperty;
 
 public class F15CThing extends VirtualThing {
 
@@ -61,43 +54,9 @@ public class F15CThing extends VirtualThing {
     private final static boolean ENABLE_TUNNELING = true;
     
     //////////
-    //RunwayTest state
-    private final static int POST_STARTUP_SLEEP = 5000;
-    
-    //////////
-    //WaypointFlight state
-    
-    private final static double MAX_HEADING_CHANGE = 12.0;
-    
-    //adjust in smaller increments than MAX_HEADING_CHANGE, since course changes can be radical
-    private final static double COURSE_ADJUSTMENT_INCREMENT = 3.5;
-    
-    //if the sim is steering the plane by forcing positional constraints,
-    //then the plane is essentially a missile so we need a wide margin of error
-    private final static double WAYPOINT_ARRIVAL_THRESHOLD = 10.0 * 5280.0;
-    
-    //beyond this distance, increase throttle to crusing level (MAX)
-    private final static double WAYPOINT_ADJUST_MIN_DIST = 30.0 * 5280.0; 
-    
-    private final static String LAUNCH_TIME_GMT = "2021-07-01T20:00:00";
-    
-    private final static double THROTTLE_WAYPOINT_APPROACH = 0.75;
-    private final static double THROTTLE_COURSE_CHANGE = 0.6;
-    
-    private final static double FUEL_LEVEL_REFILL_THRESHOLD_PERCENT = 0.9;
-    
-    
-    private FlightLog flightLog;
-    
-    private WaypointManager waypointManager;
-    
-    private ServiceCallTimeoutManagement connectivityManager;
-    
-    //////////
     
     private final static int SUBSCRIBED_PROPERTIES_UPDATE_TIMEOUT = 250;
     private final static int SUBSCRIBED_EVENTS_UPDATE_TIMEOUT = 250;
-    private final static int TOO_SMALL_DOOMED_TIMEOUT = 100;
         
     ////////
     //datashape names
@@ -112,11 +71,10 @@ public class F15CThing extends VirtualThing {
     private final static String SIM_MODEL_SHAPE_NAME = "SimModelShape";
     private final static String VELOCITIES_SHAPE_NAME = "VelocitiesShape";
     
-    ////////
-    //sleep intervals
-    private final static int FLIGHT_EXECUTION_SLEEP = 250;
-        
-    private boolean isFlightRunning;
+    private final static String FLIGHTPLAN_SHAPE_NAME = "FlightPlanShape";
+       
+    //a nice, clear, warm, bright date/time in western canada
+    private final static String LAUNCH_TIME_GMT = "2021-07-01T20:00:00";
     
     private F15C plane;
 
@@ -128,12 +86,16 @@ public class F15CThing extends VirtualThing {
 	private EdgeSSHDServer sshdServer = null;
 	private Thread sshdServerThread;
 
-    public F15CThing(String name, String description, String identifer, ConnectedThingClient client) throws Exception {
+	public F15CThing(String name, String description, String identifer, ConnectedThingClient client) throws Exception {
+		this(name, description, identifer, client, new F15CConfig());
+	}
+	
+    public F15CThing(String name, String description, String identifer, ConnectedThingClient client, F15CConfig simConfig) throws Exception {
         super(name, description, identifer, client);
         
         ///////////////////////        
         //init plane object
-        plane = new F15C();
+        plane = new F15C(simConfig);
                 
         // Populate the thing shape with any properties, services, and events that are annotated in
         // this code
@@ -147,13 +109,7 @@ public class F15CThing extends VirtualThing {
 	        sshdServerThread.start();
 	    }
         
-        flightPlan = FLIGHTPLAN_RUNWAY;
-        
-        flightLog = new FlightLog();
-        waypointManager = new WaypointManager();
-        
-        //perfect network by default
-        this.connectivityManager = new PerfectNetwork();
+        flightPlan = FLIGHTPLAN_FLYAROUND;
         
         ///////////////////////
         //properties
@@ -192,7 +148,9 @@ public class F15CThing extends VirtualThing {
         flightThread = new Thread() {
             @Override
             public void run() {
-                LOGGER.trace("flight thread started");
+            	if(LOGGER.isTraceEnabled()) {
+            		LOGGER.trace("flight thread started");
+            	}
                 
                 //TODO: select a flight plan based on config
                 try {
@@ -213,15 +171,17 @@ public class F15CThing extends VirtualThing {
                     LOGGER.error(e.getMessage(), e);
                 }
                 
-                LOGGER.trace("flight thread returning");
+                if(LOGGER.isTraceEnabled()) {
+                	LOGGER.trace("flight thread returning");
+                }
             }
         };
         
         ///////////////////////
     }
     
-    public void setConnectivityManager(ServiceCallTimeoutManagement manager) {
-    	this.connectivityManager = manager;
+    public Map<String, String> getPlaneTelemetryMap() {
+    	return plane.getTelemetry();
     }
         
     public void setFlightPlan(int plan) {
@@ -229,11 +189,13 @@ public class F15CThing extends VirtualThing {
     }
     
     public void setRoute( ArrayList<WaypointPosition> route) {
-    	waypointManager.setWaypoints(route);
+    	plane.setWaypoints(route);
     }
     
     private void init() throws Exception {
-        LOGGER.trace("init invoked");
+    	if(LOGGER.isTraceEnabled()) {
+    		LOGGER.trace("init invoked");
+    	}
         
         super.initialize();
         
@@ -270,8 +232,12 @@ public class F15CThing extends VirtualThing {
         //Velocities
         defineDataShapeDefinition(VELOCITIES_SHAPE_NAME, DataShapeInitializer.buildVelocitiesShape());
 
+        //waypoint readout
+        defineDataShapeDefinition(FLIGHTPLAN_SHAPE_NAME, DataShapeInitializer.buildFlightPlanShape());
         
-        LOGGER.trace("init returning");
+        if(LOGGER.isTraceEnabled()) {
+        	LOGGER.trace("init returning");
+        }
     }
     
     //separate function, so plane can be started after bind
@@ -289,12 +255,16 @@ public class F15CThing extends VirtualThing {
     }
     
     public void executeFlightPlan() {
-        LOGGER.trace("executeFlightPlan invoked");
+    	if(LOGGER.isTraceEnabled()) {
+    		LOGGER.trace("executeFlightPlan invoked");
+    	}
         
         //start the flight thread
         flightThread.start();
         
-        LOGGER.trace("executeFlightPlan returning");
+        if(LOGGER.isTraceEnabled()) {
+        	LOGGER.trace("executeFlightPlan returning");
+        }
     }
     
     @Override
@@ -313,13 +283,17 @@ public class F15CThing extends VirtualThing {
      */
     @Override
     public void processScanRequest() throws Exception {
-        LOGGER.trace("processScanRequest invoked");
+    	if(LOGGER.isTraceEnabled()) {
+    		LOGGER.trace("processScanRequest invoked");
+    	}
         
         super.processScanRequest();
         
         this.scanDevice();
         
-        LOGGER.trace("processScanRequest returning");
+        if(LOGGER.isTraceEnabled()) {
+        	LOGGER.trace("processScanRequest returning");
+        }
 
     }
     
@@ -331,7 +305,7 @@ public class F15CThing extends VirtualThing {
      */
     private void scanDevice() throws Exception {
         
-        F15CDeviceScanner.DeviceScanner(this, plane);
+        F15CDeviceScanner.DeviceScanner(this, plane.getTelemetry());
 
         this.updateSubscribedProperties(SUBSCRIBED_PROPERTIES_UPDATE_TIMEOUT);
         this.updateSubscribedEvents(SUBSCRIBED_EVENTS_UPDATE_TIMEOUT);
@@ -342,8 +316,151 @@ public class F15CThing extends VirtualThing {
     /////////////////////////
     
     //waypoints
-    //add waypoint
+    @ThingworxServiceDefinition
+    (
+       name = "AddWaypoint", 
+       description = "Append a new waypoint to the end of the flight plan"
+    )
+    public synchronized void AddWaypoint(
+        @ThingworxServiceParameter
+        ( 
+        	name="latitude", 
+        	description="latitude in degrees", 
+        	baseType="NUMBER" 
+        ) Double latitude,
+    	@ThingworxServiceParameter
+    	( 
+    		name="longitude", 
+    		description="longitude in degrees", 
+    		baseType="NUMBER" 
+    	) Double longitude,
+    	@ThingworxServiceParameter
+    	( 
+    		name="name", 
+    		description="waypoint name", 
+    		baseType="STRING" 
+    	) String name
+    ) throws Exception
+    {
+    	plane.addWaypoint( new WaypointPosition(latitude, longitude, name));
+    }
+    
+    @ThingworxServiceDefinition
+    (
+       name = "AddNextWaypoint", 
+       description = "Append a new waypoint to the beginning of the flight plan"
+    )
+    public synchronized void AddNextWaypoint(
+        @ThingworxServiceParameter
+        ( 
+        	name="latitude", 
+        	description="latitude in degrees", 
+        	baseType="NUMBER" 
+        ) Double latitude,
+    	@ThingworxServiceParameter
+    	( 
+    		name="longitude", 
+    		description="longitude in degrees", 
+    		baseType="NUMBER" 
+    	) Double longitude,
+    	@ThingworxServiceParameter
+    	( 
+    		name="name", 
+    		description="waypoint name", 
+    		baseType="STRING" 
+    	) String name
+    )
+    {
+    	plane.addNextWaypoint( new WaypointPosition(latitude, longitude, name)) ;
+    }
+
+    //abandon all waypoints
+    @ThingworxServiceDefinition
+    (
+       name = "AbandonCurrentWaypoint", 
+       description = "Abandon current waypoint in flight plan, and proceed to the next one."
+    )
+    public synchronized void AbandonCurrentWaypoint() {
+    	plane.abandonCurrentWaypoint();
+    }
+    
+    //remove all waypoints
+    @ThingworxServiceDefinition
+    (
+       name = "ClearWaypoints", 
+       description = "Clear the flightplan"
+    )
+    public synchronized void ClearWaypoints() {
+    	plane.clearWaypoints();
+    }
+    
     //remove waypoint
+    @ThingworxServiceDefinition
+    (
+       name = "RemoveWaypoints", 
+       description = "Remove waypoints from the flight plan matching provided lat/lon"
+    )
+    public synchronized void RemoveWaypoints(
+        @ThingworxServiceParameter
+        ( 
+        	name="latitude", 
+        	description="latitude in degrees", 
+        	baseType="NUMBER" 
+        ) Double latitude,
+    	@ThingworxServiceParameter
+    	( 
+    		name="longitude", 
+    		description="longitude in degrees", 
+    		baseType="NUMBER" 
+    	) Double longitude
+    )
+    {
+    	plane.removeWaypoints(latitude, longitude);
+    }
+    
+    //Get the human-readable flightplan
+    @ThingworxServiceDefinition
+    (
+       name = "GetFlightPlan", 
+       description = "Retrieve the flightplan"
+    )
+	@ThingworxServiceResult
+	(
+			name = CommonPropertyNames.PROP_RESULT, 
+			description = "InfoTable of waypoint data", 
+			baseType = "INFOTABLE",
+			aspects = { "dataShape:" + FLIGHTPLAN_SHAPE_NAME }
+	)
+    public synchronized InfoTable GetFlightPlan() throws Exception {
+    	
+    	LOGGER.debug("Retrieving F15C flight plan");
+    	
+    	InfoTable table = new InfoTable(getDataShapeDefinition(FLIGHTPLAN_SHAPE_NAME));
+    	    	
+    	for( WaypointPosition wp : plane.getWaypoints()) {
+			
+    		//need to create a new vc for the row in the loop body
+    		ValueCollection entry = new ValueCollection();
+    		
+			entry.SetNumberValue(
+				EdgeUtilities.toThingworxPropertyName(FlightGearFields.LATITUDE_FIELD), wp.getLatitude());
+			entry.SetNumberValue(
+				EdgeUtilities.toThingworxPropertyName(FlightGearFields.LONGITUDE_FIELD), wp.getLongitude());
+			entry.SetNumberValue(
+				EdgeUtilities.toThingworxPropertyName(FlightGearFields.ALTITUDE_FIELD), wp.getAltitude());
+			entry.SetStringValue(
+				EdgeUtilities.toThingworxPropertyName(WaypointManager.WAYPOINT_NAME_FIELD), wp.getName());
+			
+	    	LOGGER.debug("Logging waypoint: {}", entry.toString());
+			
+			table.addRow(entry);
+    	}
+
+    	LOGGER.debug("Retrieved F15C flight plan");
+    	
+    	return table;
+    }
+
 
     /////////////////////////
     //consumables
@@ -782,10 +899,7 @@ public class F15CThing extends VirtualThing {
     public void Shutdown() throws Exception {
         
         LOGGER.debug("F15CThing shut down invoked");
-        
-        //signal the flight thread to shutdown
-        isFlightRunning = false;
-        
+                
         this.getClient().shutdown();
         
         if(this.sshdServer != null) {
@@ -810,73 +924,31 @@ public class F15CThing extends VirtualThing {
     private void runRunwayFlightPlan() throws Exception {
         
         LOGGER.info("F15CThing runRunwayFlightPlan thread starting");
-               
-        //initial config
+                   
+    	//40 gallons - at high throttle fuel goes fairly quickly
+    	int testFuelAmount = 40;
         
-        //high throttle but not so high it overwhelms the parking brake
-        double highThrottle = 0.80;
-        double lowThrottle = 0.25;
-        double testFuelLevel = 30.0;
-        double speedUpLevel = 8.0;
+        //refill in case a previous run emptied it
+        plane.refillFuel();
         
-        long throttleInterval = 5 * 1000;
+        //a clean sim can start with the engines running depending on the sim autosave, and we don't want that
+        plane.setEngine0Cutoff(true);
+        plane.setEngine1Cutoff(true);
         
-        
-        //setup. pause so these updates don't overwrite each other
-        plane.setPause(true);
+        //probably not going to happen but do it anyway
         plane.setDamageEnabled(false);
-        plane.setGMT(LAUNCH_TIME_GMT);         
-        plane.setPause(false);
         
-        plane.setParkingBrake(true);
+        //set our test fuel amount
+        plane.setFuelTank0Level(0.0);
+        plane.setFuelTank1Level(0.0);
+        plane.setFuelTank2Level(testFuelAmount);
+        plane.setFuelTank3Level(0.0);
+        plane.setFuelTank4Level(0.0);
         
-        //will block/wait for the engine to begin running
-        plane.startupPlane();
+        RunwayBurnoutFlightExecutor.runFlight(plane);
         
-        //sleep some more for the engines to get up to speed for the initial mixture/throttle setting
-        try {
-            Thread.sleep(POST_STARTUP_SLEEP);
-        } catch (InterruptedException e) {
-            LOGGER.warn("FLIGHT_EXECUTION_SLEEP interrupted", e);
-        }
-
-        //post-startup setup. pause so these updates don't overwrite each other
-        plane.setPause(true);
-        
-        //explicitly set after startup too. sometimes startup unsets the brake
-        plane.setParkingBrake(true);
-        
-        //i'm in a hurry
-        plane.setSimSpeedUp(speedUpLevel);
-        
-        //lighten the tank to shorten the duration of the test
-        plane.refillFuel(testFuelLevel);
-        
-        //set after sleep 
-        plane.setEngineThrottles(highThrottle);
-        
-        plane.setPause(false);
-        
-        double currentThrottle;
-        
-        while(plane.isEngineRunning()) {
-            
-        	//throttles set collectively
-            currentThrottle = plane.getEngine0Throttle();
-            
-            //if it's high throttle, flip to low. vice-versa
-            if(currentThrottle <= lowThrottle) {
-                plane.setEngineThrottles(highThrottle);
-            } else {
-                plane.setEngineThrottles(lowThrottle);
-            }
-            
-            try {
-                Thread.sleep(throttleInterval);
-            } catch (InterruptedException e) {
-                LOGGER.warn("Throttle interval interrupted", e);
-            }
-        }
+        //at higher speedups the simulator window is unusable, so return it to something usable
+        plane.setSimSpeedUp(1);
         
         LOGGER.info("Flight operation ended. Shutting down FlightGear connection.");
         
@@ -899,274 +971,26 @@ public class F15CThing extends VirtualThing {
      *
      */
     private void runFlyAroundFlightPlan() throws IOException, AircraftStartupException, FlightGearSetupException {
-        
+            	
         LOGGER.info("F15CThing runFlyAroundFlightPlan thread starting");
-               
-        //initial config
-
-        double targetAltitude = 11500.0;
         
-        plane.setDamageEnabled(false);
-        plane.setGMT(LAUNCH_TIME_GMT);
-        
-        plane.refillFuel();
-        
+        //plane route should have been set before this function is invoked
 
-        
-        isFlightRunning = true;
-        
-        while(isFlightRunning) {
-            
-            LOGGER.debug("F15CThing thread running");
-            
-            //fly the plane
-            
-            WaypointPosition startingWaypoint = waypointManager.getNextWaypoint();
-            
-            //figure out the heading of our first waypoint based upon our current position
-            TrackPosition startPosition = plane.getPosition();
-            double initialBearing = PositionUtilities.calcBearingToGPSCoordinates(startPosition, startingWaypoint);            
-            
-            //point the plane at our first waypoint
-            LOGGER.info("First waypoint is {} and initial target bearing is {}", startingWaypoint.toString(), initialBearing);
-            
-            //make sure the shell script is launched with the initial heading instead
-            plane.setHeading(initialBearing);
-            
-            plane.resetControlSurfaces();
-            
-            plane.setPause(false);
-            
-            //chase view
-            plane.setCurrentView(2);
+		// set chase view
+		plane.setCurrentView(2);
 
-            //full throttle or the engines will have divergent thrust outputs
-            plane.setEngineThrottles(F15CFields.THROTTLE_MAX);            
-            
-            //trouble doing waypoint flight at faster speeds with high speedup under the current threading model
-            //TODO: separate threads for telemetry readouts and flight control
-            //plane.setSimSpeedUp(2.0);
-        
-            //not much of a min, but all tanks largely filled means even weight distribution and more stable flight
-            double minFuelTank0 = plane.getFuelTank0Capacity() * FUEL_LEVEL_REFILL_THRESHOLD_PERCENT,
-                    minFuelTank1 = plane.getFuelTank1Capacity() * FUEL_LEVEL_REFILL_THRESHOLD_PERCENT,
-                    minFuelTank2 = plane.getFuelTank2Capacity() * FUEL_LEVEL_REFILL_THRESHOLD_PERCENT,
-                    minFuelTank3 = plane.getFuelTank3Capacity() * FUEL_LEVEL_REFILL_THRESHOLD_PERCENT,
-                    minFuelTank4 = plane.getFuelTank4Capacity() * FUEL_LEVEL_REFILL_THRESHOLD_PERCENT;
-            
-            //needs to be tuned depending on aircraft speed, sim speedup, and waypoint closeness
-            //int bearingRecalcCycleInterval = 5;    
-            
-            WaypointPosition nextWaypoint;
-            TrackPosition currentPosition;
-            double nextWaypointBearing = initialBearing;
-            double distanceToNextWaypoint;
-            int waypointFlightCycles;
-            long cycleSleep = 5;
-            while(waypointManager.getWaypointCount() > 0) {
-                
-                nextWaypoint = waypointManager.getAndRemoveNextWaypoint();
-                
-                //possibly slow the simulator down if the next waypoint is close.
-                //it's possible that hard and frequent course adjustments are needed
-                
-                LOGGER.info("Headed to next waypoint: {}", nextWaypoint.toString());
-                
-                nextWaypointBearing = PositionUtilities.calcBearingToGPSCoordinates(plane.getPosition(), nextWaypoint);
-                
-                //normalize to 0-360
-                if(nextWaypointBearing < 0.0) {
-                    nextWaypointBearing += FlightUtilities.DEGREES_CIRCLE;
-                }
-                
-                LOGGER.info("Bearing to next waypoint: {}", nextWaypointBearing);
-                
-                ///////////////////////////////
-                //transition to a stable path to next waypoint.
-                
-                //turning to face next waypoint. throttle down
-                plane.setEngineThrottles(THROTTLE_COURSE_CHANGE);
-                
-                double currentHeading;
-                int headingComparisonResult;
-                while(!FlightUtilities.withinHeadingThreshold(plane, MAX_HEADING_CHANGE, nextWaypointBearing)) {
-                    
-                    currentHeading = plane.getHeading();
-                    
-                    flightLog.addTrackPosition(plane.getPosition());
-                    
-                    headingComparisonResult = FlightUtilities.headingCompareTo(plane, nextWaypointBearing);
-                    
-                    LOGGER.info("Easing hard turn from current heading {} to target {}", currentHeading, nextWaypointBearing);
-                    
-                    //adjust clockwise or counter? 
-                    //this may actually change in the middle of the transition itself
-                    double intermediateHeading = currentHeading;
-                    if(headingComparisonResult == FlightUtilities.HEADING_NO_ADJUST) {
-                        LOGGER.warn("Found no adjustment needed");
-                        //shouldn't happen since we'd be with the heading threshold
-                        break;
-                    } else if(headingComparisonResult == FlightUtilities.HEADING_CW_ADJUST) {
-                        //1: adjust clockwise
-                        intermediateHeading = (intermediateHeading + COURSE_ADJUSTMENT_INCREMENT ) % FlightUtilities.DEGREES_CIRCLE;
-                    } else {
-                        //-1: adjust counterclockwise
-                        intermediateHeading -= COURSE_ADJUSTMENT_INCREMENT;
-                        
-                        //normalize 0-360
-                        if(intermediateHeading < 0) intermediateHeading += FlightUtilities.DEGREES_CIRCLE;
-                    }
-                    
-                    LOGGER.info("++++Stabilizing to intermediate heading {} from current {} with target {}", intermediateHeading, currentHeading, nextWaypointBearing);
-                    
-                    //low count here. if we're not on track by the end, the heading check should fail and get us back here
-                    //seeing close waypoints get overshot
-                    int stablizeCount = 0;
-                    while(stablizeCount < 10) {
-                        
-                        FlightUtilities.altitudeCheck(plane, 500, targetAltitude);
-                        stabilizeCheck(plane, intermediateHeading);
-                        
-                        try {
-                            Thread.sleep(10);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        
-                        stablizeCount++;
-                    }
-                    
-                    //recalculate bearing since we've moved
-                    nextWaypointBearing = PositionUtilities.calcBearingToGPSCoordinates(plane.getPosition(), nextWaypoint);
-                    
-                    //normalize to 0-360
-                    if(nextWaypointBearing < 0) {
-                        nextWaypointBearing += FlightUtilities.DEGREES_CIRCLE;
-                    }
-                    
-                    //refill all tanks for balance
-                    if (
-                        plane.getFuelTank0Level() < minFuelTank0 || 
-                        plane.getFuelTank1Level() < minFuelTank1 ||
-                        plane.getFuelTank2Level() < minFuelTank2 ||
-                        plane.getFuelTank3Level() < minFuelTank3 ||
-                        plane.getFuelTank4Level() < minFuelTank4 
+		plane.setDamageEnabled(false);
+		plane.setGMT(LAUNCH_TIME_GMT);
 
-                    ) {
-                        plane.refillFuel();
-                    }
-                }
-                
-                LOGGER.info("Heading change within tolerance");
-                
-                //on our way. throttle up
-                plane.setEngineThrottles(F15CFields.THROTTLE_MAX);
-                
-                ///////////////////////////////
-                //main flight path to way point
-                waypointFlightCycles = 0;
-                
-                //add our next waypoint to the log
-                flightLog.addWaypoint(nextWaypoint);
-                
-                while( !PositionUtilities.hasArrivedAtWaypoint(plane.getPosition(), nextWaypoint, WAYPOINT_ARRIVAL_THRESHOLD) ) {
-                
-                    LOGGER.info("======================\nCycle {} start.", waypointFlightCycles);
+		// in case we get a previously lightly-used environment
+		plane.refillFuel();
+		
+		// kick off our flight in the main thread
+		WaypointFlightExecutor.runFlight(plane);
 
-                    currentPosition = plane.getPosition();
-                    
-                    distanceToNextWaypoint = PositionUtilities.distanceBetweenPositions(plane.getPosition(), nextWaypoint);
-                    
-                    flightLog.addTrackPosition(currentPosition);
-                    
-                    if(    
-                        distanceToNextWaypoint > WAYPOINT_ADJUST_MIN_DIST //&&
-                        //waypointFlightCycles % bearingRecalcCycleInterval == 0
-                    ) 
-                    {
-                        //reset bearing incase we've drifted, not not if we're too close
-                        nextWaypointBearing = PositionUtilities.calcBearingToGPSCoordinates(plane.getPosition(), nextWaypoint);
-                        
-                        //normalize to 0-360
-                        if(nextWaypointBearing < 0) {
-                            nextWaypointBearing += FlightUtilities.DEGREES_CIRCLE;
-                        }
-                        
-                        LOGGER.info("Recalculating bearing to waypoint: {}", nextWaypointBearing);
-                    } else if ( distanceToNextWaypoint < WAYPOINT_ARRIVAL_THRESHOLD * 3 ) {
-                        //throttle down for waypoint approach to accommodate any late corrections
-                        
-                        plane.setEngineThrottles(THROTTLE_WAYPOINT_APPROACH);
-                    } else if (plane.getEngine0Throttle() != F15CFields.THROTTLE_MAX) {
-                        
-                        //far enough away from the previous waypoint and not close enough to the next
-                        //throttle up to max if we haven't already
-                        plane.setEngineThrottles(F15CFields.THROTTLE_MAX);
-                    }
-                    
-                    // check altitude first, if we're in a nose dive that needs to be corrected first
-                    FlightUtilities.altitudeCheck(plane, 500, targetAltitude);
+		// pause so the plane doesn't list from its heading and crash
+		plane.setPause(true);
 
-                    // TODO: ground elevation check. it's a problem if your target alt is 5000ft and
-                    // you're facing a 5000ft mountain
-
-                    stabilizeCheck(plane, nextWaypointBearing);                    
-                    
-                    if(!plane.isEngineRunning()) {
-                        LOGGER.error("Engine found not running. Attempting to restart.");
-//                        plane.startupPlane();
-//                        
-//                        //increase throttle
-//                        plane.setPause(true);
-//                        plane.resetControlSurfaces();
-//                        plane.setPause(false);
-//                        
-//                        plane.setEngineThrottles(F15CFields.THROTTLE_MAX);
-                        
-                        plane.setPause(true);
-                        
-                        throw new IOException("Engine not running");
-                    }
-                    
-                    //refill all tanks for balance
-                    if (
-                        plane.getFuelTank0Level() < minFuelTank0 || 
-                        plane.getFuelTank1Level() < minFuelTank1 ||
-                        plane.getFuelTank2Level() < minFuelTank2 ||
-                        plane.getFuelTank3Level() < minFuelTank3 ||
-                        plane.getFuelTank4Level() < minFuelTank4 
-
-                    ) {
-                        plane.refillFuel();
-                    }
-                    
-                    try {
-                        Thread.sleep(cycleSleep);
-                    } catch (InterruptedException e) {
-                        LOGGER.warn("Runtime sleep interrupted", e);
-                    }
-                    
-                    waypointFlightCycles++;
-                }
-                
-                LOGGER.info("Arrived at waypoint {}!", nextWaypoint.toString());
-            }
-            
-            LOGGER.info("No more waypoints. Trip is finished!");
-            
-            isFlightRunning = false;
-            
-            //pause so the plane doesn't list from its heading and crash
-            plane.setPause(true);
-            
-            /////////////////////
-            try {
-                Thread.sleep(FLIGHT_EXECUTION_SLEEP);
-            } catch (InterruptedException e) {
-                LOGGER.warn("FLIGHT_EXECUTION_SLEEP interrupted", e);
-            }
-        }
-        
         LOGGER.info("Flight operation ended. Shutting down FlightGear connection.");
         
         plane.shutdown();
@@ -1178,107 +1002,6 @@ public class F15CThing extends VirtualThing {
 		} catch (Exception e) {
             LOGGER.warn("Exception during virtual thing shutdown", e);
 		}
-    }
-    
-    private static void stabilizeCheck(F15C plane, double bearing) throws IOException {
-        if( 
-        	!FlightUtilities.withinRollThreshold(plane, 1.5, 0.0) ||
-            !FlightUtilities.withinPitchThreshold(plane, 3.0, 1.5) ||
-            !FlightUtilities.withinHeadingThreshold(plane, COURSE_ADJUSTMENT_INCREMENT, bearing)
-        ) 
-        {
-            plane.forceStabilize(bearing, 0.0, 2.0);
-        }
-    }
-    
-    ////////////////////////////////
-    //timeout overrides
-    
-    /**
-     * Depending on plane state, invoke regular updateSubscribedPropertyValues 
-     * service or supplied updateSubscribedPropertiesAndTimeout service
-     * 
-     * @param timeout
-     */
-    @Override
-    public void updateSubscribedProperties(int timeout) throws TimeoutException, ConnectionException {        
-        if(!connectivityManager.shouldTimeoutServiceCall(plane)) {
-            super.updateSubscribedProperties(timeout);
-        } else {
-            LOGGER.debug("Executing doomed-to-timeout service call for updateSubscribedProperties");
-            
-            if (getPendingPropertyUpdates().size() > 0) {
-                ValueCollection parameters = new ValueCollection();
-
-                PendingPropertyUpdatesByProperty propertyUpdates = getPendingPropertyUpdates().drainPendingPropertyUpdates();
-
-                try {
-                    parameters.put(CommonPropertyNames.PROP_VALUES,
-                            new InfoTablePrimitive(propertyUpdates.toInfoTable()));
-
-                    if (LOGGER.isTraceEnabled()) {
-                        String valuesDump = parameters.toJSON().toString();
-
-                        LOGGER.trace("PUSHING PROPERTIES = {}", valuesDump);
-                    }
-
-                    getClient().invokeService(
-                    	ThingworxEntityTypes.Things, getBindingName(),
-                        "UpdateSubscribedPropertyValuesAndTimeout", parameters, TOO_SMALL_DOOMED_TIMEOUT
-                    );
-                } catch (TimeoutException e) {
-                	LOGGER.error("Update failed, timed out waiting for response for " + getName() + ": ", e);
-                    // Re-add pending property updates
-                    getPendingPropertyUpdates().addPendingPropertyUpdates(propertyUpdates);
-                    throw e;
-                } catch (ConnectionException e) {
-                	LOGGER.error("Update failed, not connected to endpoint for " + getName() + ": ", e);
-                    // Re-add pending property updates
-                    getPendingPropertyUpdates().addPendingPropertyUpdates(propertyUpdates);
-                    throw e;
-                } catch (Exception e) {
-                	LOGGER.error("Unable To Update Subscribed Properties For " + getName() + ": ", e);
-                    // Re-add pending property updates
-                    getPendingPropertyUpdates().addPendingPropertyUpdates(propertyUpdates);
-                }
-            }
-        }
-    }
-    
-    /**
-     * Depending on plane state, invoke regular updateSubscribedEvents 
-     * service or supplied updateSubscribedEventsAndTimeout service
-     *
-     * @param timeout
-     */
-    @Override
-    public void updateSubscribedEvents(int timeout) {
-        
-        if(!connectivityManager.shouldTimeoutServiceCall(plane)) {
-            super.updateSubscribedEvents(timeout);
-        } else {
-            LOGGER.debug("Executing doomed-to-timeout service call for updateSubscribedEvents");
-            
-            if (getPendingEvents().size() > 0) {
-                ValueCollection parameters = new ValueCollection();
-
-                PendingEvents pendingEvents = getPendingEvents().drainPendingEvents();
-
-                try {
-                    parameters.put(CommonPropertyNames.PROP_VALUES, new InfoTablePrimitive(pendingEvents.toInfoTable()));
-
-                    getClient().invokeService(
-                    	ThingworxEntityTypes.Things, getBindingName(), 
-                    	"ProcessRemoteEventsAndTimeout", parameters, TOO_SMALL_DOOMED_TIMEOUT
-                    );
-                } catch (Exception e) {
-                	LOGGER.error("Unable To Update Subscribed Events For " + getName() + " : " + e.getMessage());
-
-                    // Re-add pending events
-                    getPendingEvents().replaceEvents(pendingEvents);
-                }
-            }
-
-        }
+               
     }
 }

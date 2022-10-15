@@ -2,6 +2,7 @@ package org.jason.fgedge.c172p.things;
 
 import org.jason.fgcontrol.aircraft.c172p.C172PFields;
 import org.jason.fgcontrol.aircraft.fields.FlightGearFields;
+import org.jason.fgcontrol.flight.position.WaypointManager;
 import org.jason.fgedge.util.EdgeUtilities;
 
 import com.thingworx.metadata.FieldDefinition;
@@ -684,5 +685,38 @@ public abstract class DataShapeInitializer {
         ));
         
         return velocitiesFields;
+    }
+    
+    public static FieldDefinitionCollection buildFlightPlanShape() {
+    	FieldDefinitionCollection flightplanFields = new FieldDefinitionCollection();
+    	
+    	flightplanFields.addFieldDefinition(
+    		new FieldDefinition(
+    			EdgeUtilities.toThingworxPropertyName(FlightGearFields.LATITUDE_FIELD), 
+                FlightGearFields.LATITUDE_FIELD_DESC,
+                BaseTypes.NUMBER
+    	));
+    	flightplanFields.addFieldDefinition(
+        	new FieldDefinition(
+        		EdgeUtilities.toThingworxPropertyName(FlightGearFields.LONGITUDE_FIELD), 
+                FlightGearFields.LONGITUDE_FIELD_DESC,
+                BaseTypes.NUMBER
+        ));
+    	flightplanFields.addFieldDefinition(
+            new FieldDefinition(
+            	EdgeUtilities.toThingworxPropertyName(FlightGearFields.ALTITUDE_FIELD), 
+                FlightGearFields.ALTITUDE_FIELD_DESC,
+                BaseTypes.NUMBER
+        ));
+    	//not a twx property but we can re-use the format utility
+    	flightplanFields.addFieldDefinition(
+            new FieldDefinition(
+            	EdgeUtilities.toThingworxPropertyName(WaypointManager.WAYPOINT_NAME_FIELD), 
+               	WaypointManager.WAYPOINT_NAME_FIELD_DESC,
+                BaseTypes.STRING
+        ));
+    	
+    	
+    	return flightplanFields;
     }
 }
