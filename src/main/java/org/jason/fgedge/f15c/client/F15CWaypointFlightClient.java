@@ -1,15 +1,13 @@
-package org.jason.fgedge.c172p.client;
+package org.jason.fgedge.f15c.client;
 
 import java.io.FileInputStream;
-import java.util.ArrayList;
 import java.util.Properties;
 
-import org.jason.fgcontrol.aircraft.c172p.C172PConfig;
+import org.jason.fgcontrol.aircraft.f15c.F15CConfig;
 import org.jason.fgcontrol.flight.position.KnownRoutes;
-import org.jason.fgcontrol.flight.position.WaypointPosition;
-import org.jason.fgedge.c172p.things.C172PThing;
 import org.jason.fgedge.callback.AppKeyCallback;
 import org.jason.fgedge.config.TWXConfigDirectives;
+import org.jason.fgedge.f15c.things.F15CThing;
 import org.jason.fgedge.util.EdgeUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,10 +15,10 @@ import org.slf4j.LoggerFactory;
 import com.thingworx.communications.client.ClientConfigurator;
 import com.thingworx.communications.client.ConnectedThingClient;
 
-public class C172PFlightFleetClient extends ConnectedThingClient {
+public class F15CWaypointFlightClient extends ConnectedThingClient {
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(C172PFlightFleetClient.class);
-            
+    private static final Logger LOGGER = LoggerFactory.getLogger(F15CWaypointFlightClient.class);
+          
     private static final int SCAN_RATE = 250;
     
     private static final int CONNECT_TIMEOUT = 5 * 1000;
@@ -30,26 +28,26 @@ public class C172PFlightFleetClient extends ConnectedThingClient {
     private final static String PLATFORM_URI_COMPONENT_STR = "/Thingworx/WS";
 
     
-    public C172PFlightFleetClient(ClientConfigurator config) throws Exception {
+    public F15CWaypointFlightClient(ClientConfigurator config) throws Exception {
         super(config);
     }
     
     /**
-     * Main program for a C172P fleet test. Start the plane and fly a set of waypoints.
+     * Main program for a F15C runway test. Start the plane and move the throttle up and down.
+     * Refuel a few times, then allow the engine to run until out of fuel and stopped.
      * 
-     * Run shell script c172p_flight_fleet.sh to launch simulator.
+     * Run shell script f15c_runway.sh to launch simulator.
      * 
-     * @param args	twx_edge.properties sim.properties
+     * @param args	host port appkey
      * 
      * @throws Exception
      */
     public static void main(String args[]) throws Exception {
-
     	//read config
     	//App twx_edge.properties sim.properties
     	
     	String twxConfigFile = "./conf/twx_edge.properties";
-    	String simConfigFile = "./conf/c172p.properties";
+    	String simConfigFile = "./conf/f15c.properties";
     	if(args.length == 2) {
     		twxConfigFile = args[0];	
     		simConfigFile = args[1];	
@@ -66,7 +64,7 @@ public class C172PFlightFleetClient extends ConnectedThingClient {
     	simConfig.load(new FileInputStream(simConfigFile) );
     	
     	//TODO: validate expected config directives are defined
-    	
+        
         boolean enterRunLoop = false;
         
         //////////
@@ -76,16 +74,7 @@ public class C172PFlightFleetClient extends ConnectedThingClient {
         String host = twxConfig.getProperty(TWXConfigDirectives.PLATFORM_HOST_DIRECTIVE);
         int port = Integer.parseInt(twxConfig.getProperty(TWXConfigDirectives.PLATFORM_PORT_DIRECTIVE));
         String appKey = twxConfig.getProperty(TWXConfigDirectives.APPKEY_DIRECTIVE);
-        
-        int flightPlan = C172PThing.FLIGHTPLAN_FLYAROUND;
-        
-        if(!C172PThing.SUPPORTED_FLIGHTPLANS.contains(flightPlan)) {
-        	LOGGER.error("Unsupported flight plan");
-        	System.exit(-1);
-        }
-        
-        //////////
-        
+               
         String uri = WS_PROTOCOL_STR + host + ":" + port + PLATFORM_URI_COMPONENT_STR;
         
         LOGGER.info("Launching with target uri: " + uri);
@@ -94,27 +83,30 @@ public class C172PFlightFleetClient extends ConnectedThingClient {
         config.setUri(uri);
         config.setSecurityClaims( new AppKeyCallback(appKey) );
         config.ignoreSSLErrors(true);
-
+        
         String thingName = simConfig.getProperty(TWXConfigDirectives.THINGNAME_DIRECTIVE);
         
-        C172PFlightFleetClient c172pClient = new C172PFlightFleetClient(config);
-        
-        C172PConfig c172PConfig = new C172PConfig(simConfig);
+        F15CConfig f15cConfig = new F15CConfig(simConfig);
+
+        F15CWaypointFlightClient f15cClient = new F15CWaypointFlightClient(config);
                 
-		C172PThing c172pThing = new C172PThing(thingName, "Cessna 172P Thing", "", c172pClient, c172PConfig);
+        F15CThing f15cThing = new F15CThing(thingName, "McD F15C Thing", "", f15cClient, f15cConfig);
         
-        c172pClient.bindThing(c172pThing);
+        f15cThing.setRoute( KnownRoutes.VAN_ISLAND_TOUR_SOUTH );
+
+        
+        f15cClient.bindThing(f15cThing);
         
         try {
             // Start the client
-            c172pClient.start();
+            f15cClient.start();
             
-            if(!c172pClient.waitForConnection(CONNECT_TIMEOUT)) {
+            if(!f15cClient.waitForConnection(CONNECT_TIMEOUT)) {
                 throw new Exception("Could not connect");
             }
             
             //wait for bind
-            if(!EdgeUtilities.waitForBind(c172pThing, BIND_TIMEOUT)) {
+            if(!EdgeUtilities.waitForBind(f15cThing, BIND_TIMEOUT)) {
                 throw new Exception("Could not bind virtual thing");
             }
             
@@ -124,11 +116,10 @@ public class C172PFlightFleetClient extends ConnectedThingClient {
             LOGGER.warn("Initial Start Failed : " + eStart.getMessage(), eStart);
         }
         
+        //TODO: build out services for the client and interact with those to control/config the modeled plane
         if(enterRunLoop) {
             //if we're connected, enter the edge runtime loop
             
-        	
-        	
             LOGGER.info("Entering edge run loop");
             
             //we are connected and the virtual thing is bound, start the plane and launch it
@@ -136,31 +127,11 @@ public class C172PFlightFleetClient extends ConnectedThingClient {
             //literal launch handled by the fgfs script
             //this starts the flight thread
             
-            if(flightPlan == C172PThing.FLIGHTPLAN_RUNWAY) {
-            	c172pThing.setFlightPlan(C172PThing.FLIGHTPLAN_RUNWAY);
-            } else if(flightPlan == C172PThing.FLIGHTPLAN_FLYAROUND) {
-            	c172pThing.setFlightPlan(C172PThing.FLIGHTPLAN_FLYAROUND);
-            	
-//                CellTowerCoverageNetwork networkConnectivityManager = new CellTowerCoverageNetwork();
-//                
-//                networkConnectivityManager.addTower(KnownPositions.LONSDALE_QUAY, 10.0 * 5280.0);
-//                networkConnectivityManager.addTower(KnownPositions.ABBOTSFORD, 5.0 * 5280.0);
-//                
-//                c172pThing.setConnectivityManager(networkConnectivityManager);
-                
-                ArrayList<WaypointPosition> route = KnownRoutes.VANCOUVER_TOUR;
-                
-                c172pThing.setRoute(route);
-                
-            } else {
-            	//checked earlier for this
-            	throw new Exception("Unexpected flight plan");
-            }
-            
-            c172pThing.executeFlightPlan();
+            //TODO: move inside the CTC
+            f15cThing.executeFlightPlan();
             
             //edge main execution - blocks and signals shutdown of thing/client when the flightplan is done
-            edgeOperation(c172pClient, thingName);
+            edgeOperation(f15cClient, thingName);
             
             LOGGER.info("Exiting edge run loop");
         }

@@ -13,9 +13,9 @@ import org.slf4j.LoggerFactory;
 import com.thingworx.communications.client.ClientConfigurator;
 import com.thingworx.communications.client.ConnectedThingClient;
 
-public class C172PRunwayTestClient extends ConnectedThingClient {
+public class C172PRunwayBurnoutClient extends ConnectedThingClient {
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(C172PRunwayTestClient.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(C172PRunwayBurnoutClient.class);
     
     private static final String C172P_THING_NAME = "C172PThing"; 
         
@@ -28,7 +28,7 @@ public class C172PRunwayTestClient extends ConnectedThingClient {
     private final static String PLATFORM_URI_COMPONENT_STR = "/Thingworx/WS";
 
     
-    public C172PRunwayTestClient(ClientConfigurator config) throws Exception {
+    public C172PRunwayBurnoutClient(ClientConfigurator config) throws Exception {
         super(config);
     }
     
@@ -74,7 +74,7 @@ public class C172PRunwayTestClient extends ConnectedThingClient {
         config.setSecurityClaims( new AppKeyCallback(appKey) );
         config.ignoreSSLErrors(true);
 
-        C172PRunwayTestClient c172pClient = new C172PRunwayTestClient(config);
+        C172PRunwayBurnoutClient c172pClient = new C172PRunwayBurnoutClient(config);
                 
         C172PThing c172pThing = new C172PThing(C172P_THING_NAME, "Cessna 172P Thing", "", c172pClient);
         

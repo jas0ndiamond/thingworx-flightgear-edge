@@ -2,9 +2,9 @@ package org.jason.fgedge.c172p.things;
 
 import java.util.ArrayList;
 
+import org.jason.fgcontrol.aircraft.c172p.C172PFields;
 import org.jason.fgcontrol.aircraft.fields.FlightGearFields;
 import org.jason.fgedge.util.EdgeUtilities;
-import org.jason.fgcontrol.aircraft.c172p.C172PFields;
 
 import com.thingworx.metadata.PropertyDefinition;
 import com.thingworx.types.BaseTypes;
