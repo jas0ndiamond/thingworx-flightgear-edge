@@ -21,8 +21,8 @@ public abstract class C172PDeviceScanner {
 	 * @param c172pThing	Our virtual thing that holds our remote properties
 	 * @param aircraftTelemetry		A map of telemetry fields and values
 	 * 
-	 * @throws Exception 
-	 * @throws NumberFormatException 
+	 * @throws Exception 	On any failures processing the telemetry state- fail the whole scan
+	 * @throws NumberFormatException	On any failures processing the telemetry state- fail the whole scan
 	 */
 	public static void DeviceScanner(
 		C172PThing c172pThing, 

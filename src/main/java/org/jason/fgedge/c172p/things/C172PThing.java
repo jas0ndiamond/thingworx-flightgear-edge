@@ -2,7 +2,8 @@ package org.jason.fgedge.c172p.things;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.TreeSet;
+import java.util.List;
+import java.util.Map;
 
 import org.jason.fgcontrol.aircraft.c172p.C172P;
 import org.jason.fgcontrol.aircraft.c172p.C172PConfig;
@@ -13,6 +14,7 @@ import org.jason.fgcontrol.aircraft.fields.FlightGearFields;
 import org.jason.fgcontrol.exceptions.AircraftStartupException;
 import org.jason.fgcontrol.flight.position.WaypointManager;
 import org.jason.fgcontrol.flight.position.WaypointPosition;
+import org.jason.fgedge.IAircraftThing;
 import org.jason.fgedge.sshd.EdgeSSHDServer;
 import org.jason.fgedge.util.EdgeUtilities;
 import org.slf4j.Logger;
@@ -31,23 +33,13 @@ import com.thingworx.types.constants.Aspects;
 import com.thingworx.types.constants.CommonPropertyNames;
 import com.thingworx.types.primitives.BooleanPrimitive;
 
-public class C172PThing extends VirtualThing {
+public class C172PThing extends VirtualThing implements IAircraftThing {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(C172PThing.class);
     
-    private static final long serialVersionUID = -1670069869427933890L;   
-
-    public static final int FLIGHTPLAN_RUNWAY = 0;
-    public static final int FLIGHTPLAN_FLYAROUND = 1;
+    public static final String C172P_DEFAULT_THING_NAME = "C172PThing"; 
     
-    public static final TreeSet<Integer> SUPPORTED_FLIGHTPLANS = new TreeSet<>() {
-        private static final long serialVersionUID = 304016809906622587L;
-
-        {
-            add(FLIGHTPLAN_RUNWAY);
-            add(FLIGHTPLAN_FLYAROUND);
-        }
-    };
+    private static final long serialVersionUID = -1670069869427933890L;   
     
     private final static boolean ENABLE_TUNNELING = true;
     
@@ -75,7 +67,7 @@ public class C172PThing extends VirtualThing {
     //a nice, clear, warm, bright date/time in western canada
     private final static String LAUNCH_TIME_GMT = "2021-07-01T20:00:00";
     
-    private C172P plane;
+    private C172P aircraft;
 
     //default plan is the runwaytest
     private int flightPlan;
@@ -97,8 +89,8 @@ public class C172PThing extends VirtualThing {
         super(name, description, identifer, client);
         
         ///////////////////////        
-        //init plane object
-        plane = new C172P(simConfig);
+        //init aircraft object
+        aircraft = new C172P(simConfig);
                 
         // Populate the thing shape with any properties, services, and events that are annotated in
         // this code
@@ -115,7 +107,9 @@ public class C172PThing extends VirtualThing {
 	        sshdServerThread.start();
 	    }
         
-        flightPlan = FLIGHTPLAN_FLYAROUND;
+        //fly around plan by default
+        //TODO: check config file
+        setFlightPlan(FLIGHTPLAN_FLYAROUND);
                 
         ///////////////////////
         //properties
@@ -147,49 +141,21 @@ public class C172PThing extends VirtualThing {
         //pitch correction event
         //low fuel event
         //water in fuel tank alert
-        
-        ///////////////////////
-        //configure flight thread
-        
-        flightThread = new Thread() {
-            @Override
-            public void run() {
-            	if(LOGGER.isTraceEnabled()) {
-            		LOGGER.trace("flight thread started");
-            	}
-                
-                //TODO: select a flight plan based on config
-                try {
-                    if( flightPlan == FLIGHTPLAN_RUNWAY ) {
-                        runRunwayFlightPlan();
-                    } else if ( flightPlan == FLIGHTPLAN_FLYAROUND ) {
-                        runFlyAroundFlightPlan();
-                    } else {
-                        LOGGER.error("Unsupported flight plan. Terminating.");
-                    }         
-                } catch (IOException e) {
-                    LOGGER.error(e.getMessage(), e);
-                } catch (AircraftStartupException e) {
-                    LOGGER.error(e.getMessage(), e);
-                } catch (Exception e) {
-                    LOGGER.error(e.getMessage(), e);
-                }
-                
-                if(LOGGER.isTraceEnabled()) {
-                	LOGGER.trace("flight thread returning");
-                }
-            }
-        };
+       
         
         ///////////////////////
     }
         
     public void setFlightPlan(int plan) {
-        flightPlan = plan;
+    	if(SUPPORTED_FLIGHTPLANS.contains(plan)) {
+    		flightPlan = plan;
+    	} else {
+    		LOGGER.warn("Ignoring unsupported flight plan");
+    	}
     }
     
     public void setRoute( ArrayList<WaypointPosition> route) {
-    	plane.setWaypoints(route);
+    	aircraft.setWaypoints(route);
     }
     
     private void init() throws Exception {
@@ -243,25 +209,58 @@ public class C172PThing extends VirtualThing {
         }
     }
     
-    //separate function, so plane can be started after bind
+    //separate function, so aircraft can be started after bind
     public void startupPlane() throws Exception {
         LOGGER.debug("startup invoked");
         
-        //start plane. function should return or it'll block everything else
-        plane.startupPlane();
+        //start aircraft. function should return or it'll block everything else
+        aircraft.startupPlane();
         
-        //set the parking brake so the plane doesn't start rolling
+        //set the parking brake so the aircraft doesn't start rolling
         //enabled by default, but the default c172p autostart disables it
-        plane.setParkingBrake(true);
+        aircraft.setParkingBrake(true);
         
         LOGGER.debug("startup returning");
     }
     
+    @Override
     public void executeFlightPlan() {
     	if(LOGGER.isTraceEnabled()) {
     		LOGGER.trace("executeFlightPlan invoked");
     	}
         
+        ///////////////////////
+        //configure flight thread
+        
+        flightThread = new Thread() {
+            @Override
+            public void run() {
+            	if(LOGGER.isTraceEnabled()) {
+            		LOGGER.trace("flight thread started");
+            	}
+                
+                try {
+                    if( flightPlan == FLIGHTPLAN_RUNWAY ) {
+                        runRunwayFlightPlan();
+                    } else if ( flightPlan == FLIGHTPLAN_FLYAROUND ) {
+                        runFlyAroundFlightPlan();
+                    } else {
+                        LOGGER.error("Unsupported flight plan. Terminating.");
+                    }         
+                } catch (IOException e) {
+                    LOGGER.error(e.getMessage(), e);
+                } catch (AircraftStartupException e) {
+                    LOGGER.error(e.getMessage(), e);
+                } catch (Exception e) {
+                    LOGGER.error(e.getMessage(), e);
+                }
+                
+                if(LOGGER.isTraceEnabled()) {
+                	LOGGER.trace("flight thread returning");
+                }
+            }
+        };
+    	
         //start the flight thread
         flightThread.start();
         
@@ -297,7 +296,11 @@ public class C172PThing extends VirtualThing {
         if(LOGGER.isTraceEnabled()) {
         	LOGGER.trace("processScanRequest returning");
         }
-
+    }
+    
+    @Override
+    public Map<String, String> getAircraftTelemetry() {
+    	return aircraft.getTelemetry();
     }
     
     /**
@@ -307,22 +310,15 @@ public class C172PThing extends VirtualThing {
      * 
      */
     private void scanDevice() throws Exception {
-    	
-    	//connectivityCallback(?)
-    	//defined by client?
-    	//connectivity not really part of thing model
-    	
-    	//how to manage boundary transitions?
-    	//this.getClient().isConnected()
-    	
-    	C172PDeviceScanner.DeviceScanner(this, plane.getTelemetry());
+    	    	
+    	C172PDeviceScanner.DeviceScanner(this, aircraft.getTelemetry());
 
         this.updateSubscribedProperties(SUBSCRIBED_PROPERTIES_UPDATE_TIMEOUT);
         this.updateSubscribedEvents(SUBSCRIBED_EVENTS_UPDATE_TIMEOUT);
     }
     
     /////////////////////////
-    //plane services
+    //aircraft services
     /////////////////////////
     
     //waypoints
@@ -346,7 +342,7 @@ public class C172PThing extends VirtualThing {
     	) Double longitude
     ) throws Exception
     {
-    	plane.addWaypoint(latitude, longitude);
+    	aircraft.addWaypoint(latitude, longitude);
     }
     
     @ThingworxServiceDefinition
@@ -369,7 +365,7 @@ public class C172PThing extends VirtualThing {
     	) Double longitude
     )
     {
-    	plane.addNextWaypoint(latitude, longitude);
+    	aircraft.addNextWaypoint(latitude, longitude);
     }
 
     //abandon all waypoints
@@ -379,7 +375,7 @@ public class C172PThing extends VirtualThing {
        description = "Abandon current waypoint in flight plan, and proceed to the next one."
     )
     public synchronized void AbandonCurrentWaypoint() {
-    	plane.abandonCurrentWaypoint();
+    	aircraft.abandonCurrentWaypoint();
     }
     
     //remove all waypoints
@@ -389,7 +385,7 @@ public class C172PThing extends VirtualThing {
        description = "Clear the flightplan"
     )
     public synchronized void ClearWaypoints() {
-    	plane.clearWaypoints();
+    	aircraft.clearWaypoints();
     }
     
     //remove waypoint
@@ -413,7 +409,7 @@ public class C172PThing extends VirtualThing {
     	) Double longitude
     )
     {
-    	plane.removeWaypoints(latitude, longitude);
+    	aircraft.removeWaypoints(latitude, longitude);
     }
     
     //Get the human-readable flightplan
@@ -434,8 +430,14 @@ public class C172PThing extends VirtualThing {
     	LOGGER.debug("Retrieving C172P flight plan");
     	
     	InfoTable table = new InfoTable(getDataShapeDefinition(FLIGHTPLAN_SHAPE_NAME));
-    	    	
-    	for( WaypointPosition wp : plane.getWaypoints()) {
+    	
+    	List<WaypointPosition> waypoints = aircraft.getWaypoints();
+    	
+    	//add current waypoint as first
+    	waypoints.add(0, aircraft.getCurrentWaypointTarget());
+    	
+    	//remaining waypoints    	
+    	for( WaypointPosition wp : waypoints) {
 			
     		//need to create a new vc for the row in the loop body
     		ValueCollection entry = new ValueCollection();
@@ -446,7 +448,8 @@ public class C172PThing extends VirtualThing {
 				EdgeUtilities.toThingworxPropertyName(FlightGearFields.LONGITUDE_FIELD), wp.getLongitude());
 			entry.SetNumberValue(
 				EdgeUtilities.toThingworxPropertyName(FlightGearFields.ALTITUDE_FIELD), wp.getAltitude());
-			entry.SetStringValue(WaypointManager.WAYPOINT_NAME_FIELD, wp.getName());
+			entry.SetStringValue(
+				EdgeUtilities.toThingworxPropertyName(WaypointManager.WAYPOINT_NAME_FIELD), wp.getName());
 			
 	    	LOGGER.debug("Logging waypoint: {}", entry.toString());
 			
@@ -478,7 +481,7 @@ public class C172PThing extends VirtualThing {
     {
         LOGGER.trace("SetFuelLevel invoked");
         
-        Double newFuelAmount = plane.getFuelTank0Capacity();
+        Double newFuelAmount = aircraft.getFuelTank0Capacity();
         Double tankCapacity = newFuelAmount;
         
         //guard rails
@@ -494,8 +497,8 @@ public class C172PThing extends VirtualThing {
         
         LOGGER.debug("Setting fuel level to: {}", newFuelAmount);
         
-        plane.setFuelTank0Level(newFuelAmount);
-        plane.setFuelTank1Level(newFuelAmount);
+        aircraft.setFuelTank0Level(newFuelAmount);
+        aircraft.setFuelTank1Level(newFuelAmount);
         
         LOGGER.trace("SetFuelLevel returning");
     }
@@ -525,8 +528,8 @@ public class C172PThing extends VirtualThing {
         
         LOGGER.debug("Setting fuel tank water amount to: {}", newWaterAmount);
         
-        plane.setFuelTank0WaterContamination(newWaterAmount);
-        plane.setFuelTank1WaterContamination(newWaterAmount);
+        aircraft.setFuelTank0WaterContamination(newWaterAmount);
+        aircraft.setFuelTank1WaterContamination(newWaterAmount);
         
         LOGGER.trace("SetFuelTankWaterContamination returning");
     }
@@ -551,17 +554,17 @@ public class C172PThing extends VirtualThing {
         entry.clear();
         
         entry.SetNumberValue(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_0_CAPACITY_FIELD), plane.getFuelTank0Capacity());
+                EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_0_CAPACITY_FIELD), aircraft.getFuelTank0Capacity());
         entry.SetNumberValue(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_0_LEVEL_FIELD), plane.getFuelTank0Level());
+                EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_0_LEVEL_FIELD), aircraft.getFuelTank0Level());
         entry.SetNumberValue(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_0_WATER_CONTAMINATION_FIELD), plane.getFuelTank0WaterContamination());
+                EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_0_WATER_CONTAMINATION_FIELD), aircraft.getFuelTank0WaterContamination());
         entry.SetNumberValue(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_1_CAPACITY_FIELD), plane.getFuelTank1Capacity());
+                EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_1_CAPACITY_FIELD), aircraft.getFuelTank1Capacity());
         entry.SetNumberValue(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_1_LEVEL_FIELD), plane.getFuelTank1Level());
+                EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_1_LEVEL_FIELD), aircraft.getFuelTank1Level());
         entry.SetNumberValue(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_1_WATER_CONTAMINATION_FIELD), plane.getFuelTank1WaterContamination());
+                EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_1_WATER_CONTAMINATION_FIELD), aircraft.getFuelTank1WaterContamination());
  
         InfoTable table = new InfoTable(getDataShapeDefinition(CONSUMABLES_SHAPE_NAME));
         table.addRow(entry);
@@ -593,7 +596,7 @@ public class C172PThing extends VirtualThing {
         
         LOGGER.debug("Setting battery switch to: {}", isEnabled);
         
-        plane.setBatterySwitch(isEnabled);
+        aircraft.setBatterySwitch(isEnabled);
         
         LOGGER.trace("SetBatterySwitch returning");
     }
@@ -617,7 +620,7 @@ public class C172PThing extends VirtualThing {
         if(mixtureAmount < 1.0 && mixtureAmount > 0.0) {
             LOGGER.debug("Setting mixture amount to: {}", mixtureAmount);
             
-            plane.setMixture(mixtureAmount);
+            aircraft.setMixture(mixtureAmount);
         } else {
             LOGGER.warn("Ignoring mixture change to invalid amount");
         }
@@ -644,7 +647,7 @@ public class C172PThing extends VirtualThing {
         if(throttleAmount < C172PFields.THROTTLE_MAX && throttleAmount > C172PFields.THROTTLE_MIN) {
             LOGGER.debug("Setting throttle amount to: {}", throttleAmount);
             
-            plane.setThrottle(throttleAmount);
+            aircraft.setThrottle(throttleAmount);
         } else {
             LOGGER.warn("Ignoring throttle change to invalid amount");
         }
@@ -677,7 +680,7 @@ public class C172PThing extends VirtualThing {
 
         LOGGER.debug("Setting aileron orientation to: {}", orientation);
 
-        plane.setAileron(orientation);
+        aircraft.setAileron(orientation);
 
         LOGGER.trace("SetAileron returning");
     }
@@ -700,7 +703,7 @@ public class C172PThing extends VirtualThing {
         
         LOGGER.debug("Setting AutoCoordination to: {}", isEnabled);
         
-        plane.setAutoCoordination(isEnabled);
+        aircraft.setAutoCoordination(isEnabled);
         
         LOGGER.trace("SetAutoCoordination returning");
     }
@@ -730,7 +733,7 @@ public class C172PThing extends VirtualThing {
 
         LOGGER.debug("Setting elevator orientation to: {}", orientation);
 
-        plane.setAileron(orientation);
+        aircraft.setAileron(orientation);
 
         LOGGER.trace("SetElevator returning");
     }
@@ -760,7 +763,7 @@ public class C172PThing extends VirtualThing {
 
         LOGGER.debug("Setting flaps orientation to: {}", orientation);
 
-        plane.setAileron(orientation);
+        aircraft.setAileron(orientation);
 
         LOGGER.trace("SetFlaps returning");
     }
@@ -790,7 +793,7 @@ public class C172PThing extends VirtualThing {
 
         LOGGER.debug("Setting elevator orientation to: {}", orientation);
 
-        plane.setAileron(orientation);
+        aircraft.setAileron(orientation);
 
         LOGGER.trace("SetRudder returning");
     }
@@ -818,8 +821,8 @@ public class C172PThing extends VirtualThing {
     {
         LOGGER.trace("SetParkingBrake invoked");
 
-        plane.setParkingBrake(enabled);
-        int brakeState = plane.getParkingBrakeEnabled();
+        aircraft.setParkingBrake(enabled);
+        int brakeState = aircraft.getParkingBrakeEnabled();
         
         LOGGER.debug("Got parking brake state {}", brakeState);
         
@@ -858,29 +861,29 @@ public class C172PThing extends VirtualThing {
         entry.clear();
         
         entry.SetIntegerValue(
-            EdgeUtilities.toThingworxPropertyName(C172PFields.BATTERY_SWITCH_FIELD), plane.getBatterySwitch());
+            EdgeUtilities.toThingworxPropertyName(C172PFields.BATTERY_SWITCH_FIELD), aircraft.getBatterySwitch());
         entry.SetNumberValue(
-            EdgeUtilities.toThingworxPropertyName(C172PFields.MIXTURE_FIELD), plane.getMixture());
+            EdgeUtilities.toThingworxPropertyName(C172PFields.MIXTURE_FIELD), aircraft.getMixture());
         entry.SetNumberValue(
-            EdgeUtilities.toThingworxPropertyName(C172PFields.THROTTLE_FIELD), plane.getThrottle());
+            EdgeUtilities.toThingworxPropertyName(C172PFields.THROTTLE_FIELD), aircraft.getThrottle());
         entry.SetNumberValue(
-            EdgeUtilities.toThingworxPropertyName(C172PFields.AILERON_FIELD), plane.getAileron());
+            EdgeUtilities.toThingworxPropertyName(C172PFields.AILERON_FIELD), aircraft.getAileron());
         entry.SetIntegerValue(
-            EdgeUtilities.toThingworxPropertyName(C172PFields.AUTO_COORDINATION_FIELD), plane.getAutoCoordination());
+            EdgeUtilities.toThingworxPropertyName(C172PFields.AUTO_COORDINATION_FIELD), aircraft.getAutoCoordination());
         entry.SetNumberValue(
-            EdgeUtilities.toThingworxPropertyName(C172PFields.AUTO_COORDINATION_FACTOR_FIELD), plane.getAutoCoordinationFactor());
+            EdgeUtilities.toThingworxPropertyName(C172PFields.AUTO_COORDINATION_FACTOR_FIELD), aircraft.getAutoCoordinationFactor());
         entry.SetNumberValue(
-            EdgeUtilities.toThingworxPropertyName(C172PFields.ELEVATOR_FIELD), plane.getElevator());
+            EdgeUtilities.toThingworxPropertyName(C172PFields.ELEVATOR_FIELD), aircraft.getElevator());
         entry.SetNumberValue(
-            EdgeUtilities.toThingworxPropertyName(C172PFields.FLAPS_FIELD), plane.getFlaps());
+            EdgeUtilities.toThingworxPropertyName(C172PFields.FLAPS_FIELD), aircraft.getFlaps());
         entry.SetNumberValue(
-            EdgeUtilities.toThingworxPropertyName(C172PFields.RUDDER_FIELD), plane.getRudder());
+            EdgeUtilities.toThingworxPropertyName(C172PFields.RUDDER_FIELD), aircraft.getRudder());
         entry.SetNumberValue(
-            EdgeUtilities.toThingworxPropertyName(C172PFields.SPEED_BRAKE_FIELD), plane.getSpeedbrake());
+            EdgeUtilities.toThingworxPropertyName(C172PFields.SPEED_BRAKE_FIELD), aircraft.getSpeedbrake());
         entry.SetIntegerValue(
-            EdgeUtilities.toThingworxPropertyName(C172PFields.PARKING_BRAKE_FIELD), plane.getParkingBrake());
+            EdgeUtilities.toThingworxPropertyName(C172PFields.PARKING_BRAKE_FIELD), aircraft.getParkingBrake());
         entry.SetIntegerValue(
-            EdgeUtilities.toThingworxPropertyName(C172PFields.GEAR_DOWN_FIELD), plane.getGearDown());
+            EdgeUtilities.toThingworxPropertyName(C172PFields.GEAR_DOWN_FIELD), aircraft.getGearDown());
         
         InfoTable table = new InfoTable(getDataShapeDefinition(CONTROL_SHAPE_NAME));
         table.addRow(entry);
@@ -940,13 +943,10 @@ public class C172PThing extends VirtualThing {
      * Set the parking brake on. Start the engines. Move the throttle around while fuel is consumed.
      * Executed in the flightplan thread.
      * 
-     * @throws IOException 
-     * @throws AircraftStartupException 
-     * 
      * @throws Exception 
      *
      */
-    private void runRunwayFlightPlan() throws IOException, AircraftStartupException {
+    private void runRunwayFlightPlan() throws Exception {
         
     	double testFuelAmount = 4.0;
     	
@@ -955,39 +955,31 @@ public class C172PThing extends VirtualThing {
         
         
         //refill in case a previous run emptied it
-        plane.refillFuel();
+        aircraft.refillFuel();
 
         //probably not going to happen but do it anyway
-        plane.setDamageEnabled(false);
+        aircraft.setDamageEnabled(false);
         
         //a full fuel tank will take a while
-        plane.setFuelTank0Level(testFuelAmount);
-        plane.setFuelTank1Level(testFuelAmount);  
+        aircraft.setFuelTank0Level(testFuelAmount);
+        aircraft.setFuelTank1Level(testFuelAmount);  
         
-        try {
-			RunwayBurnoutFlightExecutor.runFlight(plane);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		RunwayBurnoutFlightExecutor.runFlight(aircraft);
      
         LOGGER.debug("Exiting runtime loop");
         
         //at higher speedups the simulator window is unusable, so return it to something usable
-        plane.setSimSpeedUp(1);
+        aircraft.setSimSpeedUp(1);
 
 
         
         LOGGER.info("Flight operation ended. Shutting down FlightGear connection.");
         
-        //shut down the plane
-        plane.shutdown();
+        //shut down the aircraft
+        aircraft.shutdown();
         
         //signal the flight thread to shutdown
-        try {
-			Shutdown();
-		} catch (Exception e) {
-            LOGGER.warn("Exception during virtual thing shutdown", e);
-		}
+		Shutdown();
         
         LOGGER.info("FlightPlan thread runRunwayFlightPlan returning");
     }
@@ -995,45 +987,39 @@ public class C172PThing extends VirtualThing {
     /**
      * Function for managing the flight. Fly through the waypoint plan. Allow services to add waypoint
      * Executed in the flightplan thread.
-     * 
-     * @throws IOException 
-     * @throws AircraftStartupException 
+     * @throws Exception 
      *
      */
-    private void runFlyAroundFlightPlan() throws IOException, AircraftStartupException {
+    private void runFlyAroundFlightPlan() throws Exception {
         
         LOGGER.info("C172PThing runFlyAroundFlightPlan thread starting");
                
-        //plane route should have been set before this function is invoked
+        //aircraft route should have been set before this function is invoked
 
 		// set chase view
-		plane.setCurrentView(2);
+		aircraft.setCurrentView(2);
 
-		plane.setDamageEnabled(false);
-		plane.setComplexEngineProcedures(false);
-		plane.setWinterKitInstalled(true);
-		plane.setGMT(LAUNCH_TIME_GMT);
+		aircraft.setDamageEnabled(false);
+		aircraft.setComplexEngineProcedures(false);
+		aircraft.setWinterKitInstalled(true);
+		aircraft.setGMT(LAUNCH_TIME_GMT);
 
 		// in case we get a previously lightly-used environment
-		plane.refillFuel();
-		plane.setBatteryCharge(C172PFields.BATTERY_CHARGE_MAX);
+		aircraft.refillFuel();
+		aircraft.setBatteryCharge(C172PFields.BATTERY_CHARGE_MAX);
 		
 		// kick off our flight in the main thread
-		WaypointFlightExecutor.runFlight(plane);
+		WaypointFlightExecutor.runFlight(aircraft);
 
-		// pause so the plane doesn't list from its heading and crash
-		plane.setPause(true);
+		// pause so the aircraft doesn't list from its heading and crash
+		aircraft.setPause(true);
 
         LOGGER.info("Flight operation ended. Shutting down FlightGear connection.");
         
-        plane.shutdown();
+        aircraft.shutdown();
         
-        LOGGER.info("FlightPlan thread runFlyAroundFlightPlan returning");
-        
-        try {
-			Shutdown();
-		} catch (Exception e) {
-            LOGGER.warn("Exception during virtual thing shutdown", e);
-		}
+		Shutdown();
+		
+		LOGGER.info("FlightPlan thread runFlyAroundFlightPlan returning");
     }
 }

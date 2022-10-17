@@ -13,13 +13,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.thingworx.communications.client.ClientConfigurator;
-import com.thingworx.communications.client.ConnectedThingClient;
 
-public class F15CWaypointFlightClient extends ConnectedThingClient {
+public class F15CWaypointFlightClient extends F15CClient {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(F15CWaypointFlightClient.class);
-          
-    private static final int SCAN_RATE = 250;
     
     private static final int CONNECT_TIMEOUT = 5 * 1000;
     private static final int BIND_TIMEOUT = 5 * 1000;
@@ -48,14 +45,17 @@ public class F15CWaypointFlightClient extends ConnectedThingClient {
     	
     	String twxConfigFile = "./conf/twx_edge.properties";
     	String simConfigFile = "./conf/f15c.properties";
+    	
     	if(args.length == 2) {
-    		twxConfigFile = args[0];	
-    		simConfigFile = args[1];	
+    		twxConfigFile = args[0];
+    		simConfigFile = args[1];
     	}
-    	else {
-    		System.out.println("Usage: App twx_edge.properties sim.properties");
+    	else if(args.length == 1 && args[0].equals("-h")) {
+    		System.err.println("Usage: App twx_edge.properties sim.properties");
     		System.exit(1);
     	}
+    	
+    	LOGGER.info("Using twx config file {} and sim config file {}", twxConfigFile, simConfigFile);
         
     	Properties twxConfig = new Properties();
     	twxConfig.load(new FileInputStream(twxConfigFile) );
@@ -84,13 +84,17 @@ public class F15CWaypointFlightClient extends ConnectedThingClient {
         config.setSecurityClaims( new AppKeyCallback(appKey) );
         config.ignoreSSLErrors(true);
         
-        String thingName = simConfig.getProperty(TWXConfigDirectives.THINGNAME_DIRECTIVE);
+        String thingName = F15CThing.F15C_DEFAULT_THING_NAME;
+        
+        if(simConfig.containsKey(TWXConfigDirectives.THINGNAME_DIRECTIVE)) {
+        	thingName = simConfig.getProperty(TWXConfigDirectives.THINGNAME_DIRECTIVE);
+        }
         
         F15CConfig f15cConfig = new F15CConfig(simConfig);
 
         F15CWaypointFlightClient f15cClient = new F15CWaypointFlightClient(config);
                 
-        F15CThing f15cThing = new F15CThing(thingName, "McD F15C Thing", "", f15cClient, f15cConfig);
+        F15CThing f15cThing = new F15CThing(thingName, "McD F15C Thing - " + f15cConfig.getAircraftName(), "", f15cClient, f15cConfig);
         
         f15cThing.setRoute( KnownRoutes.VAN_ISLAND_TOUR_SOUTH );
 
@@ -131,7 +135,7 @@ public class F15CWaypointFlightClient extends ConnectedThingClient {
             f15cThing.executeFlightPlan();
             
             //edge main execution - blocks and signals shutdown of thing/client when the flightplan is done
-            edgeOperation(f15cClient, thingName);
+            edgeOperation(f15cClient, f15cThing);
             
             LOGGER.info("Exiting edge run loop");
         }
@@ -146,37 +150,37 @@ public class F15CWaypointFlightClient extends ConnectedThingClient {
      * 
      * @param client
      */
-    private static void edgeOperation(ConnectedThingClient client, String thingName) {
-                 	
-        while ( !client.isShutdown()) {
-            // Only process the Virtual Things if the client is connected
-            if (client.isConnected()) {
-                
-            	if(LOGGER.isTraceEnabled()) {
-            		LOGGER.trace("runtime cycle started");
-            	}
-                
-                try {
-                    //twx-edge execution. 
-                    client.getThing(thingName).processScanRequest();
-                } catch (Exception e) {
-                    LOGGER.warn("Exception occurred during processScanRequest", e);
-                }
-                
-                if(LOGGER.isTraceEnabled()) {
-                	LOGGER.trace("runtime cycle completed");
-                }
-            }
-            else {
-                LOGGER.warn("Client disconnected");
-            }
-            
-            // Suspend processing at the scan rate interval
-            try {
-                Thread.sleep(SCAN_RATE);
-            } catch (InterruptedException e) {
-                LOGGER.warn(e.getMessage(), e);
-            }
-        }
-    }
+//    private static void edgeOperation(ConnectedThingClient client, String thingName) {
+//                 	
+//        while ( !client.isShutdown()) {
+//            // Only process the Virtual Things if the client is connected
+//            if (client.isConnected()) {
+//                
+//            	if(LOGGER.isTraceEnabled()) {
+//            		LOGGER.trace("runtime cycle started");
+//            	}
+//                
+//                try {
+//                    //twx-edge execution. 
+//                    client.getThing(thingName).processScanRequest();
+//                } catch (Exception e) {
+//                    LOGGER.warn("Exception occurred during processScanRequest", e);
+//                }
+//                
+//                if(LOGGER.isTraceEnabled()) {
+//                	LOGGER.trace("runtime cycle completed");
+//                }
+//            }
+//            else {
+//                LOGGER.warn("Client disconnected");
+//            }
+//            
+//            // Suspend processing at the scan rate interval
+//            try {
+//                Thread.sleep(SCAN_RATE);
+//            } catch (InterruptedException e) {
+//                LOGGER.warn(e.getMessage(), e);
+//            }
+//        }
+//    }
 }
