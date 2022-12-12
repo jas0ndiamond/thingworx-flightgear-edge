@@ -1,4 +1,5 @@
 apply plugin: 'java'
+apply plugin: 'eclipse'
 apply from: 'dependencies.gradle'
 
 sourceCompatibility = JavaVersion.VERSION_11
@@ -34,17 +35,27 @@ dependencies {
     implementation libs.geotools
     implementation libs.mina_sshd
     
-
-    //edge java sdk 7.0.0
-    implementation fileTree(dir: project.file("lib/"), include: ['thingworx-java-sdk-7.0.0.jar'])
+    //edge java sdk 7.0.1
+    implementation fileTree(dir: project.file("lib/"), include: ['thingworx-java-sdk-7.0.1.jar'])
     
-    //flightgear control 1.0.0
-    implementation fileTree(dir: project.file("lib/"), include: ["flightgear-control-0.2.jar"])
+    //flightgear-control 0.2.0
+    implementation fileTree(dir: project.file("lib/"), include: ["flightgear-control-0.2.jar"])  
+}
 
-    //flightgear control source 1.0.0
-    //compile fileTree(dir: project.file("lib/"), include: ["flightgear-control-1.0.0-src.jar"])
-    //implementation fileTree(dir: 'lib', include: 'flightgear-control-1.0.0-src.jar')
-    //testImplementation fileTree(dir: 'lib', include: 'flightgear-control-1.0.0-src.jar')    
+eclipse {
+    //load sources jars for flightgear-control and the twx java sdk
+    
+    classpath {
+        file {
+            whenMerged { 
+                def lib = entries.find { it.path.contains 'flightgear-control-0.2.jar' }
+                lib.sourcePath = fileReference(file('lib/flightgear-control-0.2-src.jar'))
+                
+                lib = entries.find { it.path.contains 'thingworx-java-sdk-7.0.1.jar' }
+                lib.sourcePath = fileReference(file('lib/thingworx-java-sdk-7.0.1-src.jar'))
+            }
+        }
+    }
 }
 
 sourceSets {
