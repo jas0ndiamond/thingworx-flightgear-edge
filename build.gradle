@@ -77,14 +77,6 @@ sourceSets {
     }
 }
 
-compileJava {
-    //for perc
-    exclude (
-        'org/jason/fgedge/connectivity**',
-        'org/jason/fgedge/c172p/client/C172PWaypointFlightVariableConnectivityClient.java'
-    )
-}
-
 jar {
     archiveBaseName = title 
     archiveVersion = projectVersion
@@ -116,3 +108,18 @@ jar {
         )
     }
 }
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'src'
+    archiveVersion = projectVersion
+    
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    
+    from sourceSets.main.allSource 
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
