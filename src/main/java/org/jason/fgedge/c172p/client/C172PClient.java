@@ -11,7 +11,7 @@ public class C172PClient extends ConnectedThingClient {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(C172PClient.class);
 	
-	private static final int SCAN_RATE = 250;
+	protected static final int SCAN_RATE = 2000;
 	
 	public C172PClient(ClientConfigurator config) throws Exception {
 		super(config);

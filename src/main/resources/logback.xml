@@ -37,8 +37,11 @@
     
     
     <logger name="com.thingworx" level="INFO" />
+    
+    <!-- loud at info level -->
+    <logger name="com.thingworx.communications.client.connection.netty.NettyProxyHandler" level="WARN" />
 
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="${consoleAppenderName}" />
         <appender-ref ref="${fileAppenderName}" />
     </root>

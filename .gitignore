@@ -36,3 +36,5 @@ bin/
 /build/
 
 /lib/thingworx*.jar
+
+lib/flightgear-control-*-app.jar

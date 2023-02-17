@@ -16,7 +16,6 @@ import org.jason.fgcontrol.exceptions.FlightGearSetupException;
 import org.jason.fgcontrol.flight.position.WaypointManager;
 import org.jason.fgcontrol.flight.position.WaypointPosition;
 import org.jason.fgedge.IAircraftThing;
-import org.jason.fgedge.sshd.EdgeSSHDServer;
 import org.jason.fgedge.util.EdgeUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,9 +40,7 @@ public class F15CThing extends VirtualThing implements IAircraftThing {
     private static final long serialVersionUID = -1670069869427933890L;   
     
     public static final String F15C_DEFAULT_THING_NAME = "F15CThing"; 
-    
-    private final static boolean ENABLE_TUNNELING = true;
-    
+        
     //////////
     
     private final static int SUBSCRIBED_PROPERTIES_UPDATE_TIMEOUT = 250;
@@ -51,18 +48,18 @@ public class F15CThing extends VirtualThing implements IAircraftThing {
         
     ////////
     //datashape names
-    private final static String CONSUMABLES_SHAPE_NAME = "ConsumablesShape";
-    private final static String CONTROL_SHAPE_NAME = "ControlShape";
-    private final static String ENGINE_SHAPE_NAME = "EngineShape";
-    private final static String ENVIRONMENT_SHAPE_NAME = "EnvironmentShape";
-    private final static String FDM_SHAPE_NAME = "FDMShape";
-    private final static String ORIENTATION_SHAPE_NAME = "OrientationShape";
-    private final static String POSITION_SHAPE_NAME = "PositionShape";
-    private final static String SIM_SHAPE_NAME = "SimShape";
-    private final static String SIM_MODEL_SHAPE_NAME = "SimModelShape";
-    private final static String VELOCITIES_SHAPE_NAME = "VelocitiesShape";
+    private final static String CONSUMABLES_SHAPE_NAME = "F15C_ConsumablesShape";
+    private final static String CONTROL_SHAPE_NAME = "F15C_ControlShape";
+    private final static String ENGINE_SHAPE_NAME = "F15C_EngineShape";
+    private final static String ENVIRONMENT_SHAPE_NAME = "F15C_EnvironmentShape";
+    private final static String FDM_SHAPE_NAME = "F15C_FDMShape";
+    private final static String ORIENTATION_SHAPE_NAME = "F15C_OrientationShape";
+    private final static String POSITION_SHAPE_NAME = "F15C_PositionShape";
+    private final static String SIM_SHAPE_NAME = "F15C_SimShape";
+    private final static String SIM_MODEL_SHAPE_NAME = "F15C_SimModelShape";
+    private final static String VELOCITIES_SHAPE_NAME = "F15C_VelocitiesShape";
     
-    private final static String FLIGHTPLAN_SHAPE_NAME = "FlightPlanShape";
+    private final static String FLIGHTPLAN_SHAPE_NAME = "F15C_FlightPlanShape";
        
     //a nice, clear, warm, bright date/time in western canada
     private final static String LAUNCH_TIME_GMT = "2021-07-01T20:00:00";
@@ -73,9 +70,6 @@ public class F15CThing extends VirtualThing implements IAircraftThing {
     private int flightPlan;
     
     private Thread flightThread;
-
-	private EdgeSSHDServer sshdServer = null;
-	private Thread sshdServerThread;
 
 	public F15CThing(String name, String description, String identifer, ConnectedThingClient client) throws Exception {
 		this(name, description, identifer, client, new F15CConfig());
@@ -92,17 +86,7 @@ public class F15CThing extends VirtualThing implements IAircraftThing {
         // this code
         super.initializeFromAnnotations();
         this.init();
-        
-        //edge embedded sshd server
-        if(ENABLE_TUNNELING) {
-        	
-        	//TODO: grab any relevant directives from the config file
-        	
-	        sshdServer = new EdgeSSHDServer();
-	        sshdServerThread = new Thread(sshdServer);
-	        sshdServerThread.start();
-	    }
-        
+                
         //fly around plan by default
         //TODO: check config file
         setFlightPlan(FLIGHTPLAN_FLYAROUND);
@@ -487,7 +471,7 @@ public class F15CThing extends VirtualThing implements IAircraftThing {
     	) Double fuelLevel
     ) throws Exception 
     {
-        LOGGER.trace("SetFuelLevel invoked");
+        LOGGER.debug("SetFuelLevel invoked");
         
         Double newFuelAmount = aircraft.getFuelTank0Capacity();
         Double tankCapacity = newFuelAmount;
@@ -508,7 +492,7 @@ public class F15CThing extends VirtualThing implements IAircraftThing {
         aircraft.setFuelTank0Level(newFuelAmount);
         aircraft.setFuelTank1Level(newFuelAmount);
         
-        LOGGER.trace("SetFuelLevel returning");
+        LOGGER.debug("SetFuelLevel returning");
     }
     
     @ThingworxServiceDefinition
@@ -525,7 +509,7 @@ public class F15CThing extends VirtualThing implements IAircraftThing {
         ) Double waterAmount
     ) throws Exception 
     {
-        LOGGER.trace("SetFuelTankWaterContamination invoked");
+        LOGGER.debug("SetFuelTankWaterContamination invoked");
         
         double newWaterAmount = 0;
         
@@ -536,7 +520,7 @@ public class F15CThing extends VirtualThing implements IAircraftThing {
         
         LOGGER.debug("Setting fuel tank water amount to: {}", newWaterAmount);
         
-        LOGGER.trace("SetFuelTankWaterContamination returning");
+        LOGGER.debug("SetFuelTankWaterContamination returning");
     }
     
     @ThingworxServiceDefinition
@@ -553,7 +537,7 @@ public class F15CThing extends VirtualThing implements IAircraftThing {
     )
     public synchronized InfoTable GetConsumablesTelemetry() throws Exception 
     {
-        LOGGER.trace("GetConsumablesTelemetry invoked");
+        LOGGER.debug("GetConsumablesTelemetry invoked");
 
         ValueCollection entry = new ValueCollection();
         entry.clear();
@@ -582,7 +566,7 @@ public class F15CThing extends VirtualThing implements IAircraftThing {
         InfoTable table = new InfoTable(getDataShapeDefinition(CONSUMABLES_SHAPE_NAME));
         table.addRow(entry);
         
-        LOGGER.trace("GetConsumablesTelemetry returning");
+        LOGGER.debug("GetConsumablesTelemetry returning");
         
         return table;
     }
@@ -605,13 +589,13 @@ public class F15CThing extends VirtualThing implements IAircraftThing {
         ) Boolean isEnabled
     ) throws Exception 
     {
-        LOGGER.trace("SetBatterySwitch invoked");
+        LOGGER.debug("SetBatterySwitch invoked");
         
         LOGGER.debug("Setting battery switch to: {}", isEnabled);
         
         aircraft.setBatterySwitch(isEnabled);
         
-        LOGGER.trace("SetBatterySwitch returning");
+        LOGGER.debug("SetBatterySwitch returning");
     }
     
     @ThingworxServiceDefinition
@@ -628,7 +612,7 @@ public class F15CThing extends VirtualThing implements IAircraftThing {
         ) Double throttleAmount
     ) throws Exception 
     {
-        LOGGER.trace("SetThrottle invoked");
+        LOGGER.debug("SetThrottle invoked");
         
         if(throttleAmount < F15CFields.THROTTLE_MAX && throttleAmount > F15CFields.THROTTLE_MIN) {
             LOGGER.debug("Setting throttle amount to: {}", throttleAmount);
@@ -638,7 +622,7 @@ public class F15CThing extends VirtualThing implements IAircraftThing {
             LOGGER.warn("Ignoring throttle change to invalid amount");
         }
                 
-        LOGGER.trace("SetThrottle returning");
+        LOGGER.debug("SetThrottle returning");
     }
     
     @ThingworxServiceDefinition
@@ -655,7 +639,7 @@ public class F15CThing extends VirtualThing implements IAircraftThing {
         ) Double orientation
     ) throws Exception 
     {
-        LOGGER.trace("SetAileron invoked");
+        LOGGER.debug("SetAileron invoked");
         
         //guardrails -1.0 <-> 1.0
         if(orientation < F15CFields.AILERON_MIN) {
@@ -668,7 +652,7 @@ public class F15CThing extends VirtualThing implements IAircraftThing {
 
         aircraft.setAileron(orientation);
 
-        LOGGER.trace("SetAileron returning");
+        LOGGER.debug("SetAileron returning");
     }
     
     @ThingworxServiceDefinition
@@ -685,13 +669,13 @@ public class F15CThing extends VirtualThing implements IAircraftThing {
         ) Boolean isEnabled
     ) throws Exception 
     {
-        LOGGER.trace("SetAutoCoordination invoked");
+        LOGGER.debug("SetAutoCoordination invoked");
         
         LOGGER.debug("Setting AutoCoordination to: {}", isEnabled);
         
         aircraft.setAutoCoordination(isEnabled);
         
-        LOGGER.trace("SetAutoCoordination returning");
+        LOGGER.debug("SetAutoCoordination returning");
     }
     
     @ThingworxServiceDefinition
@@ -708,7 +692,7 @@ public class F15CThing extends VirtualThing implements IAircraftThing {
         ) Double orientation
     ) throws Exception 
     {
-        LOGGER.trace("SetElevator invoked");
+        LOGGER.debug("SetElevator invoked");
         
         //guardrails -1 <-> 1
         if(orientation < F15CFields.ELEVATOR_MIN) {
@@ -721,7 +705,7 @@ public class F15CThing extends VirtualThing implements IAircraftThing {
 
         aircraft.setAileron(orientation);
 
-        LOGGER.trace("SetElevator returning");
+        LOGGER.debug("SetElevator returning");
     }
     
     @ThingworxServiceDefinition
@@ -738,7 +722,7 @@ public class F15CThing extends VirtualThing implements IAircraftThing {
         ) Double orientation
     ) throws Exception 
     {
-        LOGGER.trace("SetFlaps invoked");
+        LOGGER.debug("SetFlaps invoked");
         
         //guardrails 0 <-> 1
         if(orientation < F15CFields.FLAPS_MIN) {
@@ -751,7 +735,7 @@ public class F15CThing extends VirtualThing implements IAircraftThing {
 
         aircraft.setAileron(orientation);
 
-        LOGGER.trace("SetFlaps returning");
+        LOGGER.debug("SetFlaps returning");
     }
     
     @ThingworxServiceDefinition
@@ -768,7 +752,7 @@ public class F15CThing extends VirtualThing implements IAircraftThing {
         ) Double orientation
     ) throws Exception 
     {
-        LOGGER.trace("SetRudder invoked");
+        LOGGER.debug("SetRudder invoked");
         
         //guardrails 0 <-> 1
         if(orientation < F15CFields.ELEVATOR_MIN) {
@@ -781,7 +765,7 @@ public class F15CThing extends VirtualThing implements IAircraftThing {
 
         aircraft.setAileron(orientation);
 
-        LOGGER.trace("SetRudder returning");
+        LOGGER.debug("SetRudder returning");
     }
     
     @ThingworxServiceDefinition
@@ -805,7 +789,7 @@ public class F15CThing extends VirtualThing implements IAircraftThing {
         ) Boolean enabled
     ) throws Exception 
     {
-        LOGGER.trace("SetParkingBrake invoked");
+        LOGGER.debug("SetParkingBrake invoked");
 
         aircraft.setParkingBrake(enabled);
         int brakeState = aircraft.getParkingBrakeEnabled();
@@ -820,7 +804,7 @@ public class F15CThing extends VirtualThing implements IAircraftThing {
         InfoTable table = new InfoTable(getDataShapeDefinition(SIM_MODEL_SHAPE_NAME));
         table.addRow(entry);
         
-        LOGGER.trace("SetParkingBrake returning");
+        LOGGER.debug("SetParkingBrake returning");
         
         return table;
     }
@@ -839,13 +823,17 @@ public class F15CThing extends VirtualThing implements IAircraftThing {
     )
     public synchronized InfoTable GetControlTelemetry() throws Exception 
     {
-        LOGGER.trace("GetControlTelemetry invoked");
+        LOGGER.debug("GetControlTelemetry invoked");
 
         ValueCollection entry = new ValueCollection();
         entry.clear();
         
         entry.SetIntegerValue(
             EdgeUtilities.toThingworxPropertyName(F15CFields.BATTERY_SWITCH_FIELD), aircraft.getBatterySwitch());
+        entry.SetNumberValue(
+            EdgeUtilities.toThingworxPropertyName(F15CFields.ENGINE_0_CUTOFF_FIELD), aircraft.getEngine0Cutoff());
+        entry.SetNumberValue(
+            EdgeUtilities.toThingworxPropertyName(F15CFields.ENGINE_1_CUTOFF_FIELD), aircraft.getEngine1Cutoff());
         entry.SetNumberValue(
             EdgeUtilities.toThingworxPropertyName(F15CFields.ENGINE_0_MIXTURE_FIELD), aircraft.getEngine0Mixture());
         entry.SetNumberValue(
@@ -876,7 +864,7 @@ public class F15CThing extends VirtualThing implements IAircraftThing {
         InfoTable table = new InfoTable(getDataShapeDefinition(CONTROL_SHAPE_NAME));
         table.addRow(entry);
         
-        LOGGER.trace("GetControlTelemetry returning");
+        LOGGER.debug("GetControlTelemetry returning");
         
         return table;
     }
@@ -885,18 +873,99 @@ public class F15CThing extends VirtualThing implements IAircraftThing {
     //orientation
     /////////////////////////
     
+    //Dedicated service for a telemetry subset 
+    @ThingworxServiceDefinition
+    (
+    	name = "GetOrientationTelemetry", 
+        description = "Get orientation fields for the F15C"
+    )
+    @ThingworxServiceResult
+    (
+        name = CommonPropertyNames.PROP_RESULT, 
+        description = "InfoTable of orientation values", 
+        baseType = "INFOTABLE",
+        aspects = { "dataShape:" + ORIENTATION_SHAPE_NAME }
+    )
+    public InfoTable GetOrientationTelemetry() throws Exception {
+        
+    	LOGGER.debug("GetOrientationTelemetry invoked");
+
+
+        ValueCollection entry = new ValueCollection();
+        entry.clear();
+
+        entry.SetNumberValue(
+            EdgeUtilities.toThingworxPropertyName(FlightGearFields.ALPHA_FIELD), aircraft.getAlpha());
+        entry.SetNumberValue(
+            EdgeUtilities.toThingworxPropertyName(FlightGearFields.BETA_FIELD), aircraft.getBeta());
+        entry.SetNumberValue(
+        	EdgeUtilities.toThingworxPropertyName(FlightGearFields.HEADING_FIELD), aircraft.getHeading());
+        entry.SetNumberValue(
+            EdgeUtilities.toThingworxPropertyName(FlightGearFields.HEADING_MAG_FIELD), aircraft.getHeadingMag());
+        entry.SetNumberValue(
+            EdgeUtilities.toThingworxPropertyName(FlightGearFields.PITCH_FIELD), aircraft.getPitch());
+        entry.SetNumberValue(
+            EdgeUtilities.toThingworxPropertyName(FlightGearFields.ROLL_FIELD), aircraft.getRoll());
+        entry.SetNumberValue(
+            EdgeUtilities.toThingworxPropertyName(FlightGearFields.TRACK_FIELD), aircraft.getTrack());
+        entry.SetNumberValue(
+            EdgeUtilities.toThingworxPropertyName(FlightGearFields.TRACK_MAG_FIELD), aircraft.getTrackMag());
+        entry.SetNumberValue(
+            EdgeUtilities.toThingworxPropertyName(FlightGearFields.YAW_FIELD), aircraft.getYaw());
+        entry.SetNumberValue(
+            EdgeUtilities.toThingworxPropertyName(FlightGearFields.YAW_RATE_FIELD), aircraft.getYawRate());
+
+        
+        InfoTable table = new InfoTable(getDataShapeDefinition(ORIENTATION_SHAPE_NAME));
+        table.addRow(entry);
+
+        LOGGER.debug("GetOrientationTelemetry returning");
+        
+        return table;
+    }
+    
     /////////////////////////
     //position
     /////////////////////////
     
-    
-    //Dedicated service for a telemetry subset 
-    public InfoTable GetOrientation() {
+    @ThingworxServiceDefinition
+    (
+    	name = "GetPositionTelemetry", 
+        description = "Get position fields for the F15C"
+    )
+    @ThingworxServiceResult
+    (
+        name = CommonPropertyNames.PROP_RESULT, 
+        description = "InfoTable of position values", 
+        baseType = "INFOTABLE",
+        aspects = { "dataShape:" + POSITION_SHAPE_NAME }
+    )
+    public InfoTable GetPositionTelemetry() throws Exception {
         
-        //read from 
+
+    	LOGGER.debug("GetPositionTelemetry invoked");
+
+        ValueCollection entry = new ValueCollection();
+        entry.clear();
+
+        entry.SetNumberValue(
+            EdgeUtilities.toThingworxPropertyName(FlightGearFields.ALTITUDE_FIELD), aircraft.getAltitude());
+        entry.SetNumberValue(
+            EdgeUtilities.toThingworxPropertyName(FlightGearFields.GROUND_ELEVATION_FIELD), aircraft.getGroundElevation());
+        entry.SetNumberValue(
+        	EdgeUtilities.toThingworxPropertyName(FlightGearFields.LATITUDE_FIELD), aircraft.getLatitude());
+        entry.SetNumberValue(
+            EdgeUtilities.toThingworxPropertyName(FlightGearFields.LONGITUDE_FIELD), aircraft.getLongitude());
         
-        return null;
+        InfoTable table = new InfoTable(getDataShapeDefinition(POSITION_SHAPE_NAME));
+        table.addRow(entry);
+        
+        LOGGER.debug("GetPositionTelemetry returning");
+        
+        return table;
     }
+
+    /////////////////////////
 
     @ThingworxServiceDefinition
     (
@@ -908,10 +977,6 @@ public class F15CThing extends VirtualThing implements IAircraftThing {
         LOGGER.debug("F15CThing shut down invoked");
                 
         this.getClient().shutdown();
-        
-        if(this.sshdServer != null) {
-        	this.sshdServer.shutdown();
-        }
         
         LOGGER.debug("F15CThing shut down completed");
     }

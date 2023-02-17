@@ -2,8 +2,13 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply from: 'dependencies.gradle'
 
-sourceCompatibility = JavaVersion.VERSION_11
-targetCompatibility = JavaVersion.VERSION_11
+//for later LTS
+//sourceCompatibility = JavaVersion.VERSION_11
+//targetCompatibility = JavaVersion.VERSION_11
+
+//for perc
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
     
@@ -15,7 +20,6 @@ repositories {
         url "https://repo.osgeo.org/repository/release/"
     }
     
-    jcenter()
     mavenCentral() 
         
     flatDir {
@@ -24,7 +28,14 @@ repositories {
 }
     
 ext {
-    projectVersion = "0.2"
+    projectVersion = "0.4"
+    
+    flightgearControlJar = "flightgear-control-0.4.jar"
+    flightgearControlSourceJar = "lib/flightgear-control-0.4-src.jar"
+    
+    twxJavaSDKJar = "thingworx-java-sdk-7.1.0a.jar";
+    twxJavaSDKSourceJar = "lib/thingworx-java-sdk-7.1.0a-src.jar"
+    
     title = "thingworx-flightgear-edge"
 }
 
@@ -33,13 +44,13 @@ dependencies {
     implementation libs.edge_sdk_libs
     implementation libs.flightgear_control
     implementation libs.geotools
-    implementation libs.mina_sshd
     
-    //edge java sdk 7.0.1
-    implementation fileTree(dir: project.file("lib/"), include: ['thingworx-java-sdk-7.0.1.jar'])
+    //edge java sdk 7.1.0a
+    //fixes dependency conflict and adds sources jar
+    implementation fileTree(dir: project.file("lib/"), include: [twxJavaSDKJar]) 
     
     //flightgear-control 0.2.0
-    implementation fileTree(dir: project.file("lib/"), include: ["flightgear-control-0.2.jar"])  
+    implementation fileTree(dir: project.file("lib/"), include: [flightgearControlJar])  
 }
 
 eclipse {
@@ -48,11 +59,11 @@ eclipse {
     classpath {
         file {
             whenMerged { 
-                def lib = entries.find { it.path.contains 'flightgear-control-0.2.jar' }
-                lib.sourcePath = fileReference(file('lib/flightgear-control-0.2-src.jar'))
+                def lib = entries.find { it.path.contains flightgearControlJar }
+                lib.sourcePath = fileReference(file(flightgearControlSourceJar))
                 
-                lib = entries.find { it.path.contains 'thingworx-java-sdk-7.0.1.jar' }
-                lib.sourcePath = fileReference(file('lib/thingworx-java-sdk-7.0.1-src.jar'))
+                lib = entries.find { it.path.contains twxJavaSDKJar }
+                lib.sourcePath = fileReference(file(twxJavaSDKSourceJar))
             }
         }
     }
@@ -66,28 +77,42 @@ sourceSets {
     }
 }
 
+compileJava {
+    //for perc
+    exclude (
+        'org/jason/fgedge/connectivity**',
+        'org/jason/fgedge/c172p/client/C172PWaypointFlightVariableConnectivityClient.java'
+    )
+}
+
 jar {
     archiveBaseName = title 
     archiveVersion = projectVersion
 
-    from(sourceSets.main.output)
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     
-    //fatjar
-    //from {
-        //runtimeClasspath for class files from local jars
-    //    configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
-    //}
+    from sourceSets.main.output    
     
-    
-    //no main, since we have a bunch of clients
     manifest {
-        
-    //    attributes ([
-    //        'Main-Class': 'org.jason.fgedge.sshd.EdgeSSHServerTester'
-    //    ])
-        
+        //no main- not directly runnable as we have multiple demo apps
+        attributes ([
+            "Package-Title": "flightgear-control",
+            "Package-Version": projectVersion
+        ])
     }
     
-    //need to exclude sig data from some libraries
-    exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA' 
+    from (configurations.runtimeClasspath.collect { entry -> zipTree(entry) }) {
+        //class files from classpath including thirdparty
+        //strip meta stuff that causes SecurityExceptions
+        exclude 'META-INF/MANIFEST.MF'
+        exclude 'META-INF/*.SF'
+        exclude 'META-INF/*.DSA'
+        exclude 'META-INF/*.RSA'
+        
+        //don't need testng resources
+        exclude (
+            'org/testng**/',
+            'testng*'
+        )
+    }
 }

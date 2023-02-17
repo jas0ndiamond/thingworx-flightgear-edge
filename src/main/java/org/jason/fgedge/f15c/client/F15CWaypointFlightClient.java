@@ -1,12 +1,14 @@
 package org.jason.fgedge.f15c.client;
 
 import java.io.FileInputStream;
+import java.util.ArrayList;
 import java.util.Properties;
 
 import org.jason.fgcontrol.aircraft.f15c.F15CConfig;
 import org.jason.fgcontrol.flight.position.KnownRoutes;
-import org.jason.fgedge.callback.AppKeyCallback;
-import org.jason.fgedge.config.TWXConfigDirectives;
+import org.jason.fgcontrol.flight.position.WaypointPosition;
+import org.jason.fgedge.config.EdgeConfig;
+import org.jason.fgedge.config.EdgeConfigVisitor;
 import org.jason.fgedge.f15c.things.F15CThing;
 import org.jason.fgedge.util.EdgeUtilities;
 import org.slf4j.Logger;
@@ -20,11 +22,7 @@ public class F15CWaypointFlightClient extends F15CClient {
     
     private static final int CONNECT_TIMEOUT = 5 * 1000;
     private static final int BIND_TIMEOUT = 5 * 1000;
-    
-    private final static String WS_PROTOCOL_STR = "wss://";
-    private final static String PLATFORM_URI_COMPONENT_STR = "/Thingworx/WS";
-
-    
+   
     public F15CWaypointFlightClient(ClientConfigurator config) throws Exception {
         super(config);
     }
@@ -57,11 +55,11 @@ public class F15CWaypointFlightClient extends F15CClient {
     	
     	LOGGER.info("Using twx config file {} and sim config file {}", twxConfigFile, simConfigFile);
         
-    	Properties twxConfig = new Properties();
-    	twxConfig.load(new FileInputStream(twxConfigFile) );
+    	Properties twxConfigProperties = new Properties();
+    	twxConfigProperties.load(new FileInputStream(twxConfigFile) );
     	
-    	Properties simConfig = new Properties();
-    	simConfig.load(new FileInputStream(simConfigFile) );
+    	Properties simConfigProperties = new Properties();
+    	simConfigProperties.load(new FileInputStream(simConfigFile) );
     	
     	//TODO: validate expected config directives are defined
         
@@ -70,35 +68,29 @@ public class F15CWaypointFlightClient extends F15CClient {
         //////////
         //input
         
-        //TODO: add guard rails for these
-        String host = twxConfig.getProperty(TWXConfigDirectives.PLATFORM_HOST_DIRECTIVE);
-        int port = Integer.parseInt(twxConfig.getProperty(TWXConfigDirectives.PLATFORM_PORT_DIRECTIVE));
-        String appKey = twxConfig.getProperty(TWXConfigDirectives.APPKEY_DIRECTIVE);
-               
-        String uri = WS_PROTOCOL_STR + host + ":" + port + PLATFORM_URI_COMPONENT_STR;
+        String thingName;
         
-        LOGGER.info("Launching with target uri: " + uri);
+        EdgeConfig twxClientConfig = new EdgeConfig(); 
+        EdgeConfigVisitor.buildEdgeConfig(twxClientConfig, twxConfigProperties);
         
-        ClientConfigurator config = new ClientConfigurator();
-        config.setUri(uri);
-        config.setSecurityClaims( new AppKeyCallback(appKey) );
-        config.ignoreSSLErrors(true);
-        
-        String thingName = F15CThing.F15C_DEFAULT_THING_NAME;
-        
-        if(simConfig.containsKey(TWXConfigDirectives.THINGNAME_DIRECTIVE)) {
-        	thingName = simConfig.getProperty(TWXConfigDirectives.THINGNAME_DIRECTIVE);
-        }
-        
-        F15CConfig f15cConfig = new F15CConfig(simConfig);
-
-        F15CWaypointFlightClient f15cClient = new F15CWaypointFlightClient(config);
+        F15CConfig f15cConfig = new F15CConfig(simConfigProperties);
+        //////////
                 
-        F15CThing f15cThing = new F15CThing(thingName, "McD F15C Thing - " + f15cConfig.getAircraftName(), "", f15cClient, f15cConfig);
-        
-        f15cThing.setRoute( KnownRoutes.VAN_ISLAND_TOUR_SOUTH );
+        thingName = twxClientConfig.getThingName();
 
+        F15CWaypointFlightClient f15cClient = new F15CWaypointFlightClient(twxClientConfig);
+        F15CThing f15cThing = new F15CThing(
+        	thingName, 
+        	"McD F15C Thing - " + f15cConfig.getAircraftName(), 
+        	"", 
+        	f15cClient, 
+        	f15cConfig
+        );
         
+        ArrayList<WaypointPosition> route = KnownRoutes.VAN_ISLAND_TOUR_SOUTH;       
+        
+        f15cThing.setRoute( route );
+
         f15cClient.bindThing(f15cThing);
         
         try {
@@ -144,43 +136,4 @@ public class F15CWaypointFlightClient extends F15CClient {
             LOGGER.warn("Edge startup failure. Exiting.");
         }    
     }
-    
-    /**
-     * The main client loop. Keep running processScanRequest to refresh telemetry until shutdown
-     * 
-     * @param client
-     */
-//    private static void edgeOperation(ConnectedThingClient client, String thingName) {
-//                 	
-//        while ( !client.isShutdown()) {
-//            // Only process the Virtual Things if the client is connected
-//            if (client.isConnected()) {
-//                
-//            	if(LOGGER.isTraceEnabled()) {
-//            		LOGGER.trace("runtime cycle started");
-//            	}
-//                
-//                try {
-//                    //twx-edge execution. 
-//                    client.getThing(thingName).processScanRequest();
-//                } catch (Exception e) {
-//                    LOGGER.warn("Exception occurred during processScanRequest", e);
-//                }
-//                
-//                if(LOGGER.isTraceEnabled()) {
-//                	LOGGER.trace("runtime cycle completed");
-//                }
-//            }
-//            else {
-//                LOGGER.warn("Client disconnected");
-//            }
-//            
-//            // Suspend processing at the scan rate interval
-//            try {
-//                Thread.sleep(SCAN_RATE);
-//            } catch (InterruptedException e) {
-//                LOGGER.warn(e.getMessage(), e);
-//            }
-//        }
-//    }
 }

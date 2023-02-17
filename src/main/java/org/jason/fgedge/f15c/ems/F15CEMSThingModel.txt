@@ -1,20 +1,24 @@
-package org.jason.fgedge.c172p.things;
+package org.jason.fgedge.f15c.ems;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.jason.fgcontrol.aircraft.c172p.C172P;
-import org.jason.fgcontrol.aircraft.c172p.C172PConfig;
-import org.jason.fgcontrol.aircraft.c172p.C172PFields;
-import org.jason.fgcontrol.aircraft.c172p.flight.RunwayBurnoutFlightExecutor;
-import org.jason.fgcontrol.aircraft.c172p.flight.WaypointFlightExecutor;
+import org.jason.fgcontrol.aircraft.f15c.F15C;
+import org.jason.fgcontrol.aircraft.f15c.F15CConfig;
+import org.jason.fgcontrol.aircraft.f15c.F15CFields;
+import org.jason.fgcontrol.aircraft.f15c.flight.RunwayBurnoutFlightExecutor;
+import org.jason.fgcontrol.aircraft.f15c.flight.WaypointFlightExecutor;
 import org.jason.fgcontrol.aircraft.fields.FlightGearFields;
 import org.jason.fgcontrol.exceptions.AircraftStartupException;
+import org.jason.fgcontrol.exceptions.FlightGearSetupException;
 import org.jason.fgcontrol.flight.position.WaypointManager;
 import org.jason.fgcontrol.flight.position.WaypointPosition;
 import org.jason.fgedge.IAircraftThing;
+import org.jason.fgedge.f15c.things.DataShapeInitializer;
+import org.jason.fgedge.f15c.things.F15CDeviceScanner;
+import org.jason.fgedge.f15c.things.PropertyInitializer;
 import org.jason.fgedge.util.EdgeUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,71 +36,60 @@ import com.thingworx.types.constants.Aspects;
 import com.thingworx.types.constants.CommonPropertyNames;
 import com.thingworx.types.primitives.BooleanPrimitive;
 
-public class C172PThing extends VirtualThing implements IAircraftThing {
+public class F15CEMSThingModel implements IAircraftThing {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(C172PThing.class);
-    
-    public static final String C172P_DEFAULT_THING_NAME = "C172PThing"; 
-    
-    private static final long serialVersionUID = -1670069869427933890L;   
-    
+    private static final Logger LOGGER = LoggerFactory.getLogger(F15CEMSThingModel.class);
+        
+    public static final String F15C_DEFAULT_THING_NAME = "F15CEMSThingModel"; 
+        
     //////////
     
     private final static int SUBSCRIBED_PROPERTIES_UPDATE_TIMEOUT = 250;
     private final static int SUBSCRIBED_EVENTS_UPDATE_TIMEOUT = 250;
-    
+        
     ////////
     //datashape names
-    private final static String CONSUMABLES_SHAPE_NAME = "C172P_ConsumablesShape";
-    private final static String CONTROL_SHAPE_NAME = "C172P_ControlShape";
-    private final static String ENGINE_SHAPE_NAME = "C172P_EngineShape";
-    private final static String ENVIRONMENT_SHAPE_NAME = "C172P_EnvironmentShape";
-    private final static String FDM_SHAPE_NAME = "C172P_FDMShape";
-    private final static String ORIENTATION_SHAPE_NAME = "C172P_OrientationShape";
-    private final static String POSITION_SHAPE_NAME = "C172P_PositionShape";
-    private final static String SIM_SHAPE_NAME = "C172P_SimShape";
-    private final static String SIM_MODEL_SHAPE_NAME = "C172P_SimModelShape";
-    private final static String SYSTEMS_SHAPE_NAME = "C172P_SystemsShape";
-    private final static String VELOCITIES_SHAPE_NAME = "C172P_VelocitiesShape";
+    private final static String CONSUMABLES_SHAPE_NAME = "ConsumablesShape";
+    private final static String CONTROL_SHAPE_NAME = "ControlShape";
+    private final static String ENGINE_SHAPE_NAME = "EngineShape";
+    private final static String ENVIRONMENT_SHAPE_NAME = "EnvironmentShape";
+    private final static String FDM_SHAPE_NAME = "FDMShape";
+    private final static String ORIENTATION_SHAPE_NAME = "OrientationShape";
+    private final static String POSITION_SHAPE_NAME = "PositionShape";
+    private final static String SIM_SHAPE_NAME = "SimShape";
+    private final static String SIM_MODEL_SHAPE_NAME = "SimModelShape";
+    private final static String VELOCITIES_SHAPE_NAME = "VelocitiesShape";
     
-    private final static String FLIGHTPLAN_SHAPE_NAME = "C172P_FlightPlanShape";
-    
+    private final static String FLIGHTPLAN_SHAPE_NAME = "FlightPlanShape";
+       
     //a nice, clear, warm, bright date/time in western canada
     private final static String LAUNCH_TIME_GMT = "2021-07-01T20:00:00";
     
-    private C172P aircraft;
+    private F15C aircraft;
 
     //default plan is the runwaytest
     private int flightPlan;
     
     private Thread flightThread;
 
-	public C172PThing(String name, String description, String identifer, ConnectedThingClient client) 
-		throws Exception 
-	{
-		this(name, description, identifer, client, new C172PConfig());
+	public F15CEMSThingModel(String name, String description, String identifer, ConnectedThingClient client) throws Exception {
+		this(name, description, identifer, client, new F15CConfig());
 	}
 	
-    public C172PThing(String name, String description, String identifer, ConnectedThingClient client, C172PConfig simConfig) 
-    	throws Exception 
-    {
-        super(name, description, identifer, client);
-        
-        LOGGER.info("Building C172PThing with config: {}", simConfig.toString());
+    public F15CEMSThingModel(String name, String description, String identifer, ConnectedThingClient client, F15CConfig simConfig) throws Exception {
         
         ///////////////////////        
         //init aircraft object
-        aircraft = new C172P(simConfig);
+        aircraft = new F15C(simConfig);
                 
         // Populate the thing shape with any properties, services, and events that are annotated in
         // this code
-        super.initializeFromAnnotations();
         this.init();
-        
+                
         //fly around plan by default
         //TODO: check config file
         setFlightPlan(FLIGHTPLAN_FLYAROUND);
-                
+        
         ///////////////////////
         //properties
         
@@ -127,17 +120,16 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
         //pitch correction event
         //low fuel event
         //water in fuel tank alert
-       
         
         ///////////////////////
     }
+    
+    public Map<String, String> getPlaneTelemetryMap() {
+    	return aircraft.getTelemetry();
+    }
         
     public void setFlightPlan(int plan) {
-    	if(SUPPORTED_FLIGHTPLANS.contains(plan)) {
-    		flightPlan = plan;
-    	} else {
-    		LOGGER.warn("Ignoring unsupported flight plan");
-    	}
+        flightPlan = plan;
     }
     
     public void setRoute( ArrayList<WaypointPosition> route) {
@@ -178,12 +170,9 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
         //Sim
         defineDataShapeDefinition(SIM_SHAPE_NAME, DataShapeInitializer.buildSimShape());
         
-        //Sim model
+        //Sim Model
         defineDataShapeDefinition(SIM_MODEL_SHAPE_NAME, DataShapeInitializer.buildSimModelShape());
-
-        //Systems
-        defineDataShapeDefinition(SYSTEMS_SHAPE_NAME, DataShapeInitializer.buildSystemsShape());
-        
+            
         //Velocities
         defineDataShapeDefinition(VELOCITIES_SHAPE_NAME, DataShapeInitializer.buildVelocitiesShape());
 
@@ -203,7 +192,7 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
         aircraft.startupPlane();
         
         //set the parking brake so the aircraft doesn't start rolling
-        //enabled by default, but the default c172p autostart disables it
+        //enabled by default, but the default f15c autostart disables it
         aircraft.setParkingBrake(true);
         
         LOGGER.debug("startup returning");
@@ -235,6 +224,8 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
                     }         
                 } catch (IOException e) {
                     LOGGER.error(e.getMessage(), e);
+                } catch (FlightGearSetupException e) {
+                    LOGGER.error(e.getMessage(), e);
                 } catch (AircraftStartupException e) {
                     LOGGER.error(e.getMessage(), e);
                 } catch (Exception e) {
@@ -255,38 +246,27 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
         }
     }
     
-    @Override
-    public void synchronizeState() {
-        
-        //check readytosend?
-        
-        super.syncProperties();
-    }
-    
+	@Override
+	public Map<String, String> getAircraftTelemetry() {
+		return aircraft.getTelemetry();
+	}
+       
     /**
-     * VirtualThing-level edge execution
      * 
      * @throws Exception 
      *
      */
-    @Override
     public void processScanRequest() throws Exception {
     	if(LOGGER.isTraceEnabled()) {
     		LOGGER.trace("processScanRequest invoked");
     	}
-        
-        super.processScanRequest();
         
         this.scanDevice();
         
         if(LOGGER.isTraceEnabled()) {
         	LOGGER.trace("processScanRequest returning");
         }
-    }
-    
-    @Override
-    public Map<String, String> getAircraftTelemetry() {
-    	return aircraft.getTelemetry();
+
     }
     
     /**
@@ -296,11 +276,10 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
      * 
      */
     private void scanDevice() throws Exception {
-    	    	
-    	C172PDeviceScanner.DeviceScanner(this, aircraft.getTelemetry());
+        
+        F15CDeviceScanner.DeviceScanner(this, aircraft.getTelemetry());
 
-        this.updateSubscribedProperties(SUBSCRIBED_PROPERTIES_UPDATE_TIMEOUT);
-        this.updateSubscribedEvents(SUBSCRIBED_EVENTS_UPDATE_TIMEOUT);
+        //TODO: hand off to REST client for transmission to platform
     }
     
     /////////////////////////
@@ -325,10 +304,16 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
     		name="longitude", 
     		description="longitude in degrees", 
     		baseType="NUMBER" 
-    	) Double longitude
+    	) Double longitude,
+    	@ThingworxServiceParameter
+    	( 
+    		name="name", 
+    		description="waypoint name", 
+    		baseType="STRING" 
+    	) String name
     ) throws Exception
     {
-    	aircraft.addWaypoint(latitude, longitude);
+    	aircraft.addWaypoint( new WaypointPosition(latitude, longitude, name));
     }
     
     @ThingworxServiceDefinition
@@ -348,10 +333,16 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
     		name="longitude", 
     		description="longitude in degrees", 
     		baseType="NUMBER" 
-    	) Double longitude
+    	) Double longitude,
+    	@ThingworxServiceParameter
+    	( 
+    		name="name", 
+    		description="waypoint name", 
+    		baseType="STRING" 
+    	) String name
     )
     {
-    	aircraft.addNextWaypoint(latitude, longitude);
+    	aircraft.addNextWaypoint( new WaypointPosition(latitude, longitude, name)) ;
     }
 
     //abandon all waypoints
@@ -413,10 +404,10 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
 	)
     public synchronized InfoTable GetFlightPlan() throws Exception {
     	
-    	LOGGER.debug("Retrieving C172P flight plan");
+    	LOGGER.debug("Retrieving F15C flight plan");
     	
     	InfoTable table = new InfoTable(getDataShapeDefinition(FLIGHTPLAN_SHAPE_NAME));
-    	
+    	    	
     	List<WaypointPosition> waypoints = aircraft.getWaypoints();
     	
     	//add current waypoint as first
@@ -442,28 +433,12 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
 			table.addRow(entry);
     	}
 
-    	LOGGER.debug("Retrieved C172P flight plan");
+    	LOGGER.debug("Retrieved F15C flight plan");
     	
     	return table;
     }
 
-    /////////////////////////
-    //procedures
-    /////////////////////////
-    @ThingworxServiceDefinition
-    (
-        name = "RunStartupProcedure", 
-        description = "Execute the C172P startup procedure"
-    )
-    public synchronized void RunStartupProcedure() throws Exception 
-    {
-        LOGGER.trace("RunStartupProcedure invoked");
-        
-        startupPlane();
 
-        LOGGER.trace("RunStartupProcedure returning");
-    }
-    
     /////////////////////////
     //consumables
     /////////////////////////
@@ -482,14 +457,14 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
     	) Double fuelLevel
     ) throws Exception 
     {
-        LOGGER.debug("SetFuelLevel invoked");
+        LOGGER.trace("SetFuelLevel invoked");
         
         Double newFuelAmount = aircraft.getFuelTank0Capacity();
         Double tankCapacity = newFuelAmount;
         
         //guard rails
-        if(fuelLevel < 0.0) {
-            newFuelAmount = 0.0;
+        if(fuelLevel < 0) {
+            newFuelAmount = Double.valueOf(0);
         }
         else if (fuelLevel < tankCapacity) {
             newFuelAmount = fuelLevel;
@@ -500,15 +475,16 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
         
         LOGGER.debug("Setting fuel level to: {}", newFuelAmount);
         
-        aircraft.setFuelTanksLevel(newFuelAmount);
+        aircraft.setFuelTank0Level(newFuelAmount);
+        aircraft.setFuelTank1Level(newFuelAmount);
         
-        LOGGER.debug("SetFuelLevel returning");
+        LOGGER.trace("SetFuelLevel returning");
     }
     
     @ThingworxServiceDefinition
     (
-        name = "SetFuelTankWaterContamination", 
-        description = "Set the water contamination for the primary tank"
+        name = "SetFuelLevel", 
+        description = "Set the fuel level for the primary tank"
     )
     public synchronized void SetFuelTankWaterContamination(
         @ThingworxServiceParameter
@@ -519,101 +495,24 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
         ) Double waterAmount
     ) throws Exception 
     {
-        LOGGER.debug("SetFuelTankWaterContamination invoked");
+        LOGGER.trace("SetFuelTankWaterContamination invoked");
         
-        double newWaterAmount = 0.0;
+        double newWaterAmount = 0;
         
         //guard rails
-        if(waterAmount > 0.0) {
-            newWaterAmount = waterAmount;
+        if(waterAmount < 0) {
+            newWaterAmount = Double.valueOf(0);
         }
         
-        LOGGER.debug("Setting fuel tanks water amount to: {}", newWaterAmount);
+        LOGGER.debug("Setting fuel tank water amount to: {}", newWaterAmount);
         
-        aircraft.setFuelTank0WaterContamination(newWaterAmount);
-        aircraft.setFuelTank1WaterContamination(newWaterAmount);
-        
-        LOGGER.debug("SetFuelTankWaterContamination returning");
-    }
-    
-    public synchronized void SetBatteryCharge(
-            @ThingworxServiceParameter
-            ( 
-            	name="chargePercent", 
-                description="Battery charge percentage as a decimal", 
-                baseType="NUMBER" 
-            ) Double chargePercent
-        ) throws Exception 
-        {
-            LOGGER.debug("SetBatteryCharge invoked");
-            
-            double newChargeValue;
-            
-            //guard rails
-            if(chargePercent < C172PFields.BATTERY_CHARGE_MIN) {
-            	newChargeValue = C172PFields.BATTERY_CHARGE_MIN;
-            } else if(chargePercent > C172PFields.BATTERY_CHARGE_MAX) {
-            	newChargeValue = C172PFields.BATTERY_CHARGE_MAX;
-            } else {
-            	newChargeValue = chargePercent;
-            }
-            
-            LOGGER.debug("Setting battery charge to: {}", newChargeValue);
-            
-            aircraft.setBatteryCharge(newChargeValue);
-            
-            LOGGER.debug("SetBatteryCharge returning");
-        }
-    
-    @ThingworxServiceDefinition
-    (
-        name = "FlushFuelTanks", 
-        description = "Flush Fuel tanks of water and fuel"
-    )
-    public synchronized void FlushFuelTanks() throws Exception 
-    {
-        LOGGER.trace("FlushFuelTanks invoked");
-        
-        //TODO: static fields
-        SetFuelTankWaterContamination(0.0);
-        SetFuelLevel(0.0);
-
-        LOGGER.trace("FlushFuelTanks returning");
-    }
-    
-    @ThingworxServiceDefinition
-    (
-        name = "RefillFuelTanks", 
-        description = "Fill fuel tanks to capacity"
-    )
-    public synchronized void RefillFuelTanks() throws Exception 
-    {
-        LOGGER.trace("RefillFuelTanks invoked");
-        
-        //c172p should have two fuel tanks of equal capacity
-        SetFuelLevel(aircraft.getFuelTank0Capacity());
-
-        LOGGER.debug("RefillFuelTanks returning");
-    }
-    
-    @ThingworxServiceDefinition
-    (
-        name = "RechargeBattery", 
-        description = "Charge battery to capacity"
-    )
-    public synchronized void RechargeBattery() throws Exception 
-    {
-        LOGGER.debug("RechargeBattery invoked");
-        
-        SetBatteryCharge(C172PFields.BATTERY_CHARGE_MAX);
-
-        LOGGER.debug("RechargeBattery returning");
+        LOGGER.trace("SetFuelTankWaterContamination returning");
     }
     
     @ThingworxServiceDefinition
     (
         name = "GetConsumablesTelemetry", 
-        description = "Get consumables telemetry fields for the C172"
+        description = "Get consumables telemetry fields for the F15C"
     )
     @ThingworxServiceResult
     (
@@ -624,28 +523,36 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
     )
     public synchronized InfoTable GetConsumablesTelemetry() throws Exception 
     {
-        LOGGER.debug("GetConsumablesTelemetry invoked");
+        LOGGER.trace("GetConsumablesTelemetry invoked");
 
         ValueCollection entry = new ValueCollection();
         entry.clear();
         
         entry.SetNumberValue(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_0_CAPACITY_FIELD), aircraft.getFuelTank0Capacity());
+                EdgeUtilities.toThingworxPropertyName(F15CFields.FUEL_TANK_0_CAPACITY_FIELD), aircraft.getFuelTank0Capacity());
         entry.SetNumberValue(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_0_LEVEL_FIELD), aircraft.getFuelTank0Level());
+                EdgeUtilities.toThingworxPropertyName(F15CFields.FUEL_TANK_0_LEVEL_FIELD), aircraft.getFuelTank0Level());
         entry.SetNumberValue(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_0_WATER_CONTAMINATION_FIELD), aircraft.getFuelTank0WaterContamination());
+                EdgeUtilities.toThingworxPropertyName(F15CFields.FUEL_TANK_1_CAPACITY_FIELD), aircraft.getFuelTank1Capacity());
         entry.SetNumberValue(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_1_CAPACITY_FIELD), aircraft.getFuelTank1Capacity());
+                EdgeUtilities.toThingworxPropertyName(F15CFields.FUEL_TANK_1_LEVEL_FIELD), aircraft.getFuelTank1Level());
         entry.SetNumberValue(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_1_LEVEL_FIELD), aircraft.getFuelTank1Level());
+                EdgeUtilities.toThingworxPropertyName(F15CFields.FUEL_TANK_2_CAPACITY_FIELD), aircraft.getFuelTank2Capacity());
         entry.SetNumberValue(
-                EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_1_WATER_CONTAMINATION_FIELD), aircraft.getFuelTank1WaterContamination());
+                EdgeUtilities.toThingworxPropertyName(F15CFields.FUEL_TANK_2_LEVEL_FIELD), aircraft.getFuelTank2Level());
+        entry.SetNumberValue(
+                EdgeUtilities.toThingworxPropertyName(F15CFields.FUEL_TANK_3_CAPACITY_FIELD), aircraft.getFuelTank3Capacity());
+        entry.SetNumberValue(
+                EdgeUtilities.toThingworxPropertyName(F15CFields.FUEL_TANK_3_LEVEL_FIELD), aircraft.getFuelTank3Level());
+        entry.SetNumberValue(
+                EdgeUtilities.toThingworxPropertyName(F15CFields.FUEL_TANK_4_CAPACITY_FIELD), aircraft.getFuelTank4Capacity());
+        entry.SetNumberValue(
+                EdgeUtilities.toThingworxPropertyName(F15CFields.FUEL_TANK_4_LEVEL_FIELD), aircraft.getFuelTank4Level());
  
         InfoTable table = new InfoTable(getDataShapeDefinition(CONSUMABLES_SHAPE_NAME));
         table.addRow(entry);
         
-        LOGGER.debug("GetConsumablesTelemetry returning");
+        LOGGER.trace("GetConsumablesTelemetry returning");
         
         return table;
     }
@@ -668,40 +575,13 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
         ) Boolean isEnabled
     ) throws Exception 
     {
-        LOGGER.debug("SetBatterySwitch invoked");
+        LOGGER.trace("SetBatterySwitch invoked");
         
         LOGGER.debug("Setting battery switch to: {}", isEnabled);
         
         aircraft.setBatterySwitch(isEnabled);
         
-        LOGGER.debug("SetBatterySwitch returning");
-    }
-    
-    @ThingworxServiceDefinition
-    (
-        name = "SetMixture", 
-        description = "Set the fuel mixture level"
-    )
-    public synchronized void SetMixture(
-        @ThingworxServiceParameter
-        ( 
-        	name="mixtureValue", 
-            description="Fuel mixture setting", 
-            baseType="NUMBER" 
-        ) Double mixtureAmount
-    ) throws Exception 
-    {
-        LOGGER.debug("SetMixture invoked");
-        
-        if(mixtureAmount < 1.0 && mixtureAmount > 0.0) {
-            LOGGER.debug("Setting mixture amount to: {}", mixtureAmount);
-            
-            aircraft.setMixture(mixtureAmount);
-        } else {
-            LOGGER.warn("Ignoring mixture change to invalid amount");
-        }
-                
-        LOGGER.debug("SetMixture returning");
+        LOGGER.trace("SetBatterySwitch returning");
     }
     
     @ThingworxServiceDefinition
@@ -718,17 +598,17 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
         ) Double throttleAmount
     ) throws Exception 
     {
-        LOGGER.debug("SetThrottle invoked");
+        LOGGER.trace("SetThrottle invoked");
         
-        if(throttleAmount < C172PFields.THROTTLE_MAX && throttleAmount > C172PFields.THROTTLE_MIN) {
+        if(throttleAmount < F15CFields.THROTTLE_MAX && throttleAmount > F15CFields.THROTTLE_MIN) {
             LOGGER.debug("Setting throttle amount to: {}", throttleAmount);
             
-            aircraft.setThrottle(throttleAmount);
+            aircraft.setEngine1Throttle(throttleAmount);
         } else {
             LOGGER.warn("Ignoring throttle change to invalid amount");
         }
                 
-        LOGGER.debug("SetThrottle returning");
+        LOGGER.trace("SetThrottle returning");
     }
     
     @ThingworxServiceDefinition
@@ -745,20 +625,20 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
         ) Double orientation
     ) throws Exception 
     {
-        LOGGER.debug("SetAileron invoked");
+        LOGGER.trace("SetAileron invoked");
         
         //guardrails -1.0 <-> 1.0
-        if(orientation < C172PFields.AILERON_MIN) {
-            orientation = C172PFields.AILERON_MIN;
-        } else if (orientation > C172PFields.AILERON_MAX) {
-            orientation = C172PFields.AILERON_MAX;
+        if(orientation < F15CFields.AILERON_MIN) {
+            orientation = F15CFields.AILERON_MIN;
+        } else if (orientation > F15CFields.AILERON_MAX) {
+            orientation = F15CFields.AILERON_MAX;
         }
 
         LOGGER.debug("Setting aileron orientation to: {}", orientation);
 
         aircraft.setAileron(orientation);
 
-        LOGGER.debug("SetAileron returning");
+        LOGGER.trace("SetAileron returning");
     }
     
     @ThingworxServiceDefinition
@@ -775,13 +655,13 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
         ) Boolean isEnabled
     ) throws Exception 
     {
-        LOGGER.debug("SetAutoCoordination invoked");
+        LOGGER.trace("SetAutoCoordination invoked");
         
         LOGGER.debug("Setting AutoCoordination to: {}", isEnabled);
         
         aircraft.setAutoCoordination(isEnabled);
         
-        LOGGER.debug("SetAutoCoordination returning");
+        LOGGER.trace("SetAutoCoordination returning");
     }
     
     @ThingworxServiceDefinition
@@ -798,20 +678,20 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
         ) Double orientation
     ) throws Exception 
     {
-        LOGGER.debug("SetElevator invoked");
+        LOGGER.trace("SetElevator invoked");
         
         //guardrails -1 <-> 1
-        if(orientation < C172PFields.ELEVATOR_MIN) {
-            orientation = C172PFields.ELEVATOR_MIN;
-        } else if (orientation > C172PFields.ELEVATOR_MAX) {
-            orientation = C172PFields.ELEVATOR_MAX;
+        if(orientation < F15CFields.ELEVATOR_MIN) {
+            orientation = F15CFields.ELEVATOR_MIN;
+        } else if (orientation > F15CFields.ELEVATOR_MAX) {
+            orientation = F15CFields.ELEVATOR_MAX;
         }
 
         LOGGER.debug("Setting elevator orientation to: {}", orientation);
 
         aircraft.setAileron(orientation);
 
-        LOGGER.debug("SetElevator returning");
+        LOGGER.trace("SetElevator returning");
     }
     
     @ThingworxServiceDefinition
@@ -828,20 +708,20 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
         ) Double orientation
     ) throws Exception 
     {
-        LOGGER.debug("SetFlaps invoked");
+        LOGGER.trace("SetFlaps invoked");
         
         //guardrails 0 <-> 1
-        if(orientation < C172PFields.FLAPS_MIN) {
-            orientation = C172PFields.FLAPS_MIN;
-        } else if (orientation > C172PFields.FLAPS_MAX) {
-            orientation = C172PFields.FLAPS_MAX;
+        if(orientation < F15CFields.FLAPS_MIN) {
+            orientation = F15CFields.FLAPS_MIN;
+        } else if (orientation > F15CFields.FLAPS_MAX) {
+            orientation = F15CFields.FLAPS_MAX;
         }
 
         LOGGER.debug("Setting flaps orientation to: {}", orientation);
 
         aircraft.setAileron(orientation);
 
-        LOGGER.debug("SetFlaps returning");
+        LOGGER.trace("SetFlaps returning");
     }
     
     @ThingworxServiceDefinition
@@ -858,26 +738,26 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
         ) Double orientation
     ) throws Exception 
     {
-        LOGGER.debug("SetRudder invoked");
+        LOGGER.trace("SetRudder invoked");
         
         //guardrails 0 <-> 1
-        if(orientation < C172PFields.ELEVATOR_MIN) {
-            orientation = C172PFields.ELEVATOR_MIN;
-        } else if (orientation > C172PFields.ELEVATOR_MAX) {
-            orientation = C172PFields.ELEVATOR_MAX;
+        if(orientation < F15CFields.ELEVATOR_MIN) {
+            orientation = F15CFields.ELEVATOR_MIN;
+        } else if (orientation > F15CFields.ELEVATOR_MAX) {
+            orientation = F15CFields.ELEVATOR_MAX;
         }
 
         LOGGER.debug("Setting elevator orientation to: {}", orientation);
 
         aircraft.setAileron(orientation);
 
-        LOGGER.debug("SetRudder returning");
+        LOGGER.trace("SetRudder returning");
     }
     
     @ThingworxServiceDefinition
     (
         name = "SetParkingBrake", 
-        description = "Set the C172 Parking Brake"
+        description = "Set the F15C Parking Brake"
     )
     @ThingworxServiceResult
     (
@@ -895,7 +775,7 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
         ) Boolean enabled
     ) throws Exception 
     {
-        LOGGER.debug("SetParkingBrake invoked");
+        LOGGER.trace("SetParkingBrake invoked");
 
         aircraft.setParkingBrake(enabled);
         int brakeState = aircraft.getParkingBrakeEnabled();
@@ -905,12 +785,12 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
         ValueCollection entry = new ValueCollection();
         entry.clear();
         
-        entry.SetIntegerValue(EdgeUtilities.toThingworxPropertyName(C172PFields.SIM_PARKING_BRAKE_FIELD), brakeState);
+        entry.SetIntegerValue(EdgeUtilities.toThingworxPropertyName(F15CFields.PARKING_BRAKE_FIELD), brakeState);
 
         InfoTable table = new InfoTable(getDataShapeDefinition(SIM_MODEL_SHAPE_NAME));
         table.addRow(entry);
         
-        LOGGER.debug("SetParkingBrake returning");
+        LOGGER.trace("SetParkingBrake returning");
         
         return table;
     }
@@ -918,7 +798,7 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
     @ThingworxServiceDefinition
     (
     	name = "GetControlTelemetry", 
-        description = "Get control telemetry fields for the C172"
+        description = "Get control telemetry fields for the F15C"
     )
     @ThingworxServiceResult
     (
@@ -929,41 +809,44 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
     )
     public synchronized InfoTable GetControlTelemetry() throws Exception 
     {
-
-    	LOGGER.debug("GetControlTelemetry invoked");
+        LOGGER.trace("GetControlTelemetry invoked");
 
         ValueCollection entry = new ValueCollection();
         entry.clear();
         
         entry.SetIntegerValue(
-            EdgeUtilities.toThingworxPropertyName(C172PFields.BATTERY_SWITCH_FIELD), aircraft.getBatterySwitch());
+            EdgeUtilities.toThingworxPropertyName(F15CFields.BATTERY_SWITCH_FIELD), aircraft.getBatterySwitch());
         entry.SetNumberValue(
-            EdgeUtilities.toThingworxPropertyName(C172PFields.MIXTURE_FIELD), aircraft.getMixture());
+            EdgeUtilities.toThingworxPropertyName(F15CFields.ENGINE_0_MIXTURE_FIELD), aircraft.getEngine0Mixture());
         entry.SetNumberValue(
-            EdgeUtilities.toThingworxPropertyName(C172PFields.THROTTLE_FIELD), aircraft.getThrottle());
+            EdgeUtilities.toThingworxPropertyName(F15CFields.ENGINE_1_MIXTURE_FIELD), aircraft.getEngine1Mixture());
         entry.SetNumberValue(
-            EdgeUtilities.toThingworxPropertyName(C172PFields.AILERON_FIELD), aircraft.getAileron());
+            EdgeUtilities.toThingworxPropertyName(F15CFields.ENGINE_0_THROTTLE_FIELD), aircraft.getEngine0Throttle());
+        entry.SetNumberValue(
+            EdgeUtilities.toThingworxPropertyName(F15CFields.ENGINE_1_THROTTLE_FIELD), aircraft.getEngine1Throttle());
+        entry.SetNumberValue(
+            EdgeUtilities.toThingworxPropertyName(F15CFields.AILERON_FIELD), aircraft.getAileron());
         entry.SetIntegerValue(
-            EdgeUtilities.toThingworxPropertyName(C172PFields.AUTO_COORDINATION_FIELD), aircraft.getAutoCoordination());
+            EdgeUtilities.toThingworxPropertyName(F15CFields.AUTO_COORDINATION_FIELD), aircraft.getAutoCoordination());
         entry.SetNumberValue(
-            EdgeUtilities.toThingworxPropertyName(C172PFields.AUTO_COORDINATION_FACTOR_FIELD), aircraft.getAutoCoordinationFactor());
+            EdgeUtilities.toThingworxPropertyName(F15CFields.AUTO_COORDINATION_FACTOR_FIELD), aircraft.getAutoCoordinationFactor());
         entry.SetNumberValue(
-            EdgeUtilities.toThingworxPropertyName(C172PFields.ELEVATOR_FIELD), aircraft.getElevator());
+            EdgeUtilities.toThingworxPropertyName(F15CFields.ELEVATOR_FIELD), aircraft.getElevator());
         entry.SetNumberValue(
-            EdgeUtilities.toThingworxPropertyName(C172PFields.FLAPS_FIELD), aircraft.getFlaps());
+            EdgeUtilities.toThingworxPropertyName(F15CFields.FLAPS_FIELD), aircraft.getFlaps());
         entry.SetNumberValue(
-            EdgeUtilities.toThingworxPropertyName(C172PFields.RUDDER_FIELD), aircraft.getRudder());
+            EdgeUtilities.toThingworxPropertyName(F15CFields.RUDDER_FIELD), aircraft.getRudder());
         entry.SetNumberValue(
-            EdgeUtilities.toThingworxPropertyName(C172PFields.SPEED_BRAKE_FIELD), aircraft.getSpeedbrake());
+            EdgeUtilities.toThingworxPropertyName(F15CFields.SPEED_BRAKE_FIELD), aircraft.getSpeedbrake());
         entry.SetIntegerValue(
-            EdgeUtilities.toThingworxPropertyName(C172PFields.PARKING_BRAKE_FIELD), aircraft.getParkingBrake());
+            EdgeUtilities.toThingworxPropertyName(F15CFields.PARKING_BRAKE_FIELD), aircraft.getParkingBrake());
         entry.SetIntegerValue(
-            EdgeUtilities.toThingworxPropertyName(C172PFields.GEAR_DOWN_FIELD), aircraft.getGearDown());
+            EdgeUtilities.toThingworxPropertyName(F15CFields.GEAR_DOWN_FIELD), aircraft.getGearDown());
         
         InfoTable table = new InfoTable(getDataShapeDefinition(CONTROL_SHAPE_NAME));
         table.addRow(entry);
         
-        LOGGER.debug("GetControlTelemetry returning");
+        LOGGER.trace("GetControlTelemetry returning");
         
         return table;
     }
@@ -972,162 +855,31 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
     //orientation
     /////////////////////////
     
-    //Dedicated service for a telemetry subset 
-    @ThingworxServiceDefinition
-    (
-    	name = "GetOrientationTelemetry", 
-        description = "Get orientation fields for the C172"
-    )
-    @ThingworxServiceResult
-    (
-        name = CommonPropertyNames.PROP_RESULT, 
-        description = "InfoTable of orientation values", 
-        baseType = "INFOTABLE",
-        aspects = { "dataShape:" + ORIENTATION_SHAPE_NAME }
-    )
-    public InfoTable GetOrientationTelemetry() throws Exception {
-        
-    	LOGGER.debug("GetOrientationTelemetry invoked");
-
-        ValueCollection entry = new ValueCollection();
-        entry.clear();
-
-        entry.SetNumberValue(
-            EdgeUtilities.toThingworxPropertyName(FlightGearFields.ALPHA_FIELD), aircraft.getAlpha());
-        entry.SetNumberValue(
-            EdgeUtilities.toThingworxPropertyName(FlightGearFields.BETA_FIELD), aircraft.getBeta());
-        entry.SetNumberValue(
-        	EdgeUtilities.toThingworxPropertyName(FlightGearFields.HEADING_FIELD), aircraft.getHeading());
-        entry.SetNumberValue(
-            EdgeUtilities.toThingworxPropertyName(FlightGearFields.HEADING_MAG_FIELD), aircraft.getHeadingMag());
-        entry.SetNumberValue(
-            EdgeUtilities.toThingworxPropertyName(FlightGearFields.PITCH_FIELD), aircraft.getPitch());
-        entry.SetNumberValue(
-            EdgeUtilities.toThingworxPropertyName(FlightGearFields.ROLL_FIELD), aircraft.getRoll());
-        entry.SetNumberValue(
-            EdgeUtilities.toThingworxPropertyName(FlightGearFields.TRACK_FIELD), aircraft.getTrack());
-        entry.SetNumberValue(
-            EdgeUtilities.toThingworxPropertyName(FlightGearFields.TRACK_MAG_FIELD), aircraft.getTrackMag());
-        entry.SetNumberValue(
-            EdgeUtilities.toThingworxPropertyName(FlightGearFields.YAW_FIELD), aircraft.getYaw());
-        entry.SetNumberValue(
-            EdgeUtilities.toThingworxPropertyName(FlightGearFields.YAW_RATE_FIELD), aircraft.getYawRate());
-
-        
-        InfoTable table = new InfoTable(getDataShapeDefinition(ORIENTATION_SHAPE_NAME));
-        table.addRow(entry);
-        
-        LOGGER.debug("GetOrientationTelemetry returning");
-        
-        return table;
-    }
-    
     /////////////////////////
     //position
     /////////////////////////
     
-    @ThingworxServiceDefinition
-    (
-    	name = "GetPositionTelemetry", 
-        description = "Get position fields for the C172P"
-    )
-    @ThingworxServiceResult
-    (
-        name = CommonPropertyNames.PROP_RESULT, 
-        description = "InfoTable of position values", 
-        baseType = "INFOTABLE",
-        aspects = { "dataShape:" + POSITION_SHAPE_NAME }
-    )
-    public InfoTable GetPositionTelemetry() throws Exception {
+    
+    //Dedicated service for a telemetry subset 
+    public InfoTable GetOrientation() {
         
-    	LOGGER.debug("GetPositionTelemetry invoked");
-
-        ValueCollection entry = new ValueCollection();
-        entry.clear();
-
-        entry.SetNumberValue(
-            EdgeUtilities.toThingworxPropertyName(FlightGearFields.ALTITUDE_FIELD), aircraft.getAltitude());
-        entry.SetNumberValue(
-            EdgeUtilities.toThingworxPropertyName(FlightGearFields.GROUND_ELEVATION_FIELD), aircraft.getGroundElevation());
-        entry.SetNumberValue(
-        	EdgeUtilities.toThingworxPropertyName(FlightGearFields.LATITUDE_FIELD), aircraft.getLatitude());
-        entry.SetNumberValue(
-            EdgeUtilities.toThingworxPropertyName(FlightGearFields.LONGITUDE_FIELD), aircraft.getLongitude());
+        //read from 
         
-        InfoTable table = new InfoTable(getDataShapeDefinition(POSITION_SHAPE_NAME));
-        table.addRow(entry);
-        
-        LOGGER.debug("GetPositionTelemetry returning");
-        
-        return table;
+        return null;
     }
-    
-    /////////////////////////
-    //sim
-    /////////////////////////
-    @ThingworxServiceDefinition
-    (
-        name = "SetCameraView", 
-        description = "Set the simulator camera view"
-    )
-    public synchronized void SetCameraView(
-        @ThingworxServiceParameter
-        ( 
-        	name="cameraView", 
-            description="Orientation of the rudder", 
-            baseType="INTEGER" 
-        ) Integer cameraView
-    ) throws Exception 
-    {
-        LOGGER.debug("SetCameraView invoked");
-        
 
-        LOGGER.debug("Setting camera view to: {}", cameraView);
-
-        aircraft.setCurrentView(cameraView);
-
-        LOGGER.debug("SetCameraView returning");
-    }
-    
-    @ThingworxServiceDefinition
-    (
-        name = "SetSimSpeedup", 
-        description = "Set the simulator speed up factor"
-    )
-    public synchronized void SetSimSpeedup(
-        @ThingworxServiceParameter
-        ( 
-        	name="simSpeedup", 
-            description="Time acceleration factor for the simulator instance", 
-            baseType="NUMBER" 
-        ) Double speedup
-    ) throws Exception 
-    {
-        LOGGER.debug("SetSimSpeedup invoked");
-        
-        LOGGER.debug("Setting simulator speedup to: {}", speedup);
-
-        aircraft.setSimSpeedUp(speedup);
-
-        LOGGER.debug("SetSimSpeedup returning");
-    }
-    
-    
-    /////////////////////////
     @ThingworxServiceDefinition
     (
             name = "Shutdown", 
-            description = "Shut down the Edge C172P"
+            description = "Shut down the Edge F15C"
     )
     public void Shutdown() throws Exception {
         
-        LOGGER.debug("C172PThing {} shut down invoked", this.getBindingName());
-     
-        //TODO: terminate flight thread if it's running
-        
+        LOGGER.debug("F15CEMSThingModel shut down invoked");
+                
         this.getClient().shutdown();
         
-        LOGGER.debug("C172PThing {} shut down completed", this.getBindingName());
+        LOGGER.debug("F15CEMSThingModel shut down completed");
     }
     
     
@@ -1144,30 +896,32 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
      */
     private void runRunwayFlightPlan() throws Exception {
         
-    	double testFuelAmount = 1.0;
-    	
-        LOGGER.info("C172PThing runRunwayFlightPlan thread starting");
-          
-        //full fuel tanks will take a while
-        //also in case a previous run emptied it
-        aircraft.setFuelTanksLevel(testFuelAmount);  
+        LOGGER.info("F15CEMSThingModel runRunwayFlightPlan thread starting");
+                   
+    	//40 gallons - at high throttle fuel goes fairly quickly
+    	int testFuelAmount = 40;
         
-        //refill 
-        //aircraft.refillFuel();
-
+        //refill in case a previous run emptied it
+        aircraft.refillFuel();
+        
+        //a clean sim can start with the engines running depending on the sim autosave, and we don't want that
+        aircraft.setEngine0Cutoff(true);
+        aircraft.setEngine1Cutoff(true);
+        
         //probably not going to happen but do it anyway
         aircraft.setDamageEnabled(false);
         
-        //
+        //set our test fuel amount
+        aircraft.setFuelTank0Level(0.0);
+        aircraft.setFuelTank1Level(0.0);
+        aircraft.setFuelTank2Level(testFuelAmount);
+        aircraft.setFuelTank3Level(0.0);
+        aircraft.setFuelTank4Level(0.0);
         
-		RunwayBurnoutFlightExecutor.runFlight(aircraft);
-     
-        LOGGER.debug("Exiting runtime loop");
+        RunwayBurnoutFlightExecutor.runFlight(aircraft);
         
         //at higher speedups the simulator window is unusable, so return it to something usable
         aircraft.setSimSpeedUp(1);
-
-
         
         LOGGER.info("Flight operation ended. Shutting down FlightGear connection.");
         
@@ -1175,7 +929,7 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
         aircraft.shutdown();
         
         //signal the flight thread to shutdown
-		Shutdown();
+        Shutdown();
         
         LOGGER.info("FlightPlan thread runRunwayFlightPlan returning");
     }
@@ -1183,27 +937,26 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
     /**
      * Function for managing the flight. Fly through the waypoint plan. Allow services to add waypoint
      * Executed in the flightplan thread.
-     * @throws Exception 
+     * 
+     * @throws IOException 
+     * @throws AircraftStartupException 
+     * @throws FlightGearSetupException 
      *
      */
-    private void runFlyAroundFlightPlan() throws Exception {
+    private void runFlyAroundFlightPlan() throws IOException, AircraftStartupException, FlightGearSetupException {
+            	
+        LOGGER.info("F15CEMSThingModel runFlyAroundFlightPlan thread starting");
         
-        LOGGER.info("C172PThing runFlyAroundFlightPlan thread starting");
-               
         //aircraft route should have been set before this function is invoked
 
-		// set chase view (2) -> broken in fgfs 2020.3.17
-        // use helicopter view (1) instead
-		aircraft.setCurrentView(1);
+		// set chase view
+		aircraft.setCurrentView(2);
 
 		aircraft.setDamageEnabled(false);
-		aircraft.setComplexEngineProcedures(false);
-		aircraft.setWinterKitInstalled(true);
 		aircraft.setGMT(LAUNCH_TIME_GMT);
 
 		// in case we get a previously lightly-used environment
 		aircraft.refillFuel();
-		aircraft.setBatteryCharge(C172PFields.BATTERY_CHARGE_MAX);
 		
 		// kick off our flight in the main thread
 		WaypointFlightExecutor.runFlight(aircraft);
@@ -1213,12 +966,15 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
 
         LOGGER.info("Flight operation ended. Shutting down FlightGear connection.");
         
-        //shut down the aircraft
         aircraft.shutdown();
         
-        //signal the flight thread to shutdown
-		Shutdown();
-		
-		LOGGER.info("FlightPlan thread runFlyAroundFlightPlan returning");
+        LOGGER.info("FlightPlan thread runFlyAroundFlightPlan returning");
+        
+        try {
+			Shutdown();
+		} catch (Exception e) {
+            LOGGER.warn("Exception during virtual thing shutdown", e);
+		}
+               
     }
 }

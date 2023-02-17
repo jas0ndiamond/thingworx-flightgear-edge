@@ -582,6 +582,12 @@ public abstract class DataShapeInitializer {
         ));
         orientationFields.addFieldDefinition(
             new FieldDefinition(
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.TRACK_FIELD), 
+                FlightGearFields.TRACK_FIELD_DESC,
+                BaseTypes.NUMBER
+        ));
+        orientationFields.addFieldDefinition(
+            new FieldDefinition(
                 EdgeUtilities.toThingworxPropertyName(FlightGearFields.TRACK_MAG_FIELD), 
                 FlightGearFields.TRACK_MAG_FIELD_DESC,
                 BaseTypes.NUMBER

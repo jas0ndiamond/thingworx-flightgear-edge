@@ -11,7 +11,7 @@ public abstract class EdgeUtilities {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(EdgeUtilities.class);
 	
-	private static HashMap<String, String> twxPropertyMap = new HashMap<> () {
+	private static HashMap<String, String> twxPropertyMap = new HashMap<String, String> () {
 		private static final long serialVersionUID = 6332858047106595994L;
 	};
 	
@@ -65,11 +65,11 @@ public abstract class EdgeUtilities {
         return retval;
     }
     
-    public static boolean waitForBind(VirtualThing thing, int timeout) {
+    public static boolean waitForBind(VirtualThing thing, long timeout) {
         boolean retval = false;
         
-        int waitTime = 0;
-        int sleepInterval = 500;
+        long waitTime = 0L;
+        long sleepInterval = 500L;
         while( !retval && waitTime < timeout ) {
             if(thing.isBound()) {
                 retval = true;

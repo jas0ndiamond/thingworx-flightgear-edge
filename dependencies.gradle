@@ -11,16 +11,17 @@ ext {
                 'org.apache.commons:commons-compress:1.12'
             ],
             flightgear_control: [
+                'com.google.guava:guava:31.1-jre',
                 'commons-net:commons-net:3.8.0',
                 'org.apache.commons:commons-math3:3.6.1',
                 'org.json:json:20210307',
-                'ch.qos.logback:logback-classic:1.2.3'
+                'ch.qos.logback:logback-classic:1.2.3',
+                'org.apache.sshd:sshd-core:2.9.2',
+                'io.rest-assured:rest-assured:5.3.0',
+                'org.apache.httpcomponents:httpcore:4.4.16'
             ],
             geotools: [
                 'org.geotools:gt-referencing:26.1.01'
-            ],
-            mina_sshd: [
-                'org.apache.sshd:sshd-core:2.9.0'
             ],
             edge_sdk_libs: [
                 'org.slf4j:slf4j-api:1.7.25',

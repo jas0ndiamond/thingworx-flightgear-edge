@@ -12,7 +12,7 @@
          homeMashup=""
          identifier=""
          inheritedValueStream=""
-         name="C172PThing_Beta"
+         name="C172PThing_Delta"
          projectName="PTCDefaultProject"
          published="false"
          tags=""
@@ -2593,18 +2593,18 @@
             <ImplementedShapes></ImplementedShapes>
             <ThingProperties>
                 <reportingLastEvaluation>
-                    <Value>2023-01-30T05:54:43.561Z</Value>
-                    <Timestamp>2023-01-30T05:54:43.561Z</Timestamp>
+                    <Value>2023-01-30T07:25:01.490Z</Value>
+                    <Timestamp>2023-01-30T07:25:01.490Z</Timestamp>
                     <Quality>GOOD</Quality>
                 </reportingLastEvaluation>
                 <reportingLastChange>
-                    <Value>2023-01-30T05:54:43.561Z</Value>
-                    <Timestamp>2023-01-30T05:54:43.561Z</Timestamp>
+                    <Value>2023-01-30T07:25:01.490Z</Value>
+                    <Timestamp>2023-01-30T07:25:01.490Z</Timestamp>
                     <Quality>GOOD</Quality>
                 </reportingLastChange>
                 <lastConnection>
-                    <Value>2023-01-30T05:54:36.378Z</Value>
-                    <Timestamp>2023-01-30T05:54:36.378Z</Timestamp>
+                    <Value>2023-01-30T07:24:44.201Z</Value>
+                    <Timestamp>2023-01-30T07:24:44.201Z</Timestamp>
                     <Quality>GOOD</Quality>
                 </lastConnection>
             </ThingProperties>

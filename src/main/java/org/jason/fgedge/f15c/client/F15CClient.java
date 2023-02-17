@@ -11,7 +11,7 @@ public class F15CClient extends ConnectedThingClient {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(F15CClient.class);
 	
-	private static final int SCAN_RATE = 250;
+	protected static final int SCAN_RATE = 250;
 	
 	public F15CClient(ClientConfigurator config) throws Exception {
 		super(config);
