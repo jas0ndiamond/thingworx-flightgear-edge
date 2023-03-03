@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Entities
+ majorVersion="9"
+ minorVersion="3"
+ universal="password">
+    <DataShapes>
+        <DataShape
+         baseDataShape=""
+         description=""
+         documentationContent=""
+         homeMashup=""
+         name="C172P_ControlShape"
+         projectName="PTCDefaultProject"
+         tags="">
+            <avatar></avatar>
+            <DesignTimePermissions>
+                <Create></Create>
+                <Read></Read>
+                <Update></Update>
+                <Delete></Delete>
+                <Metadata></Metadata>
+            </DesignTimePermissions>
+            <RunTimePermissions></RunTimePermissions>
+            <VisibilityPermissions>
+                <Visibility></Visibility>
+            </VisibilityPermissions>
+            <ConfigurationTableDefinitions></ConfigurationTableDefinitions>
+            <ConfigurationTables></ConfigurationTables>
+            <FieldDefinitions>
+                <FieldDefinition
+                 baseType="INTEGER"
+                 description="The state of the battery switch"
+                 name="controls_electric_battery-switch"
+                 ordinal="0"></FieldDefinition>
+                <FieldDefinition
+                 baseType="NUMBER"
+                 description="The engine mixture percentage"
+                 name="controls_engines_current-engine_mixture"
+                 ordinal="0"></FieldDefinition>
+                <FieldDefinition
+                 baseType="NUMBER"
+                 description="The engine throttle percentage"
+                 name="controls_engines_current-engine_throttle"
+                 ordinal="0"></FieldDefinition>
+                <FieldDefinition
+                 baseType="NUMBER"
+                 description="The aileron orientation"
+                 name="controls_flight_aileron"
+                 ordinal="0"></FieldDefinition>
+                <FieldDefinition
+                 baseType="NUMBER"
+                 description="The aileron trim orientation"
+                 name="controls_flight_aileron-trim"
+                 ordinal="0"></FieldDefinition>
+                <FieldDefinition
+                 baseType="INTEGER"
+                 description="The auto-coordination setting for controls"
+                 name="controls_flight_auto-coordination"
+                 ordinal="0"></FieldDefinition>
+                <FieldDefinition
+                 baseType="NUMBER"
+                 description="The auto-coordination factor controls"
+                 name="controls_flight_auto-coordination-factor"
+                 ordinal="0"></FieldDefinition>
+                <FieldDefinition
+                 baseType="NUMBER"
+                 description="The elevator orientation"
+                 name="controls_flight_elevator"
+                 ordinal="0"></FieldDefinition>
+                <FieldDefinition
+                 baseType="NUMBER"
+                 description="The elevator trim orientation"
+                 name="controls_flight_elevator-trim"
+                 ordinal="0"></FieldDefinition>
+                <FieldDefinition
+                 baseType="NUMBER"
+                 description="The flaps orientation"
+                 name="controls_flight_flaps"
+                 ordinal="0"></FieldDefinition>
+                <FieldDefinition
+                 baseType="NUMBER"
+                 description="The rudder orientation"
+                 name="controls_flight_rudder"
+                 ordinal="0"></FieldDefinition>
+                <FieldDefinition
+                 baseType="NUMBER"
+                 description="The rudder orientation"
+                 name="controls_flight_rudder-trim"
+                 ordinal="0"></FieldDefinition>
+                <FieldDefinition
+                 baseType="INTEGER"
+                 description="The speedbrake orientation"
+                 name="controls_flight_speedbrake"
+                 ordinal="0"></FieldDefinition>
+                <FieldDefinition
+                 baseType="INTEGER"
+                 description="The parking brake setting"
+                 name="controls_gear_brake-parking"
+                 ordinal="0"></FieldDefinition>
+                <FieldDefinition
+                 baseType="INTEGER"
+                 description="The gear down setting"
+                 name="controls_gear_gear-down"
+                 ordinal="0"></FieldDefinition>
+            </FieldDefinitions>
+        </DataShape>
+    </DataShapes>
+</Entities>

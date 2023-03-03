@@ -11,7 +11,10 @@
 ---
 ### ThingWorx Platform Configuration ###
 1. Start up the ThingWorx Platform.
-1. In the ThingWorx Platform Composer, import all entities from the `thingworx-flightgear-edge/entities` directory. One of the imports is the Platform Application Key expected by the ThingWorx Edge SDK applications in this project.
+1. From the ThingWorx Platform Composer:
+    1. Import all of the DataShapes entities (DataShapes*) from the `thingworx-flightgear-edge/entities` directory. 
+    1. Import all of the Things entities (Things*) from the `thingworx-flightgear-edge/entities` directory. 
+    1. Import the Application Key entity ApplicationKeys_EdgeKey.xml. This is expected by the ThingWorx Edge SDK applications in this project.
 
 ---
 ### Building ###

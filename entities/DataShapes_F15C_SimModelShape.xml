@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Entities
+ majorVersion="9"
+ minorVersion="3"
+ universal="password">
+    <DataShapes>
+        <DataShape
+         baseDataShape=""
+         description=""
+         documentationContent=""
+         homeMashup=""
+         name="F15C_SimModelShape"
+         projectName="PTCDefaultProject"
+         tags="">
+            <avatar></avatar>
+            <DesignTimePermissions>
+                <Create></Create>
+                <Read></Read>
+                <Update></Update>
+                <Delete></Delete>
+                <Metadata></Metadata>
+            </DesignTimePermissions>
+            <RunTimePermissions></RunTimePermissions>
+            <VisibilityPermissions>
+                <Visibility></Visibility>
+            </VisibilityPermissions>
+            <ConfigurationTableDefinitions></ConfigurationTableDefinitions>
+            <ConfigurationTables></ConfigurationTables>
+            <FieldDefinitions>
+                <FieldDefinition
+                 baseType="INTEGER"
+                 description="Current quantity of AGM(-84?) Air-to-Ground missiles."
+                 name="sim_model_f15_systems_armament_agm_count"
+                 ordinal="0"></FieldDefinition>
+                <FieldDefinition
+                 baseType="INTEGER"
+                 description="Operational state of the F15C armament system"
+                 name="sim_model_f15_systems_armament_system-running"
+                 ordinal="0"></FieldDefinition>
+            </FieldDefinitions>
+        </DataShape>
+    </DataShapes>
+</Entities>

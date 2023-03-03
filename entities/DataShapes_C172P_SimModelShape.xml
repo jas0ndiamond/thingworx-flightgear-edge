@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Entities
+ majorVersion="9"
+ minorVersion="3"
+ universal="password">
+    <DataShapes>
+        <DataShape
+         baseDataShape=""
+         description=""
+         documentationContent=""
+         homeMashup=""
+         name="C172P_SimModelShape"
+         projectName="PTCDefaultProject"
+         tags="">
+            <avatar></avatar>
+            <DesignTimePermissions>
+                <Create></Create>
+                <Read></Read>
+                <Update></Update>
+                <Delete></Delete>
+                <Metadata></Metadata>
+            </DesignTimePermissions>
+            <RunTimePermissions></RunTimePermissions>
+            <VisibilityPermissions>
+                <Visibility></Visibility>
+            </VisibilityPermissions>
+            <ConfigurationTableDefinitions></ConfigurationTableDefinitions>
+            <ConfigurationTables></ConfigurationTables>
+            <FieldDefinitions>
+                <FieldDefinition
+                 baseType="NUMBER"
+                 description="The sim parking brake setting"
+                 name="sim_model_c172p_brake-parking"
+                 ordinal="0"></FieldDefinition>
+            </FieldDefinitions>
+        </DataShape>
+    </DataShapes>
+</Entities>

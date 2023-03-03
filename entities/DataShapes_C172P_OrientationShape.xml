@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Entities
+ majorVersion="9"
+ minorVersion="3"
+ universal="password">
+    <DataShapes>
+        <DataShape
+         baseDataShape=""
+         description=""
+         documentationContent=""
+         homeMashup=""
+         name="C172P_OrientationShape"
+         projectName="PTCDefaultProject"
+         tags="">
+            <avatar></avatar>
+            <DesignTimePermissions>
+                <Create></Create>
+                <Read></Read>
+                <Update></Update>
+                <Delete></Delete>
+                <Metadata></Metadata>
+            </DesignTimePermissions>
+            <RunTimePermissions></RunTimePermissions>
+            <VisibilityPermissions>
+                <Visibility></Visibility>
+            </VisibilityPermissions>
+            <ConfigurationTableDefinitions></ConfigurationTableDefinitions>
+            <ConfigurationTables></ConfigurationTables>
+            <FieldDefinitions>
+                <FieldDefinition
+                 baseType="NUMBER"
+                 description="The alpha orientation of the plane in degrees"
+                 name="orientation_alpha-deg"
+                 ordinal="0"></FieldDefinition>
+                <FieldDefinition
+                 baseType="NUMBER"
+                 description="The beta orientation of the plane in degrees"
+                 name="orientation_beta-deg"
+                 ordinal="0"></FieldDefinition>
+                <FieldDefinition
+                 baseType="NUMBER"
+                 description="The heading of the plane in degrees"
+                 name="orientation_heading-deg"
+                 ordinal="0"></FieldDefinition>
+                <FieldDefinition
+                 baseType="NUMBER"
+                 description="The magnetc heading of the plane in degrees"
+                 name="orientation_heading-magnetic-deg"
+                 ordinal="0"></FieldDefinition>
+                <FieldDefinition
+                 baseType="NUMBER"
+                 description="The pitch of the plane in degrees"
+                 name="orientation_pitch-deg"
+                 ordinal="0"></FieldDefinition>
+                <FieldDefinition
+                 baseType="NUMBER"
+                 description="The roll of the plane in degrees"
+                 name="orientation_roll-deg"
+                 ordinal="0"></FieldDefinition>
+                <FieldDefinition
+                 baseType="NUMBER"
+                 description="The track of the plane in degrees"
+                 name="orientation_track-deg"
+                 ordinal="0"></FieldDefinition>
+                <FieldDefinition
+                 baseType="NUMBER"
+                 description="The magnetic track of the plane in degrees"
+                 name="orientation_track-magnetic-deg"
+                 ordinal="0"></FieldDefinition>
+                <FieldDefinition
+                 baseType="NUMBER"
+                 description="The yaw of the plane in degrees"
+                 name="orientation_yaw-deg"
+                 ordinal="0"></FieldDefinition>
+                <FieldDefinition
+                 baseType="NUMBER"
+                 description="The yaw rate of the plane in degrees per second"
+                 name="orientation_yaw-rate-degps"
+                 ordinal="0"></FieldDefinition>
+            </FieldDefinitions>
+        </DataShape>
+    </DataShapes>
+</Entities>

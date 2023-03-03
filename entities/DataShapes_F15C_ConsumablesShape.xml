@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Entities
+ majorVersion="9"
+ minorVersion="3"
+ universal="password">
+    <DataShapes>
+        <DataShape
+         baseDataShape=""
+         description=""
+         documentationContent=""
+         homeMashup=""
+         name="F15C_ConsumablesShape"
+         projectName="PTCDefaultProject"
+         tags="">
+            <avatar></avatar>
+            <DesignTimePermissions>
+                <Create></Create>
+                <Read></Read>
+                <Update></Update>
+                <Delete></Delete>
+                <Metadata></Metadata>
+            </DesignTimePermissions>
+            <RunTimePermissions></RunTimePermissions>
+            <VisibilityPermissions>
+                <Visibility></Visibility>
+            </VisibilityPermissions>
+            <ConfigurationTableDefinitions></ConfigurationTableDefinitions>
+            <ConfigurationTables></ConfigurationTables>
+            <FieldDefinitions>
+                <FieldDefinition
+                 baseType="NUMBER"
+                 description="Fuel tank capacity for tank 1 in gallons"
+                 name="consumables_fuel_tank1_capacity-gal_us"
+                 ordinal="0"></FieldDefinition>
+                <FieldDefinition
+                 baseType="NUMBER"
+                 description="Fuel level for tank 1 in gallons"
+                 name="consumables_fuel_tank1_level-gal_us"
+                 ordinal="0"></FieldDefinition>
+                <FieldDefinition
+                 baseType="NUMBER"
+                 description="Fuel tank capacity for tank 2 in gallons"
+                 name="consumables_fuel_tank2_capacity-gal_us"
+                 ordinal="0"></FieldDefinition>
+                <FieldDefinition
+                 baseType="NUMBER"
+                 description="Fuel level for tank 2 in gallons"
+                 name="consumables_fuel_tank2_level-gal_us"
+                 ordinal="0"></FieldDefinition>
+                <FieldDefinition
+                 baseType="NUMBER"
+                 description="Fuel tank capacity for tank 3 in gallons"
+                 name="consumables_fuel_tank3_capacity-gal_us"
+                 ordinal="0"></FieldDefinition>
+                <FieldDefinition
+                 baseType="NUMBER"
+                 description="Fuel level for tank 3 in gallons"
+                 name="consumables_fuel_tank3_level-gal_us"
+                 ordinal="0"></FieldDefinition>
+                <FieldDefinition
+                 baseType="NUMBER"
+                 description="Fuel tank capacity for tank 4 in gallons"
+                 name="consumables_fuel_tank4_capacity-gal_us"
+                 ordinal="0"></FieldDefinition>
+                <FieldDefinition
+                 baseType="NUMBER"
+                 description="Fuel level for tank 4 in gallons"
+                 name="consumables_fuel_tank4_level-gal_us"
+                 ordinal="0"></FieldDefinition>
+                <FieldDefinition
+                 baseType="NUMBER"
+                 description="Fuel tank capacity for tank 0 in gallons"
+                 name="consumables_fuel_tank_capacity-gal_us"
+                 ordinal="0"></FieldDefinition>
+                <FieldDefinition
+                 baseType="NUMBER"
+                 description="Fuel level for tank 0 in gallons"
+                 name="consumables_fuel_tank_level-gal_us"
+                 ordinal="0"></FieldDefinition>
+            </FieldDefinitions>
+        </DataShape>
+    </DataShapes>
+</Entities>

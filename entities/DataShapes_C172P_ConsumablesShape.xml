@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Entities
+ majorVersion="9"
+ minorVersion="3"
+ universal="password">
+    <DataShapes>
+        <DataShape
+         baseDataShape=""
+         description=""
+         documentationContent=""
+         homeMashup=""
+         name="C172P_ConsumablesShape"
+         projectName="PTCDefaultProject"
+         tags="">
+            <avatar></avatar>
+            <DesignTimePermissions>
+                <Create></Create>
+                <Read></Read>
+                <Update></Update>
+                <Delete></Delete>
+                <Metadata></Metadata>
+            </DesignTimePermissions>
+            <RunTimePermissions></RunTimePermissions>
+            <VisibilityPermissions>
+                <Visibility></Visibility>
+            </VisibilityPermissions>
+            <ConfigurationTableDefinitions></ConfigurationTableDefinitions>
+            <ConfigurationTables></ConfigurationTables>
+            <FieldDefinitions>
+                <FieldDefinition
+                 baseType="NUMBER"
+                 description="Fuel tank 1 capacity in gallons"
+                 name="consumables_fuel_tank1_capacity-gal_us"
+                 ordinal="0"></FieldDefinition>
+                <FieldDefinition
+                 baseType="NUMBER"
+                 description="Fuel tank 1 level in gallons"
+                 name="consumables_fuel_tank1_level-gal_us"
+                 ordinal="0"></FieldDefinition>
+                <FieldDefinition
+                 baseType="NUMBER"
+                 description="Water contamination amount in fuel tank 1"
+                 name="consumables_fuel_tank1_water-contamination"
+                 ordinal="0"></FieldDefinition>
+                <FieldDefinition
+                 baseType="NUMBER"
+                 description="Fuel tank 0 capacity in gallons"
+                 name="consumables_fuel_tank_capacity-gal_us"
+                 ordinal="0"></FieldDefinition>
+                <FieldDefinition
+                 baseType="NUMBER"
+                 description="Fuel tank 0 level in gallons"
+                 name="consumables_fuel_tank_level-gal_us"
+                 ordinal="0"></FieldDefinition>
+                <FieldDefinition
+                 baseType="NUMBER"
+                 description="Water contamination amount in fuel tank 0"
+                 name="consumables_fuel_tank_water-contamination"
+                 ordinal="0"></FieldDefinition>
+            </FieldDefinitions>
+        </DataShape>
+    </DataShapes>
+</Entities>
