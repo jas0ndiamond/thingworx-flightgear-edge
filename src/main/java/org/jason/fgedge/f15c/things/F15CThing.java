@@ -8,8 +8,9 @@ import java.util.Map;
 import org.jason.fgcontrol.aircraft.f15c.F15C;
 import org.jason.fgcontrol.aircraft.f15c.F15CConfig;
 import org.jason.fgcontrol.aircraft.f15c.F15CFields;
+import org.jason.fgcontrol.aircraft.f15c.flight.F15CFlightParameters;
 import org.jason.fgcontrol.aircraft.f15c.flight.RunwayBurnoutFlightExecutor;
-import org.jason.fgcontrol.aircraft.f15c.flight.WaypointFlightExecutor;
+import org.jason.fgcontrol.aircraft.f15c.flight.F15CWaypointFlightExecutor;
 import org.jason.fgcontrol.aircraft.fields.FlightGearFields;
 import org.jason.fgcontrol.exceptions.AircraftStartupException;
 import org.jason.fgcontrol.exceptions.FlightGearSetupException;
@@ -1057,8 +1058,12 @@ public class F15CThing extends VirtualThing implements IAircraftThing {
 		// in case we get a previously lightly-used environment
 		aircraft.refillFuel();
 		
+		//TODO: remove after demo
+		F15CFlightParameters flightParams = new F15CFlightParameters();
+		flightParams.setTargetAltitude(8000.0);
+		
 		// kick off our flight in the main thread
-		WaypointFlightExecutor.runFlight(aircraft);
+		F15CWaypointFlightExecutor.runFlight(aircraft, flightParams);
 
 		// pause so the aircraft doesn't list from its heading and crash
 		aircraft.setPause(true);

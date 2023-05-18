@@ -9,7 +9,7 @@ import org.jason.fgcontrol.aircraft.c172p.C172P;
 import org.jason.fgcontrol.aircraft.c172p.C172PConfig;
 import org.jason.fgcontrol.aircraft.c172p.C172PFields;
 import org.jason.fgcontrol.aircraft.c172p.flight.RunwayBurnoutFlightExecutor;
-import org.jason.fgcontrol.aircraft.c172p.flight.WaypointFlightExecutor;
+import org.jason.fgcontrol.aircraft.c172p.flight.C172PWaypointFlightExecutor;
 import org.jason.fgcontrol.aircraft.fields.FlightGearFields;
 import org.jason.fgcontrol.exceptions.AircraftStartupException;
 import org.jason.fgcontrol.flight.position.WaypointManager;
@@ -1206,7 +1206,7 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
 		aircraft.setBatteryCharge(C172PFields.BATTERY_CHARGE_MAX);
 		
 		// kick off our flight in the main thread
-		WaypointFlightExecutor.runFlight(aircraft);
+		C172PWaypointFlightExecutor.runFlight(aircraft);
 
 		// pause so the aircraft doesn't list from its heading and crash
 		aircraft.setPause(true);
