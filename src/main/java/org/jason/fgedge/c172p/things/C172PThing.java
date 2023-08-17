@@ -211,8 +211,8 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
     
     @Override
     public void executeFlightPlan() {
-    	if(LOGGER.isTraceEnabled()) {
-    		LOGGER.trace("executeFlightPlan invoked");
+    	if(LOGGER.isDebugEnabled()) {
+    		LOGGER.debug("executeFlightPlan invoked");
     	}
         
         ///////////////////////
@@ -221,8 +221,8 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
         flightThread = new Thread() {
             @Override
             public void run() {
-            	if(LOGGER.isTraceEnabled()) {
-            		LOGGER.trace("flight thread started");
+            	if(LOGGER.isDebugEnabled()) {
+            		LOGGER.debug("flight thread started");
             	}
                 
                 try {
@@ -241,8 +241,8 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
                     LOGGER.error(e.getMessage(), e);
                 }
                 
-                if(LOGGER.isTraceEnabled()) {
-                	LOGGER.trace("flight thread returning");
+                if(LOGGER.isDebugEnabled()) {
+                	LOGGER.debug("flight thread returning");
                 }
             }
         };
@@ -250,8 +250,8 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
         //start the flight thread
         flightThread.start();
         
-        if(LOGGER.isTraceEnabled()) {
-        	LOGGER.trace("executeFlightPlan returning");
+        if(LOGGER.isDebugEnabled()) {
+        	LOGGER.debug("executeFlightPlan returning");
         }
     }
     
@@ -1193,8 +1193,8 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
         //aircraft route should have been set before this function is invoked
 
 		// set chase view (2) -> broken in fgfs 2020.3.17
-        // use helicopter view (1) instead
-		aircraft.setCurrentView(1);
+        // >>> workaround in runFlight
+		//aircraft.setCurrentView(2);
 
 		aircraft.setDamageEnabled(false);
 		aircraft.setComplexEngineProcedures(false);
