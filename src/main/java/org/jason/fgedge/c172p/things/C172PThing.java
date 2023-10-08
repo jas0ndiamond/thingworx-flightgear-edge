@@ -200,10 +200,11 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
         LOGGER.debug("startup invoked");
         
         //start aircraft. function should return or it'll block everything else
-        aircraft.startupPlane();
+        aircraft.startupPlane(true);
         
         //set the parking brake so the aircraft doesn't start rolling
         //enabled by default, but the default c172p autostart disables it
+        //depends on startup with autostart sleep <code>aircraft.startupPlane(true);</code>
         aircraft.setParkingBrake(true);
         
         LOGGER.debug("startup returning");
