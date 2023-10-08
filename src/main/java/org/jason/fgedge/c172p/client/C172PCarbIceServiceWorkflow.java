@@ -17,7 +17,8 @@ import com.thingworx.communications.client.ClientConfigurator;
 import com.thingworx.communications.client.ConnectedThingClient;
 
 /**
- * Start the engine for an aircraft on a runway and increase the carb_ice level.
+ * Start the engine for an aircraft on a runway and increase the carb_ice level
+ * to see a reduction in engine output, and signal that service is required.
  *
  */
 public class C172PCarbIceServiceWorkflow extends C172PClient {
@@ -122,11 +123,9 @@ public class C172PCarbIceServiceWorkflow extends C172PClient {
             
             LOGGER.info("Entering edge run loop");
             
-            //we are connected and the virtual thing is bound, start the plane and launch it
-                        
-            //c172pThing.setFlightPlan(C172PThing.FLIGHTPLAN_RUNWAY);
-            //c172pThing.executeFlightPlan();
+            //we are connected and the virtual thing is bound, start the plane and begin the edge workflow
             
+            // otherwise carburetor doesn't ice up
             c172pThing.SetEnableComplexEngineProcedures(true);
             
             // start engine to begin workflow
