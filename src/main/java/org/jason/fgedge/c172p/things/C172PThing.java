@@ -809,7 +809,7 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
 
         LOGGER.debug("Setting elevator orientation to: {}", orientation);
 
-        aircraft.setAileron(orientation);
+        aircraft.setElevator(orientation);
 
         LOGGER.debug("SetElevator returning");
     }
@@ -839,7 +839,7 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
 
         LOGGER.debug("Setting flaps orientation to: {}", orientation);
 
-        aircraft.setAileron(orientation);
+        aircraft.setFlaps(orientation);
 
         LOGGER.debug("SetFlaps returning");
     }
@@ -867,9 +867,9 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
             orientation = C172PFields.ELEVATOR_MAX;
         }
 
-        LOGGER.debug("Setting elevator orientation to: {}", orientation);
+        LOGGER.debug("Setting rudder orientation to: {}", orientation);
 
-        aircraft.setAileron(orientation);
+        aircraft.setRudder(orientation);
 
         LOGGER.debug("SetRudder returning");
     }
@@ -967,6 +967,82 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
         
         return table;
     }
+    
+    /////////////////////////
+    //engine
+    /////////////////////////
+    
+    //enable complex engine procedures
+    @ThingworxServiceDefinition
+    (
+        name = "SetEnableComplexEngineProcedures", 
+        description = "Set the enablement of C172P complex engine procedures"
+    )
+    @ThingworxServiceResult
+    (
+        name = CommonPropertyNames.PROP_RESULT, 
+        description = "InfoTable of control settings", 
+        baseType = "INFOTABLE",
+        aspects = { "dataShape:" + ENGINE_SHAPE_NAME }
+    )
+    public synchronized InfoTable SetEnableComplexEngineProcedures(
+        @ThingworxServiceParameter
+        ( 
+        	name="enabled", 
+            description="Parking brake enabled", 
+            baseType="BOOLEAN" 
+        ) Boolean enabled
+    ) throws Exception 
+    {
+        LOGGER.debug("SetEnableComplexEngineProcedures invoked");
+
+        aircraft.setComplexEngineProcedures(enabled);
+        int cepEnabled = aircraft.getComplexEngineProcedures();
+        
+        LOGGER.debug("Got Complex Engine Procedures state {}", cepEnabled);
+        
+        ValueCollection entry = new ValueCollection();
+        entry.clear();
+        
+        entry.SetIntegerValue(EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINES_COMPLEX_ENGINE_PROCEDURES), cepEnabled);
+        
+        InfoTable table = new InfoTable(getDataShapeDefinition(ENGINE_SHAPE_NAME));
+        table.addRow(entry);
+        
+        LOGGER.debug("SetEnableComplexEngineProcedures returning");
+        
+        return table;
+    }
+    
+    //set carb ice amount
+    @ThingworxServiceDefinition
+    (
+        name = "SetCarbIce", 
+        description = "Set the amount of carbourator ice in the engine"
+    )
+    public synchronized void SetCarbIce(
+        @ThingworxServiceParameter
+        ( 
+        	name="carbIce", 
+            description="Amount of carbourator ice", 
+            baseType="NUMBER" 
+        ) Double carbIceAmount
+    ) throws Exception 
+    {
+        LOGGER.debug("SetCarbIce invoked");
+        
+        //guardrails 0 <-> 1
+        if(carbIceAmount < 0.0) {
+        	carbIceAmount = 0.0;
+        }
+
+        LOGGER.debug("Setting carbourator ice amount to: {}", carbIceAmount);
+
+        aircraft.setCarbIce(carbIceAmount);
+
+        LOGGER.debug("SetCarbIce returning");
+    }
+    
     
     /////////////////////////
     //orientation
