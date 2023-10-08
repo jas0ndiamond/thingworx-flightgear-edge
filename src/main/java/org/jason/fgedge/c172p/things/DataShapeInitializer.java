@@ -125,7 +125,7 @@ public abstract class DataShapeInitializer {
         controlFields.addFieldDefinition(
             new FieldDefinition(
                 EdgeUtilities.toThingworxPropertyName(C172PFields.RUDDER_TRIM_FIELD),
-                C172PFields.RUDDER_FIELD_DESC,
+                C172PFields.RUDDER_TRIM_FIELD_DESC,
                 BaseTypes.NUMBER
         ));
         controlFields.addFieldDefinition(
