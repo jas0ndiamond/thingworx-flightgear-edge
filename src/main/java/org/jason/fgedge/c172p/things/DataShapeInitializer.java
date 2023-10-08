@@ -153,6 +153,18 @@ public abstract class DataShapeInitializer {
     public static FieldDefinitionCollection buildEngineShape() {
         FieldDefinitionCollection engineFields = new FieldDefinitionCollection();
         engineFields.addFieldDefinition(
+        	new FieldDefinition(
+        		EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINES_CARB_ICE), 
+                C172PFields.ENGINES_CARB_ICE_DESC,
+                BaseTypes.NUMBER
+        ));
+        engineFields.addFieldDefinition(
+            new FieldDefinition(
+            	EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINES_COMPLEX_ENGINE_PROCEDURES), 
+                C172PFields.ENGINES_COMPLEX_ENGINE_PROCEDURES_DESC,
+                BaseTypes.INTEGER
+        ));
+        engineFields.addFieldDefinition(
             new FieldDefinition(
                 EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINES_COWLING_AIR_TEMPERATURE_FIELD), 
                 C172PFields.ENGINES_COWLING_AIR_TEMPERATURE_DESC,

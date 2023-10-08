@@ -1,6 +1,7 @@
 package org.jason.fgedge.c172p.things;
 
 import java.util.Map;
+import java.text.DecimalFormat;
 
 import org.jason.fgcontrol.aircraft.c172p.C172PFields;
 import org.jason.fgcontrol.aircraft.fields.FlightGearFields;
@@ -11,6 +12,8 @@ import com.thingworx.types.primitives.NumberPrimitive;
 import com.thingworx.types.primitives.StringPrimitive;
 
 public abstract class C172PDeviceScanner {
+	
+	private final static DecimalFormat FUEL_LEVEL_FORMATTER = new DecimalFormat("#.###");
 	
 	/**
 	 * Run a pass of the state of the c172p and set the twx properties for transit to platform
@@ -45,10 +48,14 @@ public abstract class C172PDeviceScanner {
             EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_0_CAPACITY_FIELD), 
             new NumberPrimitive( (Number) Double.parseDouble(aircraftTelemetry.get(C172PFields.FUEL_TANK_0_CAPACITY_FIELD ) ) 
         ));
+        
+        //this could be a lot better
+        
+        
         c172pThing.setProperty(
             EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_0_LEVEL_FIELD),
-            new NumberPrimitive( (Number) Double.parseDouble(aircraftTelemetry.get(C172PFields.FUEL_TANK_0_LEVEL_FIELD ) ) 
-        ));
+            new NumberPrimitive( (Number) Double.parseDouble(FUEL_LEVEL_FORMATTER.format( Double.parseDouble( aircraftTelemetry.get(C172PFields.FUEL_TANK_0_LEVEL_FIELD ) ) ) 
+        )));
         c172pThing.setProperty(
             EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_0_WATER_CONTAMINATION_FIELD), 
             new NumberPrimitive( (Number) Double.parseDouble(aircraftTelemetry.get(C172PFields.FUEL_TANK_0_WATER_CONTAMINATION_FIELD ) )
@@ -61,8 +68,8 @@ public abstract class C172PDeviceScanner {
         ));
         c172pThing.setProperty(
         	EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_1_LEVEL_FIELD),
-            new NumberPrimitive( (Number) Double.parseDouble(aircraftTelemetry.get(C172PFields.FUEL_TANK_1_LEVEL_FIELD ) )  
-        ));
+            new NumberPrimitive( (Number) Double.parseDouble(FUEL_LEVEL_FORMATTER.format( Double.parseDouble(aircraftTelemetry.get(C172PFields.FUEL_TANK_1_LEVEL_FIELD )) )  
+        )));
         c172pThing.setProperty(
             EdgeUtilities.toThingworxPropertyName(C172PFields.FUEL_TANK_1_WATER_CONTAMINATION_FIELD), 
             new NumberPrimitive( (Number) Double.parseDouble(aircraftTelemetry.get(C172PFields.FUEL_TANK_1_WATER_CONTAMINATION_FIELD ) )
@@ -133,6 +140,14 @@ public abstract class C172PDeviceScanner {
         
 		/////////////////
         //Engine
+        c172pThing.setProperty(
+            EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINES_CARB_ICE), 
+            new NumberPrimitive( (Number) Double.parseDouble(aircraftTelemetry.get(C172PFields.ENGINES_CARB_ICE ) )
+        ));
+        c172pThing.setProperty(
+        	EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINES_COMPLEX_ENGINE_PROCEDURES),
+            new IntegerPrimitive( (Number) (int)Double.parseDouble(aircraftTelemetry.get(C172PFields.ENGINES_COMPLEX_ENGINE_PROCEDURES ) )
+        ));
         c172pThing.setProperty(
         	EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINES_COWLING_AIR_TEMPERATURE_FIELD), 
             new NumberPrimitive( (Number) Double.parseDouble(aircraftTelemetry.get(C172PFields.ENGINES_COWLING_AIR_TEMPERATURE_FIELD ) )
@@ -306,6 +321,10 @@ public abstract class C172PDeviceScanner {
         c172pThing.setProperty(
             EdgeUtilities.toThingworxPropertyName(FlightGearFields.FDM_FSZ_AERO_FIELD), 
             new NumberPrimitive( (Number) Double.parseDouble(aircraftTelemetry.get(FlightGearFields.FDM_FSZ_AERO_FIELD ) )
+        ));
+        c172pThing.setProperty(
+        	EdgeUtilities.toThingworxPropertyName(FlightGearFields.FDM_FWX_AERO_FIELD), 
+            new NumberPrimitive( (Number) Double.parseDouble(aircraftTelemetry.get(FlightGearFields.FDM_FWX_AERO_FIELD ) )
         ));
         c172pThing.setProperty(
             EdgeUtilities.toThingworxPropertyName(FlightGearFields.FDM_FWY_AERO_FIELD), 
