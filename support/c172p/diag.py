@@ -111,6 +111,16 @@ def main(args):
     else:
         report.append("Fuel Tank 1 Water contamination:\tOK") 
     
+    ##### carb_ice < 0.2
+    
+    carb_ice_amt = float(telem["/engines/active-engine/carb_ice"])
+    
+    if(carb_ice_amt >= 0.2):
+        report.append("Engine Carburetor ice amount:\tFAIL")
+        actions.append("Clear carburetor of ice")
+    else:
+        report.append("Engine Carburetor ice amount:\t\tOK") 
+    
     #####
     # check battery level > 0
     
@@ -165,11 +175,13 @@ def main(args):
         report.append("Exhaust Gas Temperature check:\t\tOK") 
     
     #####
-    # check oil temp < 150
+    # check oil temp < 250
+    
+    # about 250 for 75% throttle 
     
     oil_temp = float(telem["/engines/active-engine/oil-temperature-degf"])
     
-    if(oil_temp > 150.0 ):
+    if(oil_temp > 250.0 ):
         report.append("Oil Temperature check:\t\t\tFAIL")
         actions.append("Lower engine oil temperature")
     else:
