@@ -704,7 +704,7 @@ public class F15CThing extends VirtualThing implements IAircraftThing {
 
         LOGGER.debug("Setting elevator orientation to: {}", orientation);
 
-        aircraft.setAileron(orientation);
+        aircraft.setElevator(orientation);
 
         LOGGER.debug("SetElevator returning");
     }
@@ -734,7 +734,7 @@ public class F15CThing extends VirtualThing implements IAircraftThing {
 
         LOGGER.debug("Setting flaps orientation to: {}", orientation);
 
-        aircraft.setAileron(orientation);
+        aircraft.setFlaps(orientation);
 
         LOGGER.debug("SetFlaps returning");
     }
@@ -762,9 +762,9 @@ public class F15CThing extends VirtualThing implements IAircraftThing {
             orientation = F15CFields.ELEVATOR_MAX;
         }
 
-        LOGGER.debug("Setting elevator orientation to: {}", orientation);
+        LOGGER.debug("Setting rudder orientation to: {}", orientation);
 
-        aircraft.setAileron(orientation);
+        aircraft.setRudder(orientation);
 
         LOGGER.debug("SetRudder returning");
     }
