@@ -1,0 +1,9 @@
+Carburetor ice workflow
+
+cd support/c172p/
+./diag.py
+[check output for carb ice result]
+./clear_carb_ice.sh
+./diag.py
+[check output for carb ice result]
+[check app output or mashup for rpms within expected range]
