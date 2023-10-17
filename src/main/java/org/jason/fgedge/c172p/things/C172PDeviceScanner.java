@@ -1,12 +1,17 @@
 package org.jason.fgedge.c172p.things;
 
-import java.util.Map;
 import java.text.DecimalFormat;
+import java.util.Map;
 
 import org.jason.fgcontrol.aircraft.c172p.C172PFields;
 import org.jason.fgcontrol.aircraft.fields.FlightGearFields;
 import org.jason.fgedge.util.EdgeUtilities;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.thingworx.types.collections.ValueCollection;
+import com.thingworx.types.constants.CommonPropertyNames;
 import com.thingworx.types.primitives.IntegerPrimitive;
 import com.thingworx.types.primitives.NumberPrimitive;
 import com.thingworx.types.primitives.StringPrimitive;
@@ -14,6 +19,8 @@ import com.thingworx.types.primitives.StringPrimitive;
 public abstract class C172PDeviceScanner {
 	
 	private final static DecimalFormat FUEL_LEVEL_FORMATTER = new DecimalFormat("#.###");
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(C172PDeviceScanner.class);
 	
 	/**
 	 * Run a pass of the state of the c172p and set the twx properties for transit to platform
@@ -176,10 +183,23 @@ public abstract class C172PDeviceScanner {
             EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINES_OIL_TEMPERATURE_FIELD), 
             new NumberPrimitive( (Number) Double.parseDouble(aircraftTelemetry.get(C172PFields.ENGINES_OIL_TEMPERATURE_FIELD ) )
         ));
+        
+        double engineRpms = Double.parseDouble(aircraftTelemetry.get(C172PFields.ENGINES_RPM_FIELD ));
+        
+        if(engineRpms < 1200.0) {
+			ValueCollection eventInfo = new ValueCollection();
+			eventInfo.put(CommonPropertyNames.PROP_MESSAGE, 
+					new StringPrimitive("The C172P Engine is running with a reduced output"));
+			// Queue the event
+			c172pThing.queueEvent(C172PThing.LOW_ENGINE_RPMS_FIELD, DateTime.now(), eventInfo);
+			
+			LOGGER.warn("Low RPM Event");
+        }
+        
         c172pThing.setProperty(
             EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINES_RPM_FIELD), 
-            new NumberPrimitive( (Number) Double.parseDouble(aircraftTelemetry.get(C172PFields.ENGINES_RPM_FIELD ) )
-        ));
+            new NumberPrimitive( (Number) engineRpms )
+        );
         c172pThing.setProperty(
             EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINES_RUNNING_FIELD), 
             new IntegerPrimitive( (Number) (int)Double.parseDouble(aircraftTelemetry.get(C172PFields.ENGINES_RUNNING_FIELD ) )

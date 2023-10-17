@@ -8,8 +8,8 @@ import java.util.Map;
 import org.jason.fgcontrol.aircraft.c172p.C172P;
 import org.jason.fgcontrol.aircraft.c172p.C172PConfig;
 import org.jason.fgcontrol.aircraft.c172p.C172PFields;
-import org.jason.fgcontrol.aircraft.c172p.flight.RunwayBurnoutFlightExecutor;
 import org.jason.fgcontrol.aircraft.c172p.flight.C172PWaypointFlightExecutor;
+import org.jason.fgcontrol.aircraft.c172p.flight.RunwayBurnoutFlightExecutor;
 import org.jason.fgcontrol.aircraft.fields.FlightGearFields;
 import org.jason.fgcontrol.exceptions.AircraftStartupException;
 import org.jason.fgcontrol.flight.position.WaypointManager;
@@ -21,10 +21,14 @@ import org.slf4j.LoggerFactory;
 
 import com.thingworx.communications.client.ConnectedThingClient;
 import com.thingworx.communications.client.things.VirtualThing;
+import com.thingworx.metadata.EventDefinition;
+import com.thingworx.metadata.FieldDefinition;
 import com.thingworx.metadata.PropertyDefinition;
 import com.thingworx.metadata.annotations.ThingworxServiceDefinition;
 import com.thingworx.metadata.annotations.ThingworxServiceParameter;
 import com.thingworx.metadata.annotations.ThingworxServiceResult;
+import com.thingworx.metadata.collections.FieldDefinitionCollection;
+import com.thingworx.types.BaseTypes;
 import com.thingworx.types.InfoTable;
 import com.thingworx.types.collections.AspectCollection;
 import com.thingworx.types.collections.ValueCollection;
@@ -60,6 +64,10 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
     private final static String VELOCITIES_SHAPE_NAME = "C172P_VelocitiesShape";
     
     private final static String FLIGHTPLAN_SHAPE_NAME = "C172P_FlightPlanShape";
+    
+    //event names
+    final static String LOW_ENGINE_RPMS_FIELD = "LowEngineRpmsEvent";	
+    final static String LOW_ENGINE_RPMS_SHAPE_NAME = "LowEngineRpmsShape";
     
     //a nice, clear, warm, bright date/time in western canada
     private final static String LAUNCH_TIME_GMT = "2021-07-01T20:00:00";
@@ -128,6 +136,12 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
         //low fuel event
         //water in fuel tank alert
        
+		EventDefinition triggerDurationThresholdEvent = new EventDefinition();
+		triggerDurationThresholdEvent.setName(LOW_ENGINE_RPMS_FIELD);
+		triggerDurationThresholdEvent.setDataShapeName(LOW_ENGINE_RPMS_SHAPE_NAME);
+		triggerDurationThresholdEvent.setInvocable(true);
+		triggerDurationThresholdEvent.setPropertyEvent(false);		
+		super.defineEvent(triggerDurationThresholdEvent);
         
         ///////////////////////
     }
@@ -190,6 +204,15 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
         //waypoint readout
         defineDataShapeDefinition(FLIGHTPLAN_SHAPE_NAME, DataShapeInitializer.buildFlightPlanShape());
         
+        //////////////////////
+        //events
+        
+		FieldDefinitionCollection faultFields = new FieldDefinitionCollection();
+		faultFields.addFieldDefinition(new FieldDefinition(CommonPropertyNames.PROP_MESSAGE,BaseTypes.STRING));
+		defineDataShapeDefinition(LOW_ENGINE_RPMS_SHAPE_NAME, faultFields);
+        
+		//////////////////////
+		
         if(LOGGER.isTraceEnabled()) {
         	LOGGER.trace("init returning");
         }
@@ -399,7 +422,7 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
     	aircraft.removeWaypoints(latitude, longitude);
     }
     
-    //Get the human-readable flightplan
+    //Get the human-readable flightplan. there may not always be one available.
     @ThingworxServiceDefinition
     (
        name = "GetFlightPlan", 
@@ -420,29 +443,35 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
     	
     	List<WaypointPosition> waypoints = aircraft.getWaypoints();
     	
-    	//add current waypoint as first
-    	waypoints.add(0, aircraft.getCurrentWaypointTarget());
+    	WaypointPosition currentWaypoint = aircraft.getCurrentWaypointTarget();
     	
-    	//remaining waypoints    	
-    	for( WaypointPosition wp : waypoints) {
-			
-    		//need to create a new vc for the row in the loop body
-    		ValueCollection entry = new ValueCollection();
-    		
-			entry.SetNumberValue(
-				EdgeUtilities.toThingworxPropertyName(FlightGearFields.LATITUDE_FIELD), wp.getLatitude());
-			entry.SetNumberValue(
-				EdgeUtilities.toThingworxPropertyName(FlightGearFields.LONGITUDE_FIELD), wp.getLongitude());
-			entry.SetNumberValue(
-				EdgeUtilities.toThingworxPropertyName(FlightGearFields.ALTITUDE_FIELD), wp.getAltitude());
-			entry.SetStringValue(
-				EdgeUtilities.toThingworxPropertyName(WaypointManager.WAYPOINT_NAME_FIELD), wp.getName());
-			
-	    	LOGGER.debug("Logging waypoint: {}", entry.toString());
-			
-			table.addRow(entry);
+    	//get the rest of the flightplan if a current waypoint is defined
+    	//no waypoints is acceptable
+    	if( currentWaypoint != null ) {
+        	//add current waypoint as first
+        	waypoints.add(0, currentWaypoint );
+        	
+        	//remaining waypoints    	
+        	for( WaypointPosition wp : waypoints) {
+    			
+        		//need to create a new vc for the row in the loop body
+        		ValueCollection entry = new ValueCollection();
+        		
+    			entry.SetNumberValue(
+    				EdgeUtilities.toThingworxPropertyName(FlightGearFields.LATITUDE_FIELD), wp.getLatitude());
+    			entry.SetNumberValue(
+    				EdgeUtilities.toThingworxPropertyName(FlightGearFields.LONGITUDE_FIELD), wp.getLongitude());
+    			entry.SetNumberValue(
+    				EdgeUtilities.toThingworxPropertyName(FlightGearFields.ALTITUDE_FIELD), wp.getAltitude());
+    			entry.SetStringValue(
+    				EdgeUtilities.toThingworxPropertyName(WaypointManager.WAYPOINT_NAME_FIELD), wp.getName());
+    			
+    	    	LOGGER.debug("Logging waypoint: {}", entry.toString());
+    			
+    			table.addRow(entry);
+        	}
     	}
-
+    	
     	LOGGER.debug("Retrieved C172P flight plan");
     	
     	return table;
