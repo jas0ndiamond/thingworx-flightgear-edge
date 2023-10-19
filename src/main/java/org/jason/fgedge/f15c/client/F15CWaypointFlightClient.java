@@ -1,12 +1,9 @@
 package org.jason.fgedge.f15c.client;
 
 import java.io.FileInputStream;
-import java.util.ArrayList;
 import java.util.Properties;
 
 import org.jason.fgcontrol.aircraft.f15c.F15CConfig;
-import org.jason.fgcontrol.flight.position.KnownRoutes;
-import org.jason.fgcontrol.flight.position.WaypointPosition;
 import org.jason.fgedge.config.EdgeConfig;
 import org.jason.fgedge.config.EdgeConfigVisitor;
 import org.jason.fgedge.f15c.things.F15CThing;
@@ -87,9 +84,9 @@ public class F15CWaypointFlightClient extends F15CClient {
         	f15cConfig
         );
         
-        ArrayList<WaypointPosition> route = KnownRoutes.VAN_ISLAND_TOUR_SOUTH;       
-        
-        f15cThing.setRoute( route );
+        // override flight plan loaded from config file
+        //ArrayList<WaypointPosition> route = KnownRoutes.VAN_ISLAND_TOUR_SOUTH;       
+        //f15cThing.setRoute( route );
 
         f15cClient.bindThing(f15cThing);
         

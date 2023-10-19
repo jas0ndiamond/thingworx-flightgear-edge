@@ -125,7 +125,7 @@ public abstract class DataShapeInitializer {
         controlFields.addFieldDefinition(
             new FieldDefinition(
                 EdgeUtilities.toThingworxPropertyName(C172PFields.RUDDER_TRIM_FIELD),
-                C172PFields.RUDDER_FIELD_DESC,
+                C172PFields.RUDDER_TRIM_FIELD_DESC,
                 BaseTypes.NUMBER
         ));
         controlFields.addFieldDefinition(
@@ -152,6 +152,18 @@ public abstract class DataShapeInitializer {
 
     public static FieldDefinitionCollection buildEngineShape() {
         FieldDefinitionCollection engineFields = new FieldDefinitionCollection();
+        engineFields.addFieldDefinition(
+        	new FieldDefinition(
+        		EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINES_CARB_ICE), 
+                C172PFields.ENGINES_CARB_ICE_DESC,
+                BaseTypes.NUMBER
+        ));
+        engineFields.addFieldDefinition(
+            new FieldDefinition(
+            	EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINES_COMPLEX_ENGINE_PROCEDURES), 
+                C172PFields.ENGINES_COMPLEX_ENGINE_PROCEDURES_DESC,
+                BaseTypes.INTEGER
+        ));
         engineFields.addFieldDefinition(
             new FieldDefinition(
                 EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINES_COWLING_AIR_TEMPERATURE_FIELD), 

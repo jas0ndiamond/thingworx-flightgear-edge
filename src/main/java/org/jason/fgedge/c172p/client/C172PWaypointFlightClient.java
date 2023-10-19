@@ -1,12 +1,9 @@
 package org.jason.fgedge.c172p.client;
 
 import java.io.FileInputStream;
-import java.util.ArrayList;
 import java.util.Properties;
 
 import org.jason.fgcontrol.aircraft.c172p.C172PConfig;
-import org.jason.fgcontrol.flight.position.KnownRoutes;
-import org.jason.fgcontrol.flight.position.WaypointPosition;
 import org.jason.fgedge.c172p.things.C172PThing;
 import org.jason.fgedge.config.EdgeConfig;
 import org.jason.fgedge.config.EdgeConfigVisitor;
@@ -95,14 +92,9 @@ public class C172PWaypointFlightClient extends C172PClient {
 			c172PConfig
 		);
 		
-        ArrayList<WaypointPosition> route = KnownRoutes.VANCOUVER_SHORT_TOUR;       
-        //route.add(0, KnownPositions.LONSDALE_QUAY);
-        //route.add(0, KnownPositions.GROUSE_MOUNTAIN);
-        
-        c172pThing.setRoute( route );
-        
-        
-        
+        // override flight plan loaded from config file
+        //ArrayList<WaypointPosition> route = KnownRoutes.VANCOUVER_SHORT_TOUR;       
+        //c172pThing.setRoute( route );
 		
         c172pClient.bindThing(c172pThing);
         

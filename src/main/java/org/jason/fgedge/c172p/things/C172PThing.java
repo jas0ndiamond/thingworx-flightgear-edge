@@ -8,8 +8,8 @@ import java.util.Map;
 import org.jason.fgcontrol.aircraft.c172p.C172P;
 import org.jason.fgcontrol.aircraft.c172p.C172PConfig;
 import org.jason.fgcontrol.aircraft.c172p.C172PFields;
-import org.jason.fgcontrol.aircraft.c172p.flight.RunwayBurnoutFlightExecutor;
 import org.jason.fgcontrol.aircraft.c172p.flight.C172PWaypointFlightExecutor;
+import org.jason.fgcontrol.aircraft.c172p.flight.RunwayBurnoutFlightExecutor;
 import org.jason.fgcontrol.aircraft.fields.FlightGearFields;
 import org.jason.fgcontrol.exceptions.AircraftStartupException;
 import org.jason.fgcontrol.flight.position.WaypointManager;
@@ -21,10 +21,14 @@ import org.slf4j.LoggerFactory;
 
 import com.thingworx.communications.client.ConnectedThingClient;
 import com.thingworx.communications.client.things.VirtualThing;
+import com.thingworx.metadata.EventDefinition;
+import com.thingworx.metadata.FieldDefinition;
 import com.thingworx.metadata.PropertyDefinition;
 import com.thingworx.metadata.annotations.ThingworxServiceDefinition;
 import com.thingworx.metadata.annotations.ThingworxServiceParameter;
 import com.thingworx.metadata.annotations.ThingworxServiceResult;
+import com.thingworx.metadata.collections.FieldDefinitionCollection;
+import com.thingworx.types.BaseTypes;
 import com.thingworx.types.InfoTable;
 import com.thingworx.types.collections.AspectCollection;
 import com.thingworx.types.collections.ValueCollection;
@@ -60,6 +64,10 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
     private final static String VELOCITIES_SHAPE_NAME = "C172P_VelocitiesShape";
     
     private final static String FLIGHTPLAN_SHAPE_NAME = "C172P_FlightPlanShape";
+    
+    //event names
+    final static String LOW_ENGINE_RPMS_FIELD = "LowEngineRpmsEvent";	
+    final static String LOW_ENGINE_RPMS_SHAPE_NAME = "LowEngineRpmsShape";
     
     //a nice, clear, warm, bright date/time in western canada
     private final static String LAUNCH_TIME_GMT = "2021-07-01T20:00:00";
@@ -128,6 +136,12 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
         //low fuel event
         //water in fuel tank alert
        
+		EventDefinition triggerDurationThresholdEvent = new EventDefinition();
+		triggerDurationThresholdEvent.setName(LOW_ENGINE_RPMS_FIELD);
+		triggerDurationThresholdEvent.setDataShapeName(LOW_ENGINE_RPMS_SHAPE_NAME);
+		triggerDurationThresholdEvent.setInvocable(true);
+		triggerDurationThresholdEvent.setPropertyEvent(false);		
+		super.defineEvent(triggerDurationThresholdEvent);
         
         ///////////////////////
     }
@@ -190,6 +204,15 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
         //waypoint readout
         defineDataShapeDefinition(FLIGHTPLAN_SHAPE_NAME, DataShapeInitializer.buildFlightPlanShape());
         
+        //////////////////////
+        //events
+        
+		FieldDefinitionCollection faultFields = new FieldDefinitionCollection();
+		faultFields.addFieldDefinition(new FieldDefinition(CommonPropertyNames.PROP_MESSAGE,BaseTypes.STRING));
+		defineDataShapeDefinition(LOW_ENGINE_RPMS_SHAPE_NAME, faultFields);
+        
+		//////////////////////
+		
         if(LOGGER.isTraceEnabled()) {
         	LOGGER.trace("init returning");
         }
@@ -200,10 +223,11 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
         LOGGER.debug("startup invoked");
         
         //start aircraft. function should return or it'll block everything else
-        aircraft.startupPlane();
+        aircraft.startupPlane(true);
         
         //set the parking brake so the aircraft doesn't start rolling
         //enabled by default, but the default c172p autostart disables it
+        //depends on startup with autostart sleep <code>aircraft.startupPlane(true);</code>
         aircraft.setParkingBrake(true);
         
         LOGGER.debug("startup returning");
@@ -398,7 +422,7 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
     	aircraft.removeWaypoints(latitude, longitude);
     }
     
-    //Get the human-readable flightplan
+    //Get the human-readable flightplan. there may not always be one available.
     @ThingworxServiceDefinition
     (
        name = "GetFlightPlan", 
@@ -419,29 +443,35 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
     	
     	List<WaypointPosition> waypoints = aircraft.getWaypoints();
     	
-    	//add current waypoint as first
-    	waypoints.add(0, aircraft.getCurrentWaypointTarget());
+    	WaypointPosition currentWaypoint = aircraft.getCurrentWaypointTarget();
     	
-    	//remaining waypoints    	
-    	for( WaypointPosition wp : waypoints) {
-			
-    		//need to create a new vc for the row in the loop body
-    		ValueCollection entry = new ValueCollection();
-    		
-			entry.SetNumberValue(
-				EdgeUtilities.toThingworxPropertyName(FlightGearFields.LATITUDE_FIELD), wp.getLatitude());
-			entry.SetNumberValue(
-				EdgeUtilities.toThingworxPropertyName(FlightGearFields.LONGITUDE_FIELD), wp.getLongitude());
-			entry.SetNumberValue(
-				EdgeUtilities.toThingworxPropertyName(FlightGearFields.ALTITUDE_FIELD), wp.getAltitude());
-			entry.SetStringValue(
-				EdgeUtilities.toThingworxPropertyName(WaypointManager.WAYPOINT_NAME_FIELD), wp.getName());
-			
-	    	LOGGER.debug("Logging waypoint: {}", entry.toString());
-			
-			table.addRow(entry);
+    	//get the rest of the flightplan if a current waypoint is defined
+    	//no waypoints is acceptable
+    	if( currentWaypoint != null ) {
+        	//add current waypoint as first
+        	waypoints.add(0, currentWaypoint );
+        	
+        	//remaining waypoints    	
+        	for( WaypointPosition wp : waypoints) {
+    			
+        		//need to create a new vc for the row in the loop body
+        		ValueCollection entry = new ValueCollection();
+        		
+    			entry.SetNumberValue(
+    				EdgeUtilities.toThingworxPropertyName(FlightGearFields.LATITUDE_FIELD), wp.getLatitude());
+    			entry.SetNumberValue(
+    				EdgeUtilities.toThingworxPropertyName(FlightGearFields.LONGITUDE_FIELD), wp.getLongitude());
+    			entry.SetNumberValue(
+    				EdgeUtilities.toThingworxPropertyName(FlightGearFields.ALTITUDE_FIELD), wp.getAltitude());
+    			entry.SetStringValue(
+    				EdgeUtilities.toThingworxPropertyName(WaypointManager.WAYPOINT_NAME_FIELD), wp.getName());
+    			
+    	    	LOGGER.debug("Logging waypoint: {}", entry.toString());
+    			
+    			table.addRow(entry);
+        	}
     	}
-
+    	
     	LOGGER.debug("Retrieved C172P flight plan");
     	
     	return table;
@@ -809,7 +839,7 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
 
         LOGGER.debug("Setting elevator orientation to: {}", orientation);
 
-        aircraft.setAileron(orientation);
+        aircraft.setElevator(orientation);
 
         LOGGER.debug("SetElevator returning");
     }
@@ -839,7 +869,7 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
 
         LOGGER.debug("Setting flaps orientation to: {}", orientation);
 
-        aircraft.setAileron(orientation);
+        aircraft.setFlaps(orientation);
 
         LOGGER.debug("SetFlaps returning");
     }
@@ -867,9 +897,9 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
             orientation = C172PFields.ELEVATOR_MAX;
         }
 
-        LOGGER.debug("Setting elevator orientation to: {}", orientation);
+        LOGGER.debug("Setting rudder orientation to: {}", orientation);
 
-        aircraft.setAileron(orientation);
+        aircraft.setRudder(orientation);
 
         LOGGER.debug("SetRudder returning");
     }
@@ -967,6 +997,82 @@ public class C172PThing extends VirtualThing implements IAircraftThing {
         
         return table;
     }
+    
+    /////////////////////////
+    //engine
+    /////////////////////////
+    
+    //enable complex engine procedures
+    @ThingworxServiceDefinition
+    (
+        name = "SetEnableComplexEngineProcedures", 
+        description = "Set the enablement of C172P complex engine procedures"
+    )
+    @ThingworxServiceResult
+    (
+        name = CommonPropertyNames.PROP_RESULT, 
+        description = "InfoTable of control settings", 
+        baseType = "INFOTABLE",
+        aspects = { "dataShape:" + ENGINE_SHAPE_NAME }
+    )
+    public synchronized InfoTable SetEnableComplexEngineProcedures(
+        @ThingworxServiceParameter
+        ( 
+        	name="enabled", 
+            description="Parking brake enabled", 
+            baseType="BOOLEAN" 
+        ) Boolean enabled
+    ) throws Exception 
+    {
+        LOGGER.debug("SetEnableComplexEngineProcedures invoked");
+
+        aircraft.setComplexEngineProcedures(enabled);
+        int cepEnabled = aircraft.getComplexEngineProcedures();
+        
+        LOGGER.debug("Got Complex Engine Procedures state {}", cepEnabled);
+        
+        ValueCollection entry = new ValueCollection();
+        entry.clear();
+        
+        entry.SetIntegerValue(EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINES_COMPLEX_ENGINE_PROCEDURES), cepEnabled);
+        
+        InfoTable table = new InfoTable(getDataShapeDefinition(ENGINE_SHAPE_NAME));
+        table.addRow(entry);
+        
+        LOGGER.debug("SetEnableComplexEngineProcedures returning");
+        
+        return table;
+    }
+    
+    //set carb ice amount
+    @ThingworxServiceDefinition
+    (
+        name = "SetCarbIce", 
+        description = "Set the amount of carbourator ice in the engine"
+    )
+    public synchronized void SetCarbIce(
+        @ThingworxServiceParameter
+        ( 
+        	name="carbIce", 
+            description="Amount of carbourator ice", 
+            baseType="NUMBER" 
+        ) Double carbIceAmount
+    ) throws Exception 
+    {
+        LOGGER.debug("SetCarbIce invoked");
+        
+        //guardrails 0 <-> 1
+        if(carbIceAmount < 0.0) {
+        	carbIceAmount = 0.0;
+        }
+
+        LOGGER.debug("Setting carbourator ice amount to: {}", carbIceAmount);
+
+        aircraft.setCarbIce(carbIceAmount);
+
+        LOGGER.debug("SetCarbIce returning");
+    }
+    
     
     /////////////////////////
     //orientation
