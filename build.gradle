@@ -2,13 +2,12 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply from: 'dependencies.gradle'
 
-//for later LTS
-//sourceCompatibility = JavaVersion.VERSION_11
-//targetCompatibility = JavaVersion.VERSION_11
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
 
 //for perc
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+//sourceCompatibility = JavaVersion.VERSION_1_8
+//targetCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
     
@@ -43,10 +42,20 @@ ext {
     flightgearControlJar = "flightgear-control-0.4.jar"
     flightgearControlSourceJar = "lib/flightgear-control-0.4-src.jar"
     
+    libDir = "lib/"
     twxJavaSDKJar = "thingworx-java-sdk-7.1.0a.jar";
-    twxJavaSDKSourceJar = "lib/thingworx-java-sdk-7.1.0a-src.jar"
+    twxJavaSDKSourceJar = "thingworx-java-sdk-7.1.0a-src.jar"
     
     title = "thingworx-flightgear-edge"
+    
+    //require both the sdk jar and sdk sources jar in lib/
+    if( ! ( file(libDir + twxJavaSDKJar).exists() ) )
+        throw new FileNotFoundException("\n=========================\nDependency Failure:\nMissing TWX SDK Jar: " + 
+            libDir + twxJavaSDKJar + " \n=========================\n")
+        
+    if( ! ( file(libDir + twxJavaSDKSourceJar).exists() ) )
+        throw new FileNotFoundException("\n=========================\nDependency Failure:\nMissing TWX SDK Sources Jar: " + 
+            libDir + twxJavaSDKSourceJar + "\n=========================\n")
 }
 
 dependencies {
@@ -57,10 +66,10 @@ dependencies {
     
     //edge java sdk 7.1.0a
     //fixes dependency conflict and adds sources jar
-    implementation fileTree(dir: project.file("lib/"), include: [twxJavaSDKJar]) 
+    implementation fileTree(dir: project.file(libDir), include: [twxJavaSDKJar]) 
     
-    //flightgear-control 0.2.0
-    implementation fileTree(dir: project.file("lib/"), include: [flightgearControlJar])  
+    //flightgear-control 0.4.0
+    implementation fileTree(dir: project.file(libDir), include: [flightgearControlJar])  
 }
 
 eclipse {
