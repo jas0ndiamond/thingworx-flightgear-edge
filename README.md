@@ -9,7 +9,7 @@ thingworx-flightgear-edge is a suite of applications that provide ThingWorx Edge
 ### Requirements ###
 1. Linux x86_64 running with a windowing system.
 1. Git
-1. JDK 8
+1. JDK 11
 1. [flightgear-control](https://github.com/jas0ndiamond/flightgear-control) project setup completed with the flightgear simulator installed.
 1. ThingWorx Platform 9.3 or similar.
 1. ThingWorx Edge Java SDK 7.1.0a.
