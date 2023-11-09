@@ -1,6 +1,6 @@
 package org.jason.fgedge.connectivity;
 
-import org.jason.fgcontrol.aircraft.FlightGearAircraft;
+import org.jason.fgcontrol.flight.position.TrackPosition;
 
 public interface ServiceCallTimeoutManagement {
 	/**
@@ -19,11 +19,11 @@ public interface ServiceCallTimeoutManagement {
 	 * 
 	 * @return	true if there should be a timeout, false otherwise
 	 */
-	public abstract boolean shouldTimeoutServiceCall(FlightGearAircraft aircraft);
+	//public abstract boolean shouldTimeoutServiceCall(FlightGearAircraft aircraft);
 	
 	
 	
-	public abstract boolean shouldDisconnect(FlightGearAircraft aircraft);
+	public abstract boolean shouldDisconnect(TrackPosition currentPosition);
 	
-	public abstract boolean shouldConnect(FlightGearAircraft aircraft);
+	public abstract boolean shouldConnect(TrackPosition currentPosition);
 }

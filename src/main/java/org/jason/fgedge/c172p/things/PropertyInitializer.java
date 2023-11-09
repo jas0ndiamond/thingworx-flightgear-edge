@@ -164,6 +164,18 @@ public abstract class PropertyInitializer {
         
         //Engine
         definitions.add(
+        	new PropertyDefinition(
+        		EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINES_CARB_ICE), 
+                C172PFields.ENGINES_CARB_ICE_DESC, 
+                BaseTypes.NUMBER
+        ));
+        definitions.add(
+            new PropertyDefinition(
+            	EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINES_COMPLEX_ENGINE_PROCEDURES), 
+                C172PFields.ENGINES_COMPLEX_ENGINE_PROCEDURES_DESC, 
+                BaseTypes.INTEGER
+        ));
+        definitions.add(
             new PropertyDefinition(
                 EdgeUtilities.toThingworxPropertyName(C172PFields.ENGINES_COWLING_AIR_TEMPERATURE_FIELD), 
                 C172PFields.ENGINES_COWLING_AIR_TEMPERATURE_DESC, 
@@ -288,6 +300,7 @@ public abstract class PropertyInitializer {
                 BaseTypes.INTEGER
         ));
         
+        //fb[xyz]
         definitions.add(
             new PropertyDefinition(
                 EdgeUtilities.toThingworxPropertyName(FlightGearFields.FDM_FBX_AERO_FIELD),
@@ -398,7 +411,8 @@ public abstract class PropertyInitializer {
                 FlightGearFields.FDM_FBZ_WEIGHT_DESC, 
                 BaseTypes.NUMBER
         ));
-        
+
+        //fs[xyz]
         definitions.add(
             new PropertyDefinition(
                 EdgeUtilities.toThingworxPropertyName(FlightGearFields.FDM_FSX_AERO_FIELD), 
@@ -414,9 +428,16 @@ public abstract class PropertyInitializer {
         definitions.add(
             new PropertyDefinition(
                 EdgeUtilities.toThingworxPropertyName(FlightGearFields.FDM_FSZ_AERO_FIELD), 
-                FlightGearFields.FDM_FWZ_AERO_DESC, 
+                FlightGearFields.FDM_FSZ_AERO_DESC, 
                 BaseTypes.NUMBER));
-
+        
+        //fw[xyz]
+        definitions.add(
+        	new PropertyDefinition(
+                EdgeUtilities.toThingworxPropertyName(FlightGearFields.FDM_FWX_AERO_FIELD), 
+                FlightGearFields.FDM_FWX_AERO_DESC, 
+                BaseTypes.NUMBER
+        ));
         definitions.add(
             new PropertyDefinition(
                 EdgeUtilities.toThingworxPropertyName(FlightGearFields.FDM_FWY_AERO_FIELD), 
@@ -426,7 +447,7 @@ public abstract class PropertyInitializer {
         definitions.add(
             new PropertyDefinition(
                 EdgeUtilities.toThingworxPropertyName(FlightGearFields.FDM_FWZ_AERO_FIELD), 
-                FlightGearFields.FDM_FSZ_AERO_DESC, 
+                FlightGearFields.FDM_FWZ_AERO_DESC, 
                 BaseTypes.NUMBER
         ));
 

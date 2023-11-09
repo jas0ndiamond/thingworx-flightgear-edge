@@ -79,9 +79,7 @@
                         </FieldDefinitions>
                     </DataShape>
                     <Rows>
-                        <Row>
-                            <enableTunneling>true</enableTunneling>
-                        </Row>
+                        <Row></Row>
                     </Rows>
                 </ConfigurationTable>
                 <ConfigurationTable
@@ -143,104 +141,69 @@
                              ordinal="6"></FieldDefinition>
                         </FieldDefinitions>
                     </DataShape>
-                    <Rows>
-                        <Row>
-                            <appUri></appUri>
-                            <description></description>
-                            <host>
-                            <![CDATA[
-                            praxis
-                            ]]>
-                            </host>
-                            <name>
-                            <![CDATA[
-                            ssh
-                            ]]>
-                            </name>
-                            <numConnects>1.0</numConnects>
-                            <port>9999.0</port>
-                            <proto>
-                            <![CDATA[
-                            tcp
-                            ]]>
-                            </proto>
-                        </Row>
-                        <Row>
-                            <appUri></appUri>
-                            <description></description>
-                            <host>
-                            <![CDATA[
-                            poiesis
-                            ]]>
-                            </host>
-                            <name>
-                            <![CDATA[
-                            ssh2
-                            ]]>
-                            </name>
-                            <numConnects>1.0</numConnects>
-                            <port>9999.0</port>
-                            <proto>
-                            <![CDATA[
-                            tcp
-                            ]]>
-                            </proto>
-                        </Row>
-                    </Rows>
+                    <Rows></Rows>
                 </ConfigurationTable>
             </ConfigurationTables>
             <ThingShape>
                 <PropertyDefinitions>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="Fuel tank 1 capacity in gallons"
                      isLocalOnly="false"
                      name="consumables_fuel_tank1_capacity-gal_us"
-                     ordinal="70"></PropertyDefinition>
+                     ordinal="72"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="Fuel tank 1 level in gallons"
                      isLocalOnly="false"
                      name="consumables_fuel_tank1_level-gal_us"
-                     ordinal="45"></PropertyDefinition>
+                     ordinal="46"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="Water contamination amount in fuel tank 1"
                      isLocalOnly="false"
                      name="consumables_fuel_tank1_water-contamination"
-                     ordinal="38"></PropertyDefinition>
+                     ordinal="39"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="Fuel tank 0 capacity in gallons"
                      isLocalOnly="false"
                      name="consumables_fuel_tank_capacity-gal_us"
-                     ordinal="20"></PropertyDefinition>
+                     ordinal="21"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="Fuel tank 0 level in gallons"
                      isLocalOnly="false"
                      name="consumables_fuel_tank_level-gal_us"
-                     ordinal="99"></PropertyDefinition>
+                     ordinal="102"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="Water contamination amount in fuel tank 0"
                      isLocalOnly="false"
                      name="consumables_fuel_tank_water-contamination"
-                     ordinal="25"></PropertyDefinition>
+                     ordinal="26"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="INTEGER"
                      category=""
                      description="Pitot heater setting to prevent icing problems"
                      isLocalOnly="false"
                      name="controls_anti-ice_pitot-heat"
-                     ordinal="30"></PropertyDefinition>
+                     ordinal="31"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="INTEGER"
                      category=""
                      description="Window heater setting to prevent icing problems"
@@ -248,13 +211,15 @@
                      name="controls_anti-ice_window-heat"
                      ordinal="2"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="INTEGER"
                      category=""
                      description="Wing heater setting to prevent icing problems"
                      isLocalOnly="false"
                      name="controls_anti-ice_wing-heat"
-                     ordinal="89"></PropertyDefinition>
+                     ordinal="92"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="INTEGER"
                      category=""
                      description="The state of the battery switch"
@@ -262,20 +227,23 @@
                      name="controls_electric_battery-switch"
                      ordinal="9"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The engine mixture percentage"
                      isLocalOnly="false"
                      name="controls_engines_current-engine_mixture"
-                     ordinal="48"></PropertyDefinition>
+                     ordinal="49"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The engine throttle percentage"
                      isLocalOnly="false"
                      name="controls_engines_current-engine_throttle"
-                     ordinal="93"></PropertyDefinition>
+                     ordinal="96"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The aileron orientation"
@@ -283,13 +251,15 @@
                      name="controls_flight_aileron"
                      ordinal="7"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The aileron trim orientation"
                      isLocalOnly="false"
                      name="controls_flight_aileron-trim"
-                     ordinal="84"></PropertyDefinition>
+                     ordinal="87"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="INTEGER"
                      category=""
                      description="The auto-coordination setting for controls"
@@ -297,27 +267,31 @@
                      name="controls_flight_auto-coordination"
                      ordinal="3"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The auto-coordination factor controls"
                      isLocalOnly="false"
                      name="controls_flight_auto-coordination-factor"
-                     ordinal="81"></PropertyDefinition>
+                     ordinal="84"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The elevator orientation"
                      isLocalOnly="false"
                      name="controls_flight_elevator"
-                     ordinal="72"></PropertyDefinition>
+                     ordinal="74"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The elevator trim orientation"
                      isLocalOnly="false"
                      name="controls_flight_elevator-trim"
-                     ordinal="90"></PropertyDefinition>
+                     ordinal="93"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The flaps orientation"
@@ -325,34 +299,39 @@
                      name="controls_flight_flaps"
                      ordinal="8"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The rudder orientation"
                      isLocalOnly="false"
                      name="controls_flight_rudder"
-                     ordinal="43"></PropertyDefinition>
+                     ordinal="44"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The rudder trim orientation"
                      isLocalOnly="false"
                      name="controls_flight_rudder-trim"
-                     ordinal="69"></PropertyDefinition>
+                     ordinal="71"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The speedbrake orientation"
                      isLocalOnly="false"
                      name="controls_flight_speedbrake"
-                     ordinal="92"></PropertyDefinition>
+                     ordinal="95"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="INTEGER"
                      category=""
                      description="The parking brake setting"
                      isLocalOnly="false"
                      name="controls_gear_brake-parking"
-                     ordinal="94"></PropertyDefinition>
+                     ordinal="97"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="INTEGER"
                      category=""
                      description="The gear down setting"
@@ -360,55 +339,63 @@
                      name="controls_gear_gear-down"
                      ordinal="4"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The engine cowling air temperature in fahrenheit"
                      isLocalOnly="false"
                      name="engines_active-engine_cowling-air-temperature-degf"
-                     ordinal="66"></PropertyDefinition>
+                     ordinal="68"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The exhaust gas temperature in fahrenheit"
                      isLocalOnly="false"
                      name="engines_active-engine_egt-degf"
-                     ordinal="42"></PropertyDefinition>
+                     ordinal="43"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The exhaust gas temperature normalization in fahrenheit"
                      isLocalOnly="false"
                      name="engines_active-engine_egt-norm"
-                     ordinal="77"></PropertyDefinition>
+                     ordinal="79"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The engine fuel flow in gallons per hour"
                      isLocalOnly="false"
                      name="engines_active-engine_fuel-flow-gph"
-                     ordinal="67"></PropertyDefinition>
+                     ordinal="69"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The engine mp-osi. Not sure what this is. Possibly related to engine pistons"
                      isLocalOnly="false"
                      name="engines_active-engine_mp-osi"
-                     ordinal="50"></PropertyDefinition>
+                     ordinal="51"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The engine oil pressure in psi"
                      isLocalOnly="false"
                      name="engines_active-engine_oil-pressure-psi"
-                     ordinal="39"></PropertyDefinition>
+                     ordinal="40"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The engine oil temperature in fahrenheit"
                      isLocalOnly="false"
                      name="engines_active-engine_oil-temperature-degf"
-                     ordinal="32"></PropertyDefinition>
+                     ordinal="33"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The engine tachometer in rpm"
@@ -416,13 +403,15 @@
                      name="engines_active-engine_rpm"
                      ordinal="19"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="INTEGER"
                      category=""
                      description="The engine running state"
                      isLocalOnly="false"
                      name="engines_active-engine_running"
-                     ordinal="85"></PropertyDefinition>
+                     ordinal="88"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The dew point of the environment in celcius"
@@ -430,13 +419,15 @@
                      name="environment_dewpoint-degc"
                      ordinal="15"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The effective visibility of the environment in meters"
                      isLocalOnly="false"
                      name="environment_effective-visibility-m"
-                     ordinal="86"></PropertyDefinition>
+                     ordinal="89"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The atmos pressure of the environment in hg"
@@ -444,69 +435,79 @@
                      name="environment_pressure-inhg"
                      ordinal="12"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The relative humidity of the environment"
                      isLocalOnly="false"
                      name="environment_relative-humidity"
-                     ordinal="95"></PropertyDefinition>
+                     ordinal="98"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The temperature of the environment in fahrenheit"
                      isLocalOnly="false"
                      name="environment_temperature-degf"
-                     ordinal="36"></PropertyDefinition>
+                     ordinal="37"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The visibility of the environment in meters"
                      isLocalOnly="false"
                      name="environment_visibility-m"
-                     ordinal="73"></PropertyDefinition>
+                     ordinal="75"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The downward windspeed of the environment in feet per second"
                      isLocalOnly="false"
                      name="environment_wind-from-down-fps"
-                     ordinal="56"></PropertyDefinition>
+                     ordinal="57"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The eastward windspeed of the environment in feet per second"
                      isLocalOnly="false"
                      name="environment_wind-from-east-fps"
-                     ordinal="51"></PropertyDefinition>
+                     ordinal="52"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The northward windspeed of the environment in feet/second"
                      isLocalOnly="false"
                      name="environment_wind-from-north-fps"
-                     ordinal="34"></PropertyDefinition>
+                     ordinal="35"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The windspeed of the environment in knots"
                      isLocalOnly="false"
                      name="environment_wind-speed-kt"
-                     ordinal="60"></PropertyDefinition>
+                     ordinal="61"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="INTEGER"
                      category=""
                      description="The FDM damage repairing state"
                      isLocalOnly="false"
                      name="fdm_jsbsim_damage_repairing"
-                     ordinal="26"></PropertyDefinition>
+                     ordinal="27"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The FDM force vector FBX aero in pounds"
                      isLocalOnly="false"
                      name="fdm_jsbsim_forces_fbx-aero-lbs"
-                     ordinal="59"></PropertyDefinition>
+                     ordinal="60"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The FDM force vector FBX external in pounds"
@@ -514,41 +515,47 @@
                      name="fdm_jsbsim_forces_fbx-external-lbs"
                      ordinal="13"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The FDM force vector FBX gear in pounds"
                      isLocalOnly="false"
                      name="fdm_jsbsim_forces_fbx-gear-lbs"
-                     ordinal="22"></PropertyDefinition>
+                     ordinal="23"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The FDM force vector FBX prop in pounds"
                      isLocalOnly="false"
                      name="fdm_jsbsim_forces_fbx-prop-lbs"
-                     ordinal="87"></PropertyDefinition>
+                     ordinal="90"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The FDM force vector FBX total in pounds"
                      isLocalOnly="false"
                      name="fdm_jsbsim_forces_fbx-total-lbs"
-                     ordinal="35"></PropertyDefinition>
+                     ordinal="36"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The FDM force vector FBX weight in pounds"
                      isLocalOnly="false"
                      name="fdm_jsbsim_forces_fbx-weight-lbs"
-                     ordinal="62"></PropertyDefinition>
+                     ordinal="63"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The FDM force vector FBY aero in pounds"
                      isLocalOnly="false"
                      name="fdm_jsbsim_forces_fby-aero-lbs"
-                     ordinal="24"></PropertyDefinition>
+                     ordinal="25"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The FDM force vector FBY external in pounds"
@@ -556,6 +563,7 @@
                      name="fdm_jsbsim_forces_fby-external-lbs"
                      ordinal="18"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The FDM force vector FBY gear in pounds"
@@ -563,69 +571,79 @@
                      name="fdm_jsbsim_forces_fby-gear-lbs"
                      ordinal="6"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The FDM force vector FBY prop in pounds"
                      isLocalOnly="false"
                      name="fdm_jsbsim_forces_fby-prop-lbs"
-                     ordinal="55"></PropertyDefinition>
+                     ordinal="56"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The FDM force vector FBY total in pounds"
                      isLocalOnly="false"
                      name="fdm_jsbsim_forces_fby-total-lbs"
-                     ordinal="71"></PropertyDefinition>
+                     ordinal="73"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The FDM force vector FBY weight in pounds"
                      isLocalOnly="false"
                      name="fdm_jsbsim_forces_fby-weight-lbs"
-                     ordinal="29"></PropertyDefinition>
+                     ordinal="30"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The FDM force vector FBZ aero in pounds"
                      isLocalOnly="false"
                      name="fdm_jsbsim_forces_fbz-aero-lbs"
-                     ordinal="96"></PropertyDefinition>
+                     ordinal="99"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The FDM force vector FBZ external in pounds"
                      isLocalOnly="false"
                      name="fdm_jsbsim_forces_fbz-external-lbs"
-                     ordinal="63"></PropertyDefinition>
+                     ordinal="65"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The FDM force vector FBZ gear in pounds"
                      isLocalOnly="false"
                      name="fdm_jsbsim_forces_fbz-gear-lbs"
-                     ordinal="41"></PropertyDefinition>
+                     ordinal="42"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The FDM force vector FBZ prop in pounds"
                      isLocalOnly="false"
                      name="fdm_jsbsim_forces_fbz-prop-lbs"
-                     ordinal="75"></PropertyDefinition>
+                     ordinal="77"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The FDM force vector FBZ total in pounds"
                      isLocalOnly="false"
                      name="fdm_jsbsim_forces_fbz-total-lbs"
-                     ordinal="80"></PropertyDefinition>
+                     ordinal="83"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The FDM force vector FBZ weight in pounds"
                      isLocalOnly="false"
                      name="fdm_jsbsim_forces_fbz-weight-lbs"
-                     ordinal="21"></PropertyDefinition>
+                     ordinal="22"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The FDM force vector FSX aero in pounds"
@@ -633,62 +651,71 @@
                      name="fdm_jsbsim_forces_fsx-aero-lbs"
                      ordinal="14"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The FDM force vector FSY aero in pounds"
                      isLocalOnly="false"
                      name="fdm_jsbsim_forces_fsy-aero-lbs"
-                     ordinal="44"></PropertyDefinition>
+                     ordinal="45"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The FDM force vector FWZ aero in pounds"
                      isLocalOnly="false"
                      name="fdm_jsbsim_forces_fsz-aero-lbs"
-                     ordinal="98"></PropertyDefinition>
+                     ordinal="101"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The FDM force vector FWY aero in pounds"
                      isLocalOnly="false"
                      name="fdm_jsbsim_forces_fwy-aero-lbs"
-                     ordinal="78"></PropertyDefinition>
+                     ordinal="80"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The FDM force vector FSZ aero in pounds"
                      isLocalOnly="false"
                      name="fdm_jsbsim_forces_fwz-aero-lbs"
-                     ordinal="40"></PropertyDefinition>
+                     ordinal="41"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The FDM force load factor"
                      isLocalOnly="false"
                      name="fdm_jsbsim_forces_load-factor"
-                     ordinal="23"></PropertyDefinition>
+                     ordinal="24"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The FDM force lod normal"
                      isLocalOnly="false"
                      name="fdm_jsbsim_forces_lod-normal"
-                     ordinal="31"></PropertyDefinition>
+                     ordinal="32"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The weight of the plane"
                      isLocalOnly="false"
                      name="fdm_jsbsim_inertia_weight-lbs"
-                     ordinal="27"></PropertyDefinition>
+                     ordinal="28"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The FDM damage setting"
                      isLocalOnly="false"
                      name="fdm_jsbsim_settings_damage"
-                     ordinal="37"></PropertyDefinition>
+                     ordinal="38"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The FDM left wing damage setting"
@@ -696,13 +723,15 @@
                      name="fdm_jsbsim_wing-damage_left-wing"
                      ordinal="16"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The FDM right wing damage setting"
                      isLocalOnly="false"
                      name="fdm_jsbsim_wing-damage_right-wing"
-                     ordinal="28"></PropertyDefinition>
+                     ordinal="29"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The alpha orientation of the plane in degrees"
@@ -710,139 +739,175 @@
                      name="orientation_alpha-deg"
                      ordinal="10"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The beta orientation of the plane in degrees"
                      isLocalOnly="false"
                      name="orientation_beta-deg"
-                     ordinal="91"></PropertyDefinition>
+                     ordinal="94"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The heading of the plane in degrees"
                      isLocalOnly="false"
                      name="orientation_heading-deg"
-                     ordinal="68"></PropertyDefinition>
+                     ordinal="70"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The magnetc heading of the plane in degrees"
                      isLocalOnly="false"
                      name="orientation_heading-magnetic-deg"
-                     ordinal="61"></PropertyDefinition>
+                     ordinal="62"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The pitch of the plane in degrees"
                      isLocalOnly="false"
                      name="orientation_pitch-deg"
-                     ordinal="49"></PropertyDefinition>
+                     ordinal="50"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The roll of the plane in degrees"
                      isLocalOnly="false"
                      name="orientation_roll-deg"
-                     ordinal="53"></PropertyDefinition>
+                     ordinal="54"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The magnetic track of the plane in degrees"
                      isLocalOnly="false"
                      name="orientation_track-magnetic-deg"
-                     ordinal="88"></PropertyDefinition>
+                     ordinal="91"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The yaw of the plane in degrees"
                      isLocalOnly="false"
                      name="orientation_yaw-deg"
-                     ordinal="64"></PropertyDefinition>
+                     ordinal="66"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The yaw rate of the plane in degrees per second"
                      isLocalOnly="false"
                      name="orientation_yaw-rate-degps"
-                     ordinal="79"></PropertyDefinition>
+                     ordinal="82"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The altitude of the plane in feet"
                      isLocalOnly="false"
                      name="position_altitude-ft"
-                     ordinal="76"></PropertyDefinition>
+                     ordinal="78"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The ground elevation in feet"
                      isLocalOnly="false"
                      name="position_ground-elev-ft"
-                     ordinal="74"></PropertyDefinition>
+                     ordinal="76"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The latitude of the plane in degrees"
                      isLocalOnly="false"
                      name="position_latitude-deg"
-                     ordinal="65"></PropertyDefinition>
+                     ordinal="67"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The longitude of the plane in degrees"
                      isLocalOnly="false"
                      name="position_longitude-deg"
-                     ordinal="57"></PropertyDefinition>
+                     ordinal="58"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="INTEGER"
                      category=""
                      description="The sim freeze clock state"
                      isLocalOnly="false"
                      name="sim_freeze_clock"
-                     ordinal="82"></PropertyDefinition>
+                     ordinal="85"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="INTEGER"
                      category=""
                      description="The sim freeze master state"
                      isLocalOnly="false"
                      name="sim_freeze_master"
-                     ordinal="46"></PropertyDefinition>
+                     ordinal="47"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
+                     baseType="NUMBER"
+                     category=""
+                     description="The sim parking brake setting"
+                     isLocalOnly="false"
+                     name="sim_model_c172p_brake-parking"
+                     ordinal="64"></PropertyDefinition>
+                    <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The sim speed factor"
                      isLocalOnly="false"
                      name="sim_speed-up"
-                     ordinal="47"></PropertyDefinition>
+                     ordinal="48"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The runtime elapsed of the sim in seconds"
                      isLocalOnly="false"
                      name="sim_time_elapsed-sec"
-                     ordinal="58"></PropertyDefinition>
+                     ordinal="59"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="STRING"
                      category=""
                      description="The current datetime in the sim in GMT"
                      isLocalOnly="false"
                      name="sim_time_gmt"
-                     ordinal="100"></PropertyDefinition>
+                     ordinal="20"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The runtime elapsed of the local day of the sim in seconds"
                      isLocalOnly="false"
                      name="sim_time_local-day-seconds"
-                     ordinal="54"></PropertyDefinition>
+                     ordinal="55"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The runtime elapsed of the sim in seconds, with extended precision"
                      isLocalOnly="false"
                      name="sim_time_mp-clock-sec"
-                     ordinal="83"></PropertyDefinition>
+                     ordinal="86"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
+                     baseType="NUMBER"
+                     category=""
+                     description="The battery charge"
+                     isLocalOnly="false"
+                     name="systems_electrical_battery-charge-percent"
+                     ordinal="81"></PropertyDefinition>
+                    <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The current airspeed in knots"
@@ -850,6 +915,7 @@
                      name="velocities_airspeed-kt"
                      ordinal="17"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The current groundspeed in knots"
@@ -857,27 +923,31 @@
                      name="velocities_groundspeed-kt"
                      ordinal="11"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="u-body velocity in feet per second"
                      isLocalOnly="false"
                      name="velocities_uBody-fps"
-                     ordinal="52"></PropertyDefinition>
+                     ordinal="53"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="v-body velocity in feet per second"
                      isLocalOnly="false"
                      name="velocities_vBody-fps"
-                     ordinal="33"></PropertyDefinition>
+                     ordinal="34"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="The current vertical speed in feet per second"
                      isLocalOnly="false"
                      name="velocities_vertical-speed-fps"
-                     ordinal="97"></PropertyDefinition>
+                     ordinal="100"></PropertyDefinition>
                     <PropertyDefinition
+                     aspect.isRemote="false"
                      baseType="NUMBER"
                      category=""
                      description="w-body velocity in feet per second"
@@ -889,14 +959,118 @@
                     <ServiceDefinition
                      aspect.isAsync="false"
                      category=""
-                     description=""
+                     description="Abandon current waypoint in flight plan, and proceed to the next one."
                      isAllowOverride="false"
                      isLocalOnly="false"
                      isOpen="false"
                      isPrivate="false"
-                     name="ExceptionTest">
+                     name="AbandonCurrentWaypoint">
                         <ResultType
                          baseType="NOTHING"
+                         description=""
+                         name=""
+                         ordinal="0"></ResultType>
+                        <ParameterDefinitions></ParameterDefinitions>
+                    </ServiceDefinition>
+                    <ServiceDefinition
+                     aspect.isAsync="false"
+                     category=""
+                     description="Append a new waypoint to the beginning of the flight plan"
+                     isAllowOverride="false"
+                     isLocalOnly="false"
+                     isOpen="false"
+                     isPrivate="false"
+                     name="AddNextWaypoint">
+                        <ResultType
+                         baseType="NOTHING"
+                         description=""
+                         name=""
+                         ordinal="0"></ResultType>
+                        <ParameterDefinitions>
+                            <FieldDefinition
+                             baseType="NUMBER"
+                             description="latitude in degrees"
+                             name="latitude"
+                             ordinal="0"></FieldDefinition>
+                            <FieldDefinition
+                             baseType="NUMBER"
+                             description="longitude in degrees"
+                             name="longitude"
+                             ordinal="1"></FieldDefinition>
+                        </ParameterDefinitions>
+                    </ServiceDefinition>
+                    <ServiceDefinition
+                     aspect.isAsync="false"
+                     category=""
+                     description="Append a new waypoint to the end of the flight plan"
+                     isAllowOverride="false"
+                     isLocalOnly="false"
+                     isOpen="false"
+                     isPrivate="false"
+                     name="AddWaypoint">
+                        <ResultType
+                         baseType="NOTHING"
+                         description=""
+                         name=""
+                         ordinal="0"></ResultType>
+                        <ParameterDefinitions>
+                            <FieldDefinition
+                             baseType="NUMBER"
+                             description="latitude in degrees"
+                             name="latitude"
+                             ordinal="0"></FieldDefinition>
+                            <FieldDefinition
+                             baseType="NUMBER"
+                             description="longitude in degrees"
+                             name="longitude"
+                             ordinal="1"></FieldDefinition>
+                        </ParameterDefinitions>
+                    </ServiceDefinition>
+                    <ServiceDefinition
+                     aspect.isAsync="false"
+                     category=""
+                     description="Clear the flightplan"
+                     isAllowOverride="false"
+                     isLocalOnly="false"
+                     isOpen="false"
+                     isPrivate="false"
+                     name="ClearWaypoints">
+                        <ResultType
+                         baseType="NOTHING"
+                         description=""
+                         name=""
+                         ordinal="0"></ResultType>
+                        <ParameterDefinitions></ParameterDefinitions>
+                    </ServiceDefinition>
+                    <ServiceDefinition
+                     aspect.isAsync="false"
+                     category=""
+                     description="Flush Fuel tanks of water and fuel"
+                     isAllowOverride="false"
+                     isLocalOnly="false"
+                     isOpen="false"
+                     isPrivate="false"
+                     name="FlushFuelTanks">
+                        <ResultType
+                         baseType="NOTHING"
+                         description=""
+                         name=""
+                         ordinal="0"></ResultType>
+                        <ParameterDefinitions></ParameterDefinitions>
+                    </ServiceDefinition>
+                    <ServiceDefinition
+                     aspect.isAsync="false"
+                     category=""
+                     description="Get consumables telemetry fields for the C172"
+                     isAllowOverride="false"
+                     isLocalOnly="false"
+                     isOpen="false"
+                     isPrivate="false"
+                     name="GetConsumablesTelemetry">
+                        <ResultType
+                         aspect.Outputs="{&quot;aspects&quot;:{&quot;dataShape&quot;:&quot;C172P_ConsumablesShape&quot;},&quot;name&quot;:&quot;result&quot;,&quot;fieldDefinitions&quot;:{&quot;consumables_fuel_tank_water-contamination&quot;:{&quot;name&quot;:&quot;consumables_fuel_tank_water-contamination&quot;,&quot;aspects&quot;:{},&quot;description&quot;:&quot;Water contamination amount in fuel tank 0&quot;,&quot;baseType&quot;:&quot;NUMBER&quot;,&quot;ordinal&quot;:0},&quot;consumables_fuel_tank1_level-gal_us&quot;:{&quot;name&quot;:&quot;consumables_fuel_tank1_level-gal_us&quot;,&quot;aspects&quot;:{},&quot;description&quot;:&quot;Fuel tank 1 level in gallons&quot;,&quot;baseType&quot;:&quot;NUMBER&quot;,&quot;ordinal&quot;:0},&quot;consumables_fuel_tank1_water-contamination&quot;:{&quot;name&quot;:&quot;consumables_fuel_tank1_water-contamination&quot;,&quot;aspects&quot;:{},&quot;description&quot;:&quot;Water contamination amount in fuel tank 1&quot;,&quot;baseType&quot;:&quot;NUMBER&quot;,&quot;ordinal&quot;:0},&quot;consumables_fuel_tank_capacity-gal_us&quot;:{&quot;name&quot;:&quot;consumables_fuel_tank_capacity-gal_us&quot;,&quot;aspects&quot;:{},&quot;description&quot;:&quot;Fuel tank 0 capacity in gallons&quot;,&quot;baseType&quot;:&quot;NUMBER&quot;,&quot;ordinal&quot;:0},&quot;consumables_fuel_tank_level-gal_us&quot;:{&quot;name&quot;:&quot;consumables_fuel_tank_level-gal_us&quot;,&quot;aspects&quot;:{},&quot;description&quot;:&quot;Fuel tank 0 level in gallons&quot;,&quot;baseType&quot;:&quot;NUMBER&quot;,&quot;ordinal&quot;:0},&quot;consumables_fuel_tank1_capacity-gal_us&quot;:{&quot;name&quot;:&quot;consumables_fuel_tank1_capacity-gal_us&quot;,&quot;aspects&quot;:{},&quot;description&quot;:&quot;Fuel tank 1 capacity in gallons&quot;,&quot;baseType&quot;:&quot;NUMBER&quot;,&quot;ordinal&quot;:0}},&quot;baseType&quot;:&quot;INFOTABLE&quot;,&quot;dataShape&quot;:&quot;C172P_ConsumablesShape&quot;}"
+                         aspect.dataShape="C172P_ConsumablesShape"
+                         baseType="INFOTABLE"
                          description=""
                          name="result"
                          ordinal="0"></ResultType>
@@ -905,167 +1079,458 @@
                     <ServiceDefinition
                      aspect.isAsync="false"
                      category=""
-                     description=""
+                     description="Get control telemetry fields for the C172"
                      isAllowOverride="false"
                      isLocalOnly="false"
                      isOpen="false"
                      isPrivate="false"
-                     name="ProcessRemoteEventsAndTimeout">
+                     name="GetControlTelemetry">
                         <ResultType
-                         baseType="NOTHING"
+                         aspect.Outputs="{&quot;aspects&quot;:{&quot;dataShape&quot;:&quot;C172P_ControlShape&quot;},&quot;name&quot;:&quot;result&quot;,&quot;fieldDefinitions&quot;:{&quot;controls_flight_auto-coordination&quot;:{&quot;name&quot;:&quot;controls_flight_auto-coordination&quot;,&quot;aspects&quot;:{},&quot;description&quot;:&quot;The auto-coordination setting for controls&quot;,&quot;baseType&quot;:&quot;INTEGER&quot;,&quot;ordinal&quot;:0},&quot;controls_gear_gear-down&quot;:{&quot;name&quot;:&quot;controls_gear_gear-down&quot;,&quot;aspects&quot;:{},&quot;description&quot;:&quot;The gear down setting&quot;,&quot;baseType&quot;:&quot;INTEGER&quot;,&quot;ordinal&quot;:0},&quot;controls_flight_elevator&quot;:{&quot;name&quot;:&quot;controls_flight_elevator&quot;,&quot;aspects&quot;:{},&quot;description&quot;:&quot;The elevator orientation&quot;,&quot;baseType&quot;:&quot;NUMBER&quot;,&quot;ordinal&quot;:0},&quot;controls_flight_aileron-trim&quot;:{&quot;name&quot;:&quot;controls_flight_aileron-trim&quot;,&quot;aspects&quot;:{},&quot;description&quot;:&quot;The aileron trim orientation&quot;,&quot;baseType&quot;:&quot;NUMBER&quot;,&quot;ordinal&quot;:0},&quot;controls_flight_aileron&quot;:{&quot;name&quot;:&quot;controls_flight_aileron&quot;,&quot;aspects&quot;:{},&quot;description&quot;:&quot;The aileron orientation&quot;,&quot;baseType&quot;:&quot;NUMBER&quot;,&quot;ordinal&quot;:0},&quot;controls_flight_flaps&quot;:{&quot;name&quot;:&quot;controls_flight_flaps&quot;,&quot;aspects&quot;:{},&quot;description&quot;:&quot;The flaps orientation&quot;,&quot;baseType&quot;:&quot;NUMBER&quot;,&quot;ordinal&quot;:0},&quot;controls_electric_battery-switch&quot;:{&quot;name&quot;:&quot;controls_electric_battery-switch&quot;,&quot;aspects&quot;:{},&quot;description&quot;:&quot;The state of the battery switch&quot;,&quot;baseType&quot;:&quot;INTEGER&quot;,&quot;ordinal&quot;:0},&quot;controls_flight_rudder&quot;:{&quot;name&quot;:&quot;controls_flight_rudder&quot;,&quot;aspects&quot;:{},&quot;description&quot;:&quot;The rudder orientation&quot;,&quot;baseType&quot;:&quot;NUMBER&quot;,&quot;ordinal&quot;:0},&quot;controls_flight_elevator-trim&quot;:{&quot;name&quot;:&quot;controls_flight_elevator-trim&quot;,&quot;aspects&quot;:{},&quot;description&quot;:&quot;The elevator trim orientation&quot;,&quot;baseType&quot;:&quot;NUMBER&quot;,&quot;ordinal&quot;:0},&quot;controls_flight_speedbrake&quot;:{&quot;name&quot;:&quot;controls_flight_speedbrake&quot;,&quot;aspects&quot;:{},&quot;description&quot;:&quot;The speedbrake orientation&quot;,&quot;baseType&quot;:&quot;INTEGER&quot;,&quot;ordinal&quot;:0},&quot;controls_engines_current-engine_throttle&quot;:{&quot;name&quot;:&quot;controls_engines_current-engine_throttle&quot;,&quot;aspects&quot;:{},&quot;description&quot;:&quot;The engine throttle percentage&quot;,&quot;baseType&quot;:&quot;NUMBER&quot;,&quot;ordinal&quot;:0},&quot;controls_gear_brake-parking&quot;:{&quot;name&quot;:&quot;controls_gear_brake-parking&quot;,&quot;aspects&quot;:{},&quot;description&quot;:&quot;The parking brake setting&quot;,&quot;baseType&quot;:&quot;INTEGER&quot;,&quot;ordinal&quot;:0},&quot;controls_engines_current-engine_mixture&quot;:{&quot;name&quot;:&quot;controls_engines_current-engine_mixture&quot;,&quot;aspects&quot;:{},&quot;description&quot;:&quot;The engine mixture percentage&quot;,&quot;baseType&quot;:&quot;NUMBER&quot;,&quot;ordinal&quot;:0},&quot;controls_flight_auto-coordination-factor&quot;:{&quot;name&quot;:&quot;controls_flight_auto-coordination-factor&quot;,&quot;aspects&quot;:{},&quot;description&quot;:&quot;The auto-coordination factor controls&quot;,&quot;baseType&quot;:&quot;NUMBER&quot;,&quot;ordinal&quot;:0},&quot;controls_flight_rudder-trim&quot;:{&quot;name&quot;:&quot;controls_flight_rudder-trim&quot;,&quot;aspects&quot;:{},&quot;description&quot;:&quot;The rudder orientation&quot;,&quot;baseType&quot;:&quot;NUMBER&quot;,&quot;ordinal&quot;:0}},&quot;baseType&quot;:&quot;INFOTABLE&quot;,&quot;dataShape&quot;:&quot;C172P_ControlShape&quot;}"
+                         aspect.dataShape="C172P_ControlShape"
+                         baseType="INFOTABLE"
                          description=""
                          name="result"
                          ordinal="0"></ResultType>
+                        <ParameterDefinitions></ParameterDefinitions>
+                    </ServiceDefinition>
+                    <ServiceDefinition
+                     aspect.isAsync="false"
+                     category=""
+                     description="Retrieve the flightplan"
+                     isAllowOverride="false"
+                     isLocalOnly="false"
+                     isOpen="false"
+                     isPrivate="false"
+                     name="GetFlightPlan">
+                        <ResultType
+                         aspect.Outputs="{&quot;aspects&quot;:{&quot;dataShape&quot;:&quot;C172P_FlightPlanShape&quot;},&quot;name&quot;:&quot;result&quot;,&quot;fieldDefinitions&quot;:{&quot;position_longitude-deg&quot;:{&quot;name&quot;:&quot;position_longitude-deg&quot;,&quot;aspects&quot;:{},&quot;description&quot;:&quot;The longitude of the plane in degrees&quot;,&quot;baseType&quot;:&quot;NUMBER&quot;,&quot;ordinal&quot;:0},&quot;position_latitude-deg&quot;:{&quot;name&quot;:&quot;position_latitude-deg&quot;,&quot;aspects&quot;:{},&quot;description&quot;:&quot;The latitude of the plane in degrees&quot;,&quot;baseType&quot;:&quot;NUMBER&quot;,&quot;ordinal&quot;:0},&quot;position_altitude-ft&quot;:{&quot;name&quot;:&quot;position_altitude-ft&quot;,&quot;aspects&quot;:{},&quot;description&quot;:&quot;The altitude of the plane in feet&quot;,&quot;baseType&quot;:&quot;NUMBER&quot;,&quot;ordinal&quot;:0},&quot;Waypoint_Name&quot;:{&quot;name&quot;:&quot;Waypoint_Name&quot;,&quot;aspects&quot;:{},&quot;description&quot;:&quot;Colloquial name of waypoint&quot;,&quot;baseType&quot;:&quot;STRING&quot;,&quot;ordinal&quot;:0}},&quot;baseType&quot;:&quot;INFOTABLE&quot;,&quot;dataShape&quot;:&quot;C172P_FlightPlanShape&quot;}"
+                         aspect.dataShape="C172P_FlightPlanShape"
+                         baseType="INFOTABLE"
+                         description=""
+                         name="result"
+                         ordinal="0"></ResultType>
+                        <ParameterDefinitions></ParameterDefinitions>
+                    </ServiceDefinition>
+                    <ServiceDefinition
+                     aspect.isAsync="false"
+                     category=""
+                     description="Get orientation fields for the C172"
+                     isAllowOverride="false"
+                     isLocalOnly="false"
+                     isOpen="false"
+                     isPrivate="false"
+                     name="GetOrientationTelemetry">
+                        <ResultType
+                         aspect.Outputs="{&quot;aspects&quot;:{&quot;dataShape&quot;:&quot;C172P_OrientationShape&quot;},&quot;name&quot;:&quot;result&quot;,&quot;fieldDefinitions&quot;:{&quot;orientation_track-deg&quot;:{&quot;name&quot;:&quot;orientation_track-deg&quot;,&quot;aspects&quot;:{},&quot;description&quot;:&quot;The track of the plane in degrees&quot;,&quot;baseType&quot;:&quot;NUMBER&quot;,&quot;ordinal&quot;:0},&quot;orientation_beta-deg&quot;:{&quot;name&quot;:&quot;orientation_beta-deg&quot;,&quot;aspects&quot;:{},&quot;description&quot;:&quot;The beta orientation of the plane in degrees&quot;,&quot;baseType&quot;:&quot;NUMBER&quot;,&quot;ordinal&quot;:0},&quot;orientation_track-magnetic-deg&quot;:{&quot;name&quot;:&quot;orientation_track-magnetic-deg&quot;,&quot;aspects&quot;:{},&quot;description&quot;:&quot;The magnetic track of the plane in degrees&quot;,&quot;baseType&quot;:&quot;NUMBER&quot;,&quot;ordinal&quot;:0},&quot;orientation_yaw-rate-degps&quot;:{&quot;name&quot;:&quot;orientation_yaw-rate-degps&quot;,&quot;aspects&quot;:{},&quot;description&quot;:&quot;The yaw rate of the plane in degrees per second&quot;,&quot;baseType&quot;:&quot;NUMBER&quot;,&quot;ordinal&quot;:0},&quot;orientation_alpha-deg&quot;:{&quot;name&quot;:&quot;orientation_alpha-deg&quot;,&quot;aspects&quot;:{},&quot;description&quot;:&quot;The alpha orientation of the plane in degrees&quot;,&quot;baseType&quot;:&quot;NUMBER&quot;,&quot;ordinal&quot;:0},&quot;orientation_heading-deg&quot;:{&quot;name&quot;:&quot;orientation_heading-deg&quot;,&quot;aspects&quot;:{},&quot;description&quot;:&quot;The heading of the plane in degrees&quot;,&quot;baseType&quot;:&quot;NUMBER&quot;,&quot;ordinal&quot;:0},&quot;orientation_roll-deg&quot;:{&quot;name&quot;:&quot;orientation_roll-deg&quot;,&quot;aspects&quot;:{},&quot;description&quot;:&quot;The roll of the plane in degrees&quot;,&quot;baseType&quot;:&quot;NUMBER&quot;,&quot;ordinal&quot;:0},&quot;orientation_yaw-deg&quot;:{&quot;name&quot;:&quot;orientation_yaw-deg&quot;,&quot;aspects&quot;:{},&quot;description&quot;:&quot;The yaw of the plane in degrees&quot;,&quot;baseType&quot;:&quot;NUMBER&quot;,&quot;ordinal&quot;:0},&quot;orientation_heading-magnetic-deg&quot;:{&quot;name&quot;:&quot;orientation_heading-magnetic-deg&quot;,&quot;aspects&quot;:{},&quot;description&quot;:&quot;The magnetc heading of the plane in degrees&quot;,&quot;baseType&quot;:&quot;NUMBER&quot;,&quot;ordinal&quot;:0},&quot;orientation_pitch-deg&quot;:{&quot;name&quot;:&quot;orientation_pitch-deg&quot;,&quot;aspects&quot;:{},&quot;description&quot;:&quot;The pitch of the plane in degrees&quot;,&quot;baseType&quot;:&quot;NUMBER&quot;,&quot;ordinal&quot;:0}},&quot;baseType&quot;:&quot;INFOTABLE&quot;,&quot;dataShape&quot;:&quot;C172P_OrientationShape&quot;}"
+                         aspect.dataShape="C172P_OrientationShape"
+                         baseType="INFOTABLE"
+                         description=""
+                         name="result"
+                         ordinal="0"></ResultType>
+                        <ParameterDefinitions></ParameterDefinitions>
+                    </ServiceDefinition>
+                    <ServiceDefinition
+                     aspect.isAsync="false"
+                     category=""
+                     description="Get position fields for the C172P"
+                     isAllowOverride="false"
+                     isLocalOnly="false"
+                     isOpen="false"
+                     isPrivate="false"
+                     name="GetPositionTelemetry">
+                        <ResultType
+                         aspect.Outputs="{&quot;aspects&quot;:{&quot;dataShape&quot;:&quot;C172P_PositionShape&quot;},&quot;name&quot;:&quot;result&quot;,&quot;fieldDefinitions&quot;:{&quot;position_longitude-deg&quot;:{&quot;name&quot;:&quot;position_longitude-deg&quot;,&quot;aspects&quot;:{},&quot;description&quot;:&quot;The longitude of the plane in degrees&quot;,&quot;baseType&quot;:&quot;NUMBER&quot;,&quot;ordinal&quot;:0},&quot;position_ground-elev-ft&quot;:{&quot;name&quot;:&quot;position_ground-elev-ft&quot;,&quot;aspects&quot;:{},&quot;description&quot;:&quot;The ground elevation in feet&quot;,&quot;baseType&quot;:&quot;NUMBER&quot;,&quot;ordinal&quot;:0},&quot;position_altitude-ft&quot;:{&quot;name&quot;:&quot;position_altitude-ft&quot;,&quot;aspects&quot;:{},&quot;description&quot;:&quot;The altitude of the plane in feet&quot;,&quot;baseType&quot;:&quot;NUMBER&quot;,&quot;ordinal&quot;:0},&quot;position_latitude-deg&quot;:{&quot;name&quot;:&quot;position_latitude-deg&quot;,&quot;aspects&quot;:{},&quot;description&quot;:&quot;The latitude of the plane in degrees&quot;,&quot;baseType&quot;:&quot;NUMBER&quot;,&quot;ordinal&quot;:0}},&quot;baseType&quot;:&quot;INFOTABLE&quot;,&quot;dataShape&quot;:&quot;C172P_PositionShape&quot;}"
+                         aspect.dataShape="C172P_PositionShape"
+                         baseType="INFOTABLE"
+                         description=""
+                         name="result"
+                         ordinal="0"></ResultType>
+                        <ParameterDefinitions></ParameterDefinitions>
+                    </ServiceDefinition>
+                    <ServiceDefinition
+                     aspect.isAsync="false"
+                     category=""
+                     description="Charge battery to capacity"
+                     isAllowOverride="false"
+                     isLocalOnly="false"
+                     isOpen="false"
+                     isPrivate="false"
+                     name="RechargeBattery">
+                        <ResultType
+                         baseType="NOTHING"
+                         description=""
+                         name=""
+                         ordinal="0"></ResultType>
+                        <ParameterDefinitions></ParameterDefinitions>
+                    </ServiceDefinition>
+                    <ServiceDefinition
+                     aspect.isAsync="false"
+                     category=""
+                     description="Fill fuel tanks to capacity"
+                     isAllowOverride="false"
+                     isLocalOnly="false"
+                     isOpen="false"
+                     isPrivate="false"
+                     name="RefillFuelTanks">
+                        <ResultType
+                         baseType="NOTHING"
+                         description=""
+                         name=""
+                         ordinal="0"></ResultType>
+                        <ParameterDefinitions></ParameterDefinitions>
+                    </ServiceDefinition>
+                    <ServiceDefinition
+                     aspect.isAsync="false"
+                     category=""
+                     description="Remove waypoints from the flight plan matching provided lat/lon"
+                     isAllowOverride="false"
+                     isLocalOnly="false"
+                     isOpen="false"
+                     isPrivate="false"
+                     name="RemoveWaypoints">
+                        <ResultType
+                         baseType="NOTHING"
+                         description=""
+                         name=""
+                         ordinal="0"></ResultType>
                         <ParameterDefinitions>
                             <FieldDefinition
-                             baseType="INFOTABLE"
-                             description=""
-                             name="values"
+                             baseType="NUMBER"
+                             description="latitude in degrees"
+                             name="latitude"
+                             ordinal="0"></FieldDefinition>
+                            <FieldDefinition
+                             baseType="NUMBER"
+                             description="longitude in degrees"
+                             name="longitude"
                              ordinal="1"></FieldDefinition>
                         </ParameterDefinitions>
                     </ServiceDefinition>
                     <ServiceDefinition
                      aspect.isAsync="false"
                      category=""
-                     description=""
+                     description="Execute the C172P startup procedure"
                      isAllowOverride="false"
                      isLocalOnly="false"
                      isOpen="false"
                      isPrivate="false"
-                     name="UpdateSubscribedPropertyValuesAndTimeout">
+                     name="RunStartupProcedure">
                         <ResultType
                          baseType="NOTHING"
+                         description=""
+                         name=""
+                         ordinal="0"></ResultType>
+                        <ParameterDefinitions></ParameterDefinitions>
+                    </ServiceDefinition>
+                    <ServiceDefinition
+                     aspect.isAsync="false"
+                     category=""
+                     description="Set the aileron orientation"
+                     isAllowOverride="false"
+                     isLocalOnly="false"
+                     isOpen="false"
+                     isPrivate="false"
+                     name="SetAileron">
+                        <ResultType
+                         baseType="NOTHING"
+                         description=""
+                         name=""
+                         ordinal="0"></ResultType>
+                        <ParameterDefinitions>
+                            <FieldDefinition
+                             baseType="NUMBER"
+                             description="Orientation of the aileron"
+                             name="aileronOrientation"
+                             ordinal="0"></FieldDefinition>
+                        </ParameterDefinitions>
+                    </ServiceDefinition>
+                    <ServiceDefinition
+                     aspect.isAsync="false"
+                     category=""
+                     description="Set auto coordination of control surfaces"
+                     isAllowOverride="false"
+                     isLocalOnly="false"
+                     isOpen="false"
+                     isPrivate="false"
+                     name="SetAutoCoordination">
+                        <ResultType
+                         baseType="NOTHING"
+                         description=""
+                         name=""
+                         ordinal="0"></ResultType>
+                        <ParameterDefinitions>
+                            <FieldDefinition
+                             baseType="BOOLEAN"
+                             description="State of control surface auto coordination"
+                             name="isEnabled"
+                             ordinal="0"></FieldDefinition>
+                        </ParameterDefinitions>
+                    </ServiceDefinition>
+                    <ServiceDefinition
+                     aspect.isAsync="false"
+                     category=""
+                     description="Set the battery switch"
+                     isAllowOverride="false"
+                     isLocalOnly="false"
+                     isOpen="false"
+                     isPrivate="false"
+                     name="SetBatterySwitch">
+                        <ResultType
+                         baseType="NOTHING"
+                         description=""
+                         name=""
+                         ordinal="0"></ResultType>
+                        <ParameterDefinitions>
+                            <FieldDefinition
+                             baseType="BOOLEAN"
+                             description="State of the battery switch"
+                             name="isEnabled"
+                             ordinal="0"></FieldDefinition>
+                        </ParameterDefinitions>
+                    </ServiceDefinition>
+                    <ServiceDefinition
+                     aspect.isAsync="false"
+                     category=""
+                     description="Set the simulator camera view"
+                     isAllowOverride="false"
+                     isLocalOnly="false"
+                     isOpen="false"
+                     isPrivate="false"
+                     name="SetCameraView">
+                        <ResultType
+                         baseType="NOTHING"
+                         description=""
+                         name=""
+                         ordinal="0"></ResultType>
+                        <ParameterDefinitions>
+                            <FieldDefinition
+                             baseType="INTEGER"
+                             description="Orientation of the rudder"
+                             name="cameraView"
+                             ordinal="0"></FieldDefinition>
+                        </ParameterDefinitions>
+                    </ServiceDefinition>
+                    <ServiceDefinition
+                     aspect.isAsync="false"
+                     category=""
+                     description="Set the elevator orientation"
+                     isAllowOverride="false"
+                     isLocalOnly="false"
+                     isOpen="false"
+                     isPrivate="false"
+                     name="SetElevator">
+                        <ResultType
+                         baseType="NOTHING"
+                         description=""
+                         name=""
+                         ordinal="0"></ResultType>
+                        <ParameterDefinitions>
+                            <FieldDefinition
+                             baseType="NUMBER"
+                             description="Orientation of the elevator"
+                             name="flapsOrientation"
+                             ordinal="0"></FieldDefinition>
+                        </ParameterDefinitions>
+                    </ServiceDefinition>
+                    <ServiceDefinition
+                     aspect.isAsync="false"
+                     category=""
+                     description="Set the flaps orientation"
+                     isAllowOverride="false"
+                     isLocalOnly="false"
+                     isOpen="false"
+                     isPrivate="false"
+                     name="SetFlaps">
+                        <ResultType
+                         baseType="NOTHING"
+                         description=""
+                         name=""
+                         ordinal="0"></ResultType>
+                        <ParameterDefinitions>
+                            <FieldDefinition
+                             baseType="NUMBER"
+                             description="Orientation of the flaps"
+                             name="flapsOrientation"
+                             ordinal="0"></FieldDefinition>
+                        </ParameterDefinitions>
+                    </ServiceDefinition>
+                    <ServiceDefinition
+                     aspect.isAsync="false"
+                     category=""
+                     description="Set the fuel level for the primary tank"
+                     isAllowOverride="false"
+                     isLocalOnly="false"
+                     isOpen="false"
+                     isPrivate="false"
+                     name="SetFuelLevel">
+                        <ResultType
+                         baseType="NOTHING"
+                         description=""
+                         name=""
+                         ordinal="0"></ResultType>
+                        <ParameterDefinitions>
+                            <FieldDefinition
+                             baseType="NUMBER"
+                             description="Fuel level in gallons"
+                             name="fuelLevel"
+                             ordinal="0"></FieldDefinition>
+                        </ParameterDefinitions>
+                    </ServiceDefinition>
+                    <ServiceDefinition
+                     aspect.isAsync="false"
+                     category=""
+                     description="Set the water contamination for the primary tank"
+                     isAllowOverride="false"
+                     isLocalOnly="false"
+                     isOpen="false"
+                     isPrivate="false"
+                     name="SetFuelTankWaterContamination">
+                        <ResultType
+                         baseType="NOTHING"
+                         description=""
+                         name=""
+                         ordinal="0"></ResultType>
+                        <ParameterDefinitions>
+                            <FieldDefinition
+                             baseType="NUMBER"
+                             description="Water amount in gallons"
+                             name="waterAmount"
+                             ordinal="0"></FieldDefinition>
+                        </ParameterDefinitions>
+                    </ServiceDefinition>
+                    <ServiceDefinition
+                     aspect.isAsync="false"
+                     category=""
+                     description="Set the fuel mixture level"
+                     isAllowOverride="false"
+                     isLocalOnly="false"
+                     isOpen="false"
+                     isPrivate="false"
+                     name="SetMixture">
+                        <ResultType
+                         baseType="NOTHING"
+                         description=""
+                         name=""
+                         ordinal="0"></ResultType>
+                        <ParameterDefinitions>
+                            <FieldDefinition
+                             baseType="NUMBER"
+                             description="Fuel mixture setting"
+                             name="mixtureValue"
+                             ordinal="0"></FieldDefinition>
+                        </ParameterDefinitions>
+                    </ServiceDefinition>
+                    <ServiceDefinition
+                     aspect.isAsync="false"
+                     category=""
+                     description="Set the C172 Parking Brake"
+                     isAllowOverride="false"
+                     isLocalOnly="false"
+                     isOpen="false"
+                     isPrivate="false"
+                     name="SetParkingBrake">
+                        <ResultType
+                         aspect.Outputs="{&quot;aspects&quot;:{&quot;dataShape&quot;:&quot;C172P_SimModelShape&quot;},&quot;name&quot;:&quot;result&quot;,&quot;fieldDefinitions&quot;:{&quot;sim_model_c172p_brake-parking&quot;:{&quot;name&quot;:&quot;sim_model_c172p_brake-parking&quot;,&quot;aspects&quot;:{},&quot;description&quot;:&quot;The sim parking brake setting&quot;,&quot;baseType&quot;:&quot;NUMBER&quot;,&quot;ordinal&quot;:0}},&quot;baseType&quot;:&quot;INFOTABLE&quot;,&quot;dataShape&quot;:&quot;C172P_SimModelShape&quot;}"
+                         aspect.dataShape="C172P_SimModelShape"
+                         baseType="INFOTABLE"
                          description=""
                          name="result"
                          ordinal="0"></ResultType>
                         <ParameterDefinitions>
                             <FieldDefinition
-                             baseType="INFOTABLE"
-                             description=""
-                             name="values"
-                             ordinal="1"></FieldDefinition>
+                             baseType="BOOLEAN"
+                             description="Parking brake enabled"
+                             name="enabled"
+                             ordinal="0"></FieldDefinition>
                         </ParameterDefinitions>
+                    </ServiceDefinition>
+                    <ServiceDefinition
+                     aspect.isAsync="false"
+                     category=""
+                     description="Set the rudder orientation"
+                     isAllowOverride="false"
+                     isLocalOnly="false"
+                     isOpen="false"
+                     isPrivate="false"
+                     name="SetRudder">
+                        <ResultType
+                         baseType="NOTHING"
+                         description=""
+                         name=""
+                         ordinal="0"></ResultType>
+                        <ParameterDefinitions>
+                            <FieldDefinition
+                             baseType="NUMBER"
+                             description="Orientation of the rudder"
+                             name="rudderOrientation"
+                             ordinal="0"></FieldDefinition>
+                        </ParameterDefinitions>
+                    </ServiceDefinition>
+                    <ServiceDefinition
+                     aspect.isAsync="false"
+                     category=""
+                     description="Set the simulator speed up factor"
+                     isAllowOverride="false"
+                     isLocalOnly="false"
+                     isOpen="false"
+                     isPrivate="false"
+                     name="SetSimSpeedup">
+                        <ResultType
+                         baseType="NOTHING"
+                         description=""
+                         name=""
+                         ordinal="0"></ResultType>
+                        <ParameterDefinitions>
+                            <FieldDefinition
+                             baseType="NUMBER"
+                             description="Time acceleration factor for the simulator instance"
+                             name="simSpeedup"
+                             ordinal="0"></FieldDefinition>
+                        </ParameterDefinitions>
+                    </ServiceDefinition>
+                    <ServiceDefinition
+                     aspect.isAsync="false"
+                     category=""
+                     description="Set the throttle level"
+                     isAllowOverride="false"
+                     isLocalOnly="false"
+                     isOpen="false"
+                     isPrivate="false"
+                     name="SetThrottle">
+                        <ResultType
+                         baseType="NOTHING"
+                         description=""
+                         name=""
+                         ordinal="0"></ResultType>
+                        <ParameterDefinitions>
+                            <FieldDefinition
+                             baseType="NUMBER"
+                             description="Throttle setting"
+                             name="throttleAmount"
+                             ordinal="0"></FieldDefinition>
+                        </ParameterDefinitions>
+                    </ServiceDefinition>
+                    <ServiceDefinition
+                     aspect.isAsync="false"
+                     category=""
+                     description="Shut down the Edge C172P"
+                     isAllowOverride="false"
+                     isLocalOnly="false"
+                     isOpen="false"
+                     isPrivate="false"
+                     name="Shutdown">
+                        <ResultType
+                         baseType="NOTHING"
+                         description=""
+                         name=""
+                         ordinal="0"></ResultType>
+                        <ParameterDefinitions></ParameterDefinitions>
                     </ServiceDefinition>
                 </ServiceDefinitions>
                 <EventDefinitions></EventDefinitions>
                 <ServiceMappings></ServiceMappings>
-                <ServiceImplementations>
-                    <ServiceImplementation
-                     description=""
-                     handlerName="Script"
-                     name="ExceptionTest">
-                        <ConfigurationTables>
-                            <ConfigurationTable
-                             dataShapeName=""
-                             description=""
-                             isMultiRow="false"
-                             name="Script"
-                             ordinal="0">
-                                <DataShape>
-                                    <FieldDefinitions>
-                                        <FieldDefinition
-                                         baseType="STRING"
-                                         description="code"
-                                         name="code"
-                                         ordinal="0"></FieldDefinition>
-                                    </FieldDefinitions>
-                                </DataShape>
-                                <Rows>
-                                    <Row>
-                                        <code>
-                                        <![CDATA[
-                                        logger.info("Exception test invoked");
-                                        
-                                        throw("derp exception");
-                                        
-                                        //unreachable according to linter
-                                        //logger.info("Exception test returning");
-                                        ]]>
-                                        </code>
-                                    </Row>
-                                </Rows>
-                            </ConfigurationTable>
-                        </ConfigurationTables>
-                    </ServiceImplementation>
-                    <ServiceImplementation
-                     description=""
-                     handlerName="Script"
-                     name="ProcessRemoteEventsAndTimeout">
-                        <ConfigurationTables>
-                            <ConfigurationTable
-                             dataShapeName=""
-                             description=""
-                             isMultiRow="false"
-                             name="Script"
-                             ordinal="0">
-                                <DataShape>
-                                    <FieldDefinitions>
-                                        <FieldDefinition
-                                         baseType="STRING"
-                                         description="code"
-                                         name="code"
-                                         ordinal="0"></FieldDefinition>
-                                    </FieldDefinitions>
-                                </DataShape>
-                                <Rows>
-                                    <Row>
-                                        <code>
-                                        <![CDATA[
-                                        logger.debug("Executing doomed call to ProcessRemoteEvents");
-                                        
-                                        //longer than the remote timeout of 100ms. want timeout to occur fairly quickly
-                                        pause(200);
-                                        
-                                        me.ProcessRemoteEvents({
-                                        	values: values /* INFOTABLE {"dataShape":"NamedVTQ"} */
-                                        });
-                                        ]]>
-                                        </code>
-                                    </Row>
-                                </Rows>
-                            </ConfigurationTable>
-                        </ConfigurationTables>
-                    </ServiceImplementation>
-                    <ServiceImplementation
-                     description=""
-                     handlerName="Script"
-                     name="UpdateSubscribedPropertyValuesAndTimeout">
-                        <ConfigurationTables>
-                            <ConfigurationTable
-                             dataShapeName=""
-                             description=""
-                             isMultiRow="false"
-                             name="Script"
-                             ordinal="0">
-                                <DataShape>
-                                    <FieldDefinitions>
-                                        <FieldDefinition
-                                         baseType="STRING"
-                                         description="code"
-                                         name="code"
-                                         ordinal="0"></FieldDefinition>
-                                    </FieldDefinitions>
-                                </DataShape>
-                                <Rows>
-                                    <Row>
-                                        <code>
-                                        <![CDATA[
-                                        logger.debug("Executing doomed call to UpdatePropertyValues");
-                                        
-                                        //longer than the remote timeout of 100ms. want timeout to occur fairly quickly
-                                        pause(200);
-                                        
-                                        me.UpdatePropertyValues({
-                                        	values: values /* INFOTABLE {"dataShape":"NamedVTQ"} */
-                                        });
-                                        ]]>
-                                        </code>
-                                    </Row>
-                                </Rows>
-                            </ConfigurationTable>
-                        </ConfigurationTables>
-                    </ServiceImplementation>
-                </ServiceImplementations>
+                <ServiceImplementations></ServiceImplementations>
                 <Subscriptions></Subscriptions>
             </ThingShape>
             <PropertyBindings></PropertyBindings>
@@ -1688,6 +2153,13 @@
                  timeout="0"></RemotePropertyBinding>
                 <RemotePropertyBinding
                  foldType="NONE"
+                 name="sim_model_c172p_brake-parking"
+                 pushThreshold="0.0"
+                 pushType="VALUE"
+                 sourceName="sim_model_c172p_brake-parking"
+                 timeout="0"></RemotePropertyBinding>
+                <RemotePropertyBinding
+                 foldType="NONE"
                  name="sim_speed-up"
                  pushThreshold="0.0"
                  pushType="VALUE"
@@ -1720,6 +2192,13 @@
                  pushThreshold="0.0"
                  pushType="VALUE"
                  sourceName="sim_time_mp-clock-sec"
+                 timeout="0"></RemotePropertyBinding>
+                <RemotePropertyBinding
+                 foldType="NONE"
+                 name="systems_electrical_battery-charge-percent"
+                 pushThreshold="0.0"
+                 pushType="VALUE"
+                 sourceName="systems_electrical_battery-charge-percent"
                  timeout="0"></RemotePropertyBinding>
                 <RemotePropertyBinding
                  foldType="NONE"
@@ -1764,7 +2243,148 @@
                  sourceName="velocities_wBody-fps"
                  timeout="0"></RemotePropertyBinding>
             </RemotePropertyBindings>
-            <RemoteServiceBindings></RemoteServiceBindings>
+            <RemoteServiceBindings>
+                <RemoteServiceBinding
+                 enableQueue="false"
+                 name="AbandonCurrentWaypoint"
+                 sourceName="AbandonCurrentWaypoint"
+                 timeout="0"></RemoteServiceBinding>
+                <RemoteServiceBinding
+                 enableQueue="false"
+                 name="AddNextWaypoint"
+                 sourceName="AddNextWaypoint"
+                 timeout="0"></RemoteServiceBinding>
+                <RemoteServiceBinding
+                 enableQueue="false"
+                 name="AddWaypoint"
+                 sourceName="AddWaypoint"
+                 timeout="0"></RemoteServiceBinding>
+                <RemoteServiceBinding
+                 enableQueue="false"
+                 name="ClearWaypoints"
+                 sourceName="ClearWaypoints"
+                 timeout="0"></RemoteServiceBinding>
+                <RemoteServiceBinding
+                 enableQueue="false"
+                 name="FlushFuelTanks"
+                 sourceName="FlushFuelTanks"
+                 timeout="0"></RemoteServiceBinding>
+                <RemoteServiceBinding
+                 enableQueue="false"
+                 name="GetConsumablesTelemetry"
+                 sourceName="GetConsumablesTelemetry"
+                 timeout="0"></RemoteServiceBinding>
+                <RemoteServiceBinding
+                 enableQueue="false"
+                 name="GetControlTelemetry"
+                 sourceName="GetControlTelemetry"
+                 timeout="0"></RemoteServiceBinding>
+                <RemoteServiceBinding
+                 enableQueue="false"
+                 name="GetFlightPlan"
+                 sourceName="GetFlightPlan"
+                 timeout="0"></RemoteServiceBinding>
+                <RemoteServiceBinding
+                 enableQueue="false"
+                 name="GetOrientationTelemetry"
+                 sourceName="GetOrientationTelemetry"
+                 timeout="0"></RemoteServiceBinding>
+                <RemoteServiceBinding
+                 enableQueue="false"
+                 name="GetPositionTelemetry"
+                 sourceName="GetPositionTelemetry"
+                 timeout="0"></RemoteServiceBinding>
+                <RemoteServiceBinding
+                 enableQueue="false"
+                 name="RechargeBattery"
+                 sourceName="RechargeBattery"
+                 timeout="0"></RemoteServiceBinding>
+                <RemoteServiceBinding
+                 enableQueue="false"
+                 name="RefillFuelTanks"
+                 sourceName="RefillFuelTanks"
+                 timeout="0"></RemoteServiceBinding>
+                <RemoteServiceBinding
+                 enableQueue="false"
+                 name="RemoveWaypoints"
+                 sourceName="RemoveWaypoints"
+                 timeout="0"></RemoteServiceBinding>
+                <RemoteServiceBinding
+                 enableQueue="false"
+                 name="RunStartupProcedure"
+                 sourceName="RunStartupProcedure"
+                 timeout="0"></RemoteServiceBinding>
+                <RemoteServiceBinding
+                 enableQueue="false"
+                 name="SetAileron"
+                 sourceName="SetAileron"
+                 timeout="0"></RemoteServiceBinding>
+                <RemoteServiceBinding
+                 enableQueue="false"
+                 name="SetAutoCoordination"
+                 sourceName="SetAutoCoordination"
+                 timeout="0"></RemoteServiceBinding>
+                <RemoteServiceBinding
+                 enableQueue="false"
+                 name="SetBatterySwitch"
+                 sourceName="SetBatterySwitch"
+                 timeout="0"></RemoteServiceBinding>
+                <RemoteServiceBinding
+                 enableQueue="false"
+                 name="SetCameraView"
+                 sourceName="SetCameraView"
+                 timeout="0"></RemoteServiceBinding>
+                <RemoteServiceBinding
+                 enableQueue="false"
+                 name="SetElevator"
+                 sourceName="SetElevator"
+                 timeout="0"></RemoteServiceBinding>
+                <RemoteServiceBinding
+                 enableQueue="false"
+                 name="SetFlaps"
+                 sourceName="SetFlaps"
+                 timeout="0"></RemoteServiceBinding>
+                <RemoteServiceBinding
+                 enableQueue="false"
+                 name="SetFuelLevel"
+                 sourceName="SetFuelLevel"
+                 timeout="0"></RemoteServiceBinding>
+                <RemoteServiceBinding
+                 enableQueue="false"
+                 name="SetFuelTankWaterContamination"
+                 sourceName="SetFuelTankWaterContamination"
+                 timeout="0"></RemoteServiceBinding>
+                <RemoteServiceBinding
+                 enableQueue="false"
+                 name="SetMixture"
+                 sourceName="SetMixture"
+                 timeout="0"></RemoteServiceBinding>
+                <RemoteServiceBinding
+                 enableQueue="false"
+                 name="SetParkingBrake"
+                 sourceName="SetParkingBrake"
+                 timeout="0"></RemoteServiceBinding>
+                <RemoteServiceBinding
+                 enableQueue="false"
+                 name="SetRudder"
+                 sourceName="SetRudder"
+                 timeout="0"></RemoteServiceBinding>
+                <RemoteServiceBinding
+                 enableQueue="false"
+                 name="SetSimSpeedup"
+                 sourceName="SetSimSpeedup"
+                 timeout="0"></RemoteServiceBinding>
+                <RemoteServiceBinding
+                 enableQueue="false"
+                 name="SetThrottle"
+                 sourceName="SetThrottle"
+                 timeout="0"></RemoteServiceBinding>
+                <RemoteServiceBinding
+                 enableQueue="false"
+                 name="Shutdown"
+                 sourceName="Shutdown"
+                 timeout="0"></RemoteServiceBinding>
+            </RemoteServiceBindings>
             <RemoteEventBindings></RemoteEventBindings>
             <AlertConfigurations>
                 <AlertDefinitions
@@ -1944,6 +2564,8 @@
                 <AlertDefinitions
                  name="sim_freeze_master"></AlertDefinitions>
                 <AlertDefinitions
+                 name="sim_model_c172p_brake-parking"></AlertDefinitions>
+                <AlertDefinitions
                  name="sim_speed-up"></AlertDefinitions>
                 <AlertDefinitions
                  name="sim_time_elapsed-sec"></AlertDefinitions>
@@ -1953,6 +2575,8 @@
                  name="sim_time_local-day-seconds"></AlertDefinitions>
                 <AlertDefinitions
                  name="sim_time_mp-clock-sec"></AlertDefinitions>
+                <AlertDefinitions
+                 name="systems_electrical_battery-charge-percent"></AlertDefinitions>
                 <AlertDefinitions
                  name="velocities_airspeed-kt"></AlertDefinitions>
                 <AlertDefinitions
@@ -1969,18 +2593,18 @@
             <ImplementedShapes></ImplementedShapes>
             <ThingProperties>
                 <reportingLastEvaluation>
-                    <Value>2022-09-20T22:34:28.042Z</Value>
-                    <Timestamp>2022-09-20T22:34:28.042Z</Timestamp>
+                    <Value>2023-01-30T05:54:43.561Z</Value>
+                    <Timestamp>2023-01-30T05:54:43.561Z</Timestamp>
                     <Quality>GOOD</Quality>
                 </reportingLastEvaluation>
                 <reportingLastChange>
-                    <Value>2022-09-20T22:34:28.042Z</Value>
-                    <Timestamp>2022-09-20T22:34:28.042Z</Timestamp>
+                    <Value>2023-01-30T05:54:43.561Z</Value>
+                    <Timestamp>2023-01-30T05:54:43.561Z</Timestamp>
                     <Quality>GOOD</Quality>
                 </reportingLastChange>
                 <lastConnection>
-                    <Value>2022-09-20T22:25:18.106Z</Value>
-                    <Timestamp>2022-09-20T22:25:18.106Z</Timestamp>
+                    <Value>2023-01-30T05:54:36.378Z</Value>
+                    <Timestamp>2023-01-30T05:54:36.378Z</Timestamp>
                     <Quality>GOOD</Quality>
                 </lastConnection>
             </ThingProperties>
